@@ -1,0 +1,34 @@
+\RequirePackage{mathtools}
+
+% "left-right" pairs of symbols
+
+% inner product
+\DeclarePairedDelimiter\inner{\langle}{\rangle}
+% absolute value
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+% length
+\DeclarePairedDelimiter\len{\lvert}{\rvert}
+% a set
+\DeclarePairedDelimiter\set{\{}{\}}
+% parens
+\DeclarePairedDelimiter\parens{(}{)}
+% tuple, alias for parens
+\DeclarePairedDelimiter\tuple{(}{)}
+% square brackets
+\DeclarePairedDelimiter\bracks{[}{]}
+% rounding off
+\DeclarePairedDelimiter\round{\lfloor}{\rceil}
+% floor function
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+% ceiling function
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+% length of some vector, element
+\DeclarePairedDelimiter\length{\lVert}{\rVert}
+% quantum bra
+\DeclarePairedDelimiter\bra{\langle}{\rvert}
+% quantum ket
+\DeclarePairedDelimiter\ket{\lvert}{\rangle}
+% quantum braket
+\DeclarePairedDelimiterX\braket[2]{\langle}{\rangle}{#1 \delimsize\vert #2}
+% "lifting" of a residue class
+\DeclarePairedDelimiter\lift{\llbracket}{\rrbracket}

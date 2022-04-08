@@ -1,0 +1,177 @@
+% crypto-related notation
+
+% KEYS AND RELATED
+
+\newcommand{\mm}[1]{\ensuremath{#1}}
+
+\newcommand{\pp}{\mm{pp}}      % public params
+\newcommand{\pk}{\mm{pk}}
+\newcommand{\vk}{\mm{vk}}
+\newcommand{\sk}{\mm{sk}}
+\newcommand{\mpk}{\mm{mpk}}
+\newcommand{\msk}{\mm{msk}}
+\newcommand{\fk}{\mm{fk}}
+\newcommand{\id}{id}
+\newcommand{\keyspace}{\ensuremath{\mathcal{K}}}
+\newcommand{\ctspace}{\ensuremath{\mathcal{C}}}
+\newcommand{\msgspace}{\ensuremath{\mathcal{M}}}
+\newcommand{\idspace}{\ensuremath{\mathcal{ID}}}
+
+\newcommand{\concat}{\ensuremath{\|}}
+
+% GAMES STUFF
+
+% advantage
+\newcommand{\advan}{\ensuremath{\mathbf{Adv}}}
+
+% different attack models
+\newcommand{\attack}[1]{\ensuremath{\text{#1}}}
+
+\newcommand{\atk}{\attack{atk}} % dummy attack
+\newcommand{\indcpa}{\attack{ind-cpa}}
+\newcommand{\indcca}{\attack{ind-cca}}
+\newcommand{\anocpa}{\attack{ano-cpa}} % anonymous
+\newcommand{\anocca}{\attack{ano-cca}}
+\newcommand{\sidindcpa}{\attack{sid-ind-cpa}} % selective-id
+\newcommand{\aidindcpa}{\attack{aid-ind-cpa}} % adaptive-id
+\newcommand{\sidindcca}{\attack{sid-ind-cca}}
+\newcommand{\aidindcca}{\attack{aid-ind-cca}}
+\newcommand{\euacma}{\attack{eu-acma}} % forgery: adaptive chosen-message
+\newcommand{\euscma}{\attack{eu-scma}} % forgery: static chosen-message
+\newcommand{\suacma}{\attack{su-acma}} % strong forgery: adaptive chosen-message
+\newcommand{\suscma}{\attack{su-scma}} % strong forgery: static chosen-message
+
+% ADVERSARIES
+\newcommand{\attacker}[1]{\ensuremath{\mathcal{#1}}}
+
+\newcommand{\Adv}{\attacker{A}}
+\newcommand{\Sim}{\attacker{S}}
+\newcommand{\Ora}{\attacker{O}}
+\newcommand{\Inv}{\attacker{I}}
+\newcommand{\For}{\attacker{F}}
+
+% CRYPTO SCHEMES
+
+\newcommand{\scheme}[1]{\ensuremath{\text{#1}}}
+
+% secret-key cryptosystem
+\newcommand{\skc}{\scheme{SKC}}
+\newcommand{\skcgen}{\algo{Gen}}
+\newcommand{\skcenc}{\algo{Enc}} % can also use \kemenc and \kemdec
+\newcommand{\skcdec}{\algo{Dec}}
+
+% public-key cryptosystem
+\newcommand{\pkc}{\scheme{PKC}}
+\newcommand{\pkcsetup}{\algo{Setup}}
+\newcommand{\pkcgen}{\algo{Gen}}
+\newcommand{\pkcenc}{\algo{Enc}} % can also use \kemenc and \kemdec
+\newcommand{\pkcdec}{\algo{Dec}}
+\newcommand{\msgsp}{\mathcal{M}}
+
+% deterministic authenticated encryption ("key wrap")
+\newcommand{\dae}{\scheme{DAE}}
+\newcommand{\daegen}{\algo{Gen}}
+\newcommand{\daewrap}{\algo{Wrap}}
+\newcommand{\daeunwrap}{\algo{Unwrap}}
+
+% extra deniable algorithms for pkc
+\newcommand{\biden}{\scheme{BI\mbox{-}DEN}}
+\newcommand{\den}{\scheme{DEN}}
+\newcommand{\dengen}{\algo{DenGen}} 
+\newcommand{\denenc}{\algo{DenEnc}} % can also use \kemenc and \kemdec
+\newcommand{\rfake}{\algo{RecFake}}
+\newcommand{\sfake}{\algo{SendFake}}
+
+% plan ahead deniability 
+\newcommand{\pden}{\scheme{PL\mbox{-}DEN}}
+\newcommand{\pdenenc}{\algo{PADenEnc}} % can also use \kemenc and \kemdec
+\newcommand{\prfake}{\algo{PARecFake}}
+\newcommand{\psfake}{\algo{PASendFake}}
+
+% bitranslucent sets
+\newcommand{\bts}{\scheme{BTS}}
+\newcommand{\btsgen}{\algo{Gen}}
+\newcommand{\btsdengen}{\algo{DenGen}}
+\newcommand{\sampleP}{\algo{SampleP}} 
+\newcommand{\sampleU}{\algo{SampleU}} 
+\newcommand{\testP}{\algo{TestP}}
+\newcommand{\fakeScoins}{\algo{FakeSCoins}}
+\newcommand{\fakeRcoins}{\algo{FakeRCoins}}
+
+% digital signatures
+\newcommand{\sig}{\scheme{SIG}}
+\newcommand{\siggen}{\algo{Gen}}
+\newcommand{\sigsign}{\algo{Sign}}
+\newcommand{\sigver}{\algo{Ver}}
+
+% message authentication code
+\newcommand{\mac}{\scheme{MAC}}
+\newcommand{\macgen}{\algo{Gen}}
+\newcommand{\mactag}{\algo{Tag}}
+\newcommand{\macver}{\algo{Ver}}
+
+% key-encapsulation mechanism
+\newcommand{\kem}{\scheme{KEM}}
+\newcommand{\kemsetup}{\algo{Setup}}
+\newcommand{\kemgen}{\algo{Gen}}
+\newcommand{\kemenc}{\algo{Encaps}}
+\newcommand{\kemdec}{\algo{Decaps}}
+
+% symmetric cipher
+\newcommand{\sym}{\scheme{SYM}}
+\newcommand{\symenc}{\algo{E}}
+\newcommand{\symdec}{\algo{D}}
+
+% identity-based encryption
+\newcommand{\ibe}{\scheme{IBE}}
+\newcommand{\ibesetup}{\algo{Setup}}
+\newcommand{\ibeext}{\algo{Ext}}
+\newcommand{\ibeenc}{\algo{Enc}}
+\newcommand{\ibedec}{\algo{Dec}}
+
+% hierarchical IBE (as key encapsulation)
+\newcommand{\hibe}{\scheme{HIBE}}
+\newcommand{\hibesetup}{\algo{Setup}}
+\newcommand{\hibeext}{\algo{Extract}}
+\newcommand{\hibeenc}{\algo{Encaps}}
+\newcommand{\hibedec}{\algo{Decaps}}
+
+% binary tree encryption (as key encapsulation)
+\newcommand{\bte}{\scheme{BTE}}
+\newcommand{\btesetup}{\algo{Setup}}
+\newcommand{\bteext}{\algo{Extract}}
+\newcommand{\bteenc}{\algo{Encaps}}
+\newcommand{\btedec}{\algo{Decaps}}
+
+% trapdoor functions
+\newcommand{\tdf}{\scheme{TDF}}
+\newcommand{\tdfgen}{\algo{Gen}}
+\newcommand{\tdfeval}{\algo{Eval}}
+\newcommand{\tdfinv}{\algo{Invert}}
+\newcommand{\tdfver}{\algo{Ver}}
+
+% preimage samplable functions
+\newcommand{\psf}{\scheme{PSF}}
+\newcommand{\psfgen}{\algo{Gen}}
+\newcommand{\psfsamdom}{\algo{SampleDom}}
+\newcommand{\psfsampre}{\algo{SamplePre}}
+
+% COMPLEXITY MEASURES
+
+\newcommand{\qhash}{\ensuremath{Q_{H}}}
+\newcommand{\qext}{\ensuremath{Q_{E}}}
+\newcommand{\qid}{\ensuremath{Q_{\text{id}}}}
+\newcommand{\qsign}{\ensuremath{Q_{\text{sign}}}}
+
+% UC STUFF
+
+\newcommand{\func}[1]{\ensuremath{\mathcal{F}_{#1}}\xspace}
+\newcommand{\prot}[1]{\ensuremath{\mathcal{\pi}_{#1}}\xspace}
+\newcommand{\exec}{\ensuremath{\text{EXEC}}}
+\newcommand{\ideal}{\ensuremath{\text{IDEAL}}}
+% \Sim and \Adv are already defined above
+\newcommand{\Env}{\attacker{Z}}
+\newcommand{\sid}{\ensuremath{\mathsf{sid}}\xspace}
+\newcommand{\ssid}{\ensuremath{\mathsf{ssid}}\xspace}
+\newcommand{\ID}{\ensuremath{\mathsf{ID}}\xspace}
+\newcommand{\command}[1]{\ensuremath{\mathsf{#1}}\xspace}

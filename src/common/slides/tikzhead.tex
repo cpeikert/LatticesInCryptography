@@ -1,0 +1,117 @@
+% additional libraries for tikz and pgf
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+\usetikzlibrary{calc}
+\usetikzlibrary{shadows}
+\usetikzlibrary{scopes}
+\usetikzlibrary{chains}
+\usetikzlibrary{positioning}
+\usetikzlibrary{fit}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.symbols}
+\usetikzlibrary{shapes.misc}
+
+% color aliases
+\colorlet{Lattice}{Green}
+\colorlet{Set}{Red!10}
+
+% global styles
+\tikzset{
+  % make drop shadows a bit softer
+  every shadow/.style={opacity=.4,shadow xshift=.3ex,shadow yshift=-.3ex},
+  % use \& to separate cells in matrices, avoiding fragility in beamer frames
+  every matrix/.style={ampersand replacement=\&},
+  % edges and joins with arrows and thicker
+  every edge/.append style={->,thick},
+  every join/.style={->,thick},
+  % distance between nodes
+  % node distance=1ex and 2ex,
+}
+
+% styles for drawing in Rn, especially lattices
+\tikzset{
+  % lattice transform must include "cm" dimension to work properly,
+  % otherwise the x and y transforms become dependent
+  Ztrans/.style={x={(1.5cm,1cm)},y={(.5cm,1.5cm)}},
+  Zdual/.style={x={(1.5cm,-.5cm)},y={(.5cm,1cm)}},
+  latttrans/.style={x={(1.8cm,.5cm)},y={(0.4cm,1.3cm)}},
+  dualtrans/.style={x={(1.3cm,-.4cm)},y={(-.5cm,1.8cm)}},
+  lattB/.style={x={(1.8cm,.5cm)},y={(0.4cm,1.4cm)}},
+  dualB/.style={x={(1.4cm,-.4cm)},y={(-.5cm,1.8cm)}},
+  shortB/.style={x={(.5cm,.2cm)},y={(-.1cm,1.7cm)}},
+  latt2B/.style={x={(1cm,.1cm)},y={(.1cm,1.2cm)}},
+  ulattB/.style={x={(2.0cm,.5cm)},y={(2.1cm,-.2cm)}},
+  openball/.style={fill=structure.fg!20},
+  ball/.style={openball,thin,draw=structure.fg},
+  latt/.style={Lattice,fill},
+  dist/.style={Brown,densely dashed,font=\footnotesize},
+  offlabel/.style={Brown,inner sep=2pt,font=\tiny},
+  axes/.style={->,Gray,style=very thin},
+  fundamental/.style={Gray,fill opacity=.2},
+  target/.style={fill,Brown},
+  project/.style={thin,dashed},
+  help lines/.style={Gray,very thin,step=.5cm},
+  % expanding waves representing noise
+  noise/.style={
+    Lattice,
+    opacity=.5,
+    decorate,decoration={
+      expanding waves,
+      segment length=5pt,angle=10,
+      post=moveto,post length=3pt
+    },
+  },
+}
+
+% lattice that can be dropped into any path.
+% it would be sensible to set a default argument here, but
+% commands with optional args don't parse correctly inside a
+% tikz path
+\newcommand*{\latt}[1]{%
+  \foreach \a in {-4, ..., 4} {
+    \foreach \b in {-4, ..., 4} {
+      (\a,\b) circle (#1)
+    }
+  }
+}
+
+% style for functions mapping one point to another
+\tikzset{map/.style={->,semithick}}
+
+% style for an offset rounded box
+\tikzset{showoff/.style={draw,fill=White,rounded corners,drop
+    shadow,inner sep=6pt}}
+
+% style for all algorithms
+\tikzset{algorithm/.style={
+    draw=#1!50!Black!60,solid,
+    top color=White,bottom color=#1!50!Black!15,
+    very thick,rounded corners,drop shadow,
+    minimum size=.9cm,inner sep=6pt,outer sep=4pt
+  }
+}
+
+% style for honest, malicious, trusted parties
+\tikzset{honest/.style={algorithm=Green}}
+\tikzset{oracle/.style={algorithm=Green}}
+\tikzset{malicious/.style={algorithm=Red}}
+\tikzset{trusted/.style={algorithm=Purple,inner sep=10pt}}
+
+% style for notions
+\tikzset{notion/.style={
+    draw=#1!50!Black!60,solid,
+    top color=White,bottom color=#1!50!Black!15,
+    very thick,rounded corners,drop shadow,
+    minimum height=6.5ex,inner sep=6pt,
+  }
+}
+
+\tikzset{app/.style={notion=Blue}}
+\tikzset{prim/.style={notion=Green}}
+\tikzset{math/.style={notion=Red}}
+
+% % style for a common reference string
+\tikzset{crs/.style={draw,fill=White,cloud,cloud puffs=13,cloud ignores aspect,drop shadow}}
