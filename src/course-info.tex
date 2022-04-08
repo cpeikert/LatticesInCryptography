@@ -1,0 +1,156 @@
+\documentclass[11pt]{article}
+
+\usepackage{fullpage,microtype,pdfsync,hyperref}
+\usepackage{newtxtext}
+\usepackage[T1]{fontenc}
+
+\usepackage{mathtools,amsfonts,amssymb}
+\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
+\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
+\usepackage{import}
+
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+
+% \usepackage[svgnames]{xcolor}
+% \usepackage{tikz}
+
+\import{common/}{head.tex}
+
+\chead{\large \textbf{Course Information\\and Syllabus}}
+
+\lhead{\small
+  \textbf{\href{https://github.com/cpeikert/LatticesInCryptography}%
+    {Lattices in Cryptography}\\University of Michigan, Fall 2022}}
+
+\rhead{\small \textbf{Instructor:
+    \href{http://www.eecs.umich.edu/~cpeikert/}{Chris Peikert}}}
+
+\setlength{\headheight}{27pt}
+\setlength{\headsep}{20pt}
+
+\pagestyle{plain}               % default: no special header
+
+\begin{document}
+
+\thispagestyle{fancy}           % first page should have special header
+
+\section{General Information}
+\label{sec:general-information}
+
+\emph{Point lattices} in $\R^{n}$ have proven remarkably useful in
+cryptography, both for cryptanalysis (breaking codes) and more
+recently for constructing cryptosystems with unique security and
+functionality properties.
+
+This graduate-level seminar will cover classical results, exciting
+recent developments, and important open problems.  Specific topics,
+depending on time and level of interest, will be drawn from:
+\begin{itemize}[itemsep=0pt]
+\item Mathematical background and basic results
+\item The LLL algorithm, Coppersmith's method, and applications to
+  cryptanalysis
+\item Complexity of lattice problems: NP-hardness, algorithms and
+  other upper bounds
+\item Gaussians, harmonic analysis, and the smoothing parameter
+\item Worst-case-to-average-case reductions and the SIS/LWE problems
+\item Basic cryptographic constructions: one-way functions, encryption
+  schemes, digital signatures
+\item ``Exotic'' cryptographic constructions: ID-based encryption,
+  fully homomorphic encryption, and more
+\item ``Algebraic'' (ring-based) cryptographic reductions and
+  primitives
+\end{itemize}
+
+\subsection{Materials}
+\label{sec:materials}
+
+The public course web page with lecture notes, homeworks, and other
+materials is at {\small
+  \url{https://github.com/cpeikert/LatticesInCryptography}}.  For
+assignment submission, grading, discussions, etc., we will use the
+course Canvas site at [TBD].
+
+There is no required textbook for this class; lectures, notes, and
+research papers are the main sources of content. Students may also
+wish to refer to the following excellent sources:
+\begin{itemize}
+\item Oded Regev's course
+  \href{http://www.cims.nyu.edu/~regev/teaching/lattices_fall_2009/index.html}{\emph{Lattices
+      in Computer Science}}
+\item Micciancio and Goldwasser's book
+  \href{http://link.springer.com/book/10.1007/978-1-4615-0897-7/page/1}{\emph{Complexity
+      of Lattice Problems: A Cryptographic Perspective}}
+\end{itemize}
+
+\subsection{Prerequisites}
+\label{sec:prerequisites}
+
+There are no formal prerequisite classes.  However, this course is
+mathematically rigorous and fast-paced, hence the main requirement is
+\emph{mathematical maturity}.  Specifically, students should be
+comfortable with devising and writing correct formal proofs (and
+finding the flaws in incorrect ones!), devising and analyzing
+algorithms, and working with probability.
+
+A previous course in cryptography (e.g., Applied or Theoretical
+Cryptography) is very helpful but is not required.  No previous
+familiarity with lattices will be assumed.  \emph{Highly recommended}
+courses---the more the better---include: EECS~477 or~586 (Algorithms),
+EECS~574 (Computational Complexity Theory), EECS 475/575 (Introduced
+to/Advanced Cryptography).  The instructor reserves the right to limit
+enrollment to students who have the necessary background.
+
+\section{Course Policies}
+\label{sec:policies}
+
+\subsection{Grading}
+\label{sec:grading}
+
+Grades will be determined roughly as follows:
+\begin{itemize}
+\item[(50\%)] Homework assignments (about 5), due approximately every
+  two weeks.  Collaboration and external sources are allowed and
+  encouraged; see academic honesty policy for details.
+
+\item[(30\%)] Research-oriented project and presentation.
+
+\item[(20\%)] Participation and peer review.
+\end{itemize}
+
+All submitted work will be graded on \emph{correctness} and
+\emph{clarity}, and must be typeset in \LaTeX\ (templates will be made
+available).  It is good practice to start any longer solution with an
+informal (but accurate) ``proof summary'' that describes the core idea
+--- this will help the reader (and you!)  understand your solution
+better.
+
+There are no predetermined score thresholds for A/B/C/etc.  Your
+primary focus should be on \emph{learning the material}, not your
+grade.
+
+\subsection{Academic Honesty}
+\label{sec:academic-honesty}
+
+On homework assignments, collaboration and consultation with external
+sources is allowed and encouraged, subject to the following
+conditions:
+\begin{itemize}[itemsep=0pt]
+\item You must submit your own individually written solution, and you
+  must list your collaborators and/or external sources for each
+  problem.
+\item You may not submit a problem solution that you cannot explain
+  orally.
+\end{itemize}
+
+There is no hard-and-fast list of (dis)honest conduct.  When in doubt,
+err on the side of caution, or ask the instructor.  Dealing with
+academic dishonesty is unpleasant for everyone involved, so please
+follow these policies!
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
