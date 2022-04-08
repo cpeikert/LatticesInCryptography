@@ -1,0 +1,15 @@
+**/*.aux
+**/*.pdf
+**/*.pdfsync
+**/*.log
+**/*.out
+**/*.gz
+**/*.bbl
+**/*.blg
+**/*.lox
+**/*.rel
+**/*.thm
+**/*.nav
+**/*.snm
+**/*.toc
+**/*.tar
