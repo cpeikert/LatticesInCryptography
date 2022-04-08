@@ -1,0 +1,30 @@
+%% SET UP MY CUSTOM PRESENTATION THEME
+\mode<presentation>
+
+% sets colors for various beamer blocks (example, alert, etc.)
+\usecolortheme{orchid}
+
+% pretty fonts
+\usefonttheme{professionalfonts}
+% use serif fonts for math expressions, so they look normal
+\usefonttheme[onlymath]{serif}
+
+% make everything round and shaded
+\useinnertheme[shadow]{rounded}
+% use circles for items and such
+\useinnertheme{circles}
+% get rid of ugly buttons at lower-right
+\setbeamertemplate{navigation symbols}{}
+% put page numbers on lower-right
+\setbeamertemplate{footline}[frame number]
+
+% some the itemize bullets
+\setbeamertemplate{itemize item}{%
+  \raise1.5pt\hbox{$\blacktriangleright$}}
+\setbeamertemplate{itemize subitem}{%
+  \tiny\raise1.5pt\hbox{$\bigstar$}}
+
+% margins
+\setbeamersize{text margin left=1em,text margin right=1em}
+
+%% END OF PRESENTATION THEME SETUP

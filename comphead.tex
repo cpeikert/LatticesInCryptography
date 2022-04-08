@@ -1,0 +1,58 @@
+\RequirePackage{mathtools}
+
+% GENERAL COMPUTING STUFF
+
+\newcommand{\bit}{\ensuremath{\set{0,1}}}
+\newcommand{\pmone}{\ensuremath{\set{-1,1}}}
+
+% asymptotic stuff
+\DeclareMathOperator{\poly}{poly}
+\DeclareMathOperator{\polylog}{polylog}
+\DeclareMathOperator{\negl}{negl}
+\newcommand{\Otil}{\ensuremath{\tilde{O}}}
+
+% probability/distribution stuff
+\DeclareMathOperator*{\E}{\mathbb{E}}
+\DeclareMathOperator*{\Var}{Var}
+
+% assorted
+\DeclareMathOperator*{\wt}{wt}
+
+% hash functions
+\newcommand{\calH}{\ensuremath{\mathcal{H}}}
+\newcommand{\calR}{\ensuremath{\mathcal{R}}}
+\newcommand{\calX}{\ensuremath{\mathcal{X}}}
+\newcommand{\calY}{\ensuremath{\mathcal{Y}}}
+
+\newcommand{\compind}{\ensuremath{\stackrel{c}{\approx}}}
+\newcommand{\statind}{\ensuremath{\stackrel{s}{\approx}}}
+\newcommand{\perfind}{\ensuremath{\equiv}}
+
+% font for general-purpose algorithms
+\newcommand{\algo}[1]{\ensuremath{\mathsf{#1}}\xspace}
+
+% font for general-purpose computational problems
+\newcommand{\cproblem}[1]{\ensuremath{\mathsf{#1}}\xspace}
+
+% font for complexity classes
+\newcommand{\class}[1]{\ensuremath{\mathsf{#1}}\xspace}
+
+% complexity classes and languages
+\renewcommand{\P}{\class{P}}
+\newcommand{\BPP}{\class{BPP}}
+\newcommand{\NP}{\class{NP}}
+\newcommand{\coNP}{\class{coNP}}
+\newcommand{\AM}{\class{AM}}
+\newcommand{\coAM}{\class{coAM}}
+\newcommand{\IP}{\class{IP}}
+\newcommand{\SZK}{\class{SZK}}
+\newcommand{\NISZK}{\class{NISZK}}
+\newcommand{\NICZK}{\class{NICZK}}
+\newcommand{\PPP}{\class{PPP}}
+\newcommand{\PPAD}{\class{PPAD}}
+
+\newcommand{\yes}{\ensuremath{\text{YES}}}
+\newcommand{\no}{\ensuremath{\text{NO}}}
+
+\newcommand{\Piyes}{\ensuremath{\Pi^{\yes}}}
+\newcommand{\Pino}{\ensuremath{\Pi^{\no}}}

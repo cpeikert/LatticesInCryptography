@@ -1,0 +1,36 @@
+% the user has a choice of which theorem package to use; we won't
+% enforce one or the other
+
+% \RequirePackage{amsthm}
+% \RequirePackage{ntheorem}
+
+\newtheorem{theorem}{Theorem}[section]
+
+\theoremstyle{plain}            % following are theorem style
+
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{fact}[theorem]{Fact}
+\newtheorem{maintheorem}[theorem]{Main Theorem}
+
+% cleveref doesn't know these
+\crefname{proposition}{Proposition}{Propositions}
+\crefname{claim}{Claim}{Claims}
+\crefname{fact}{Fact}{Facts}
+
+\theoremstyle{definition}       % following are def style
+
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{construction}[theorem]{Construction}
+
+\theoremstyle{remark}           % following are remark style
+
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{note}[theorem]{Note}
+
+% equation numbering style
+\numberwithin{equation}{section}

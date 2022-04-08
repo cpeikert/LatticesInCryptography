@@ -1,0 +1,88 @@
+\RequirePackage{mathtools}
+
+% basic notation
+
+\newcommand{\lamperp}{\Lambda^{\perp}}
+\newcommand{\lam}{\Lambda}
+
+% lattice
+\newcommand{\lat}{\mathcal{L}}
+% fundamental region
+\newcommand{\piped}{\mathcal{P}}
+% smoothing parameter
+\newcommand{\smooth}{\eta}
+% smoothing w/ epsilon
+\newcommand{\smootheps}{\smooth_{\epsilon}}
+% ball
+\newcommand{\ball}{\mathcal{B}}
+% cube
+\newcommand{\cube}{\mathcal{C}}
+% covering radius symbol
+\newcommand{\cover}{\ensuremath{\mu}}
+% Gram-Schmidt
+\newcommand{\gs}[1]{\ensuremath{\widetilde{#1}}}
+% GS minimum
+\newcommand{\gsmin}{\ensuremath{\tilde{bl}}}
+% volume operation
+\DeclareMathOperator{\vol}{vol}
+% Hermite normal form
+\DeclareMathOperator{\hnf}{HNF}
+% rank
+\DeclareMathOperator{\rank}{rank}
+% distance operator
+\DeclareMathOperator{\dist}{dist}
+% span operator
+\DeclareMathOperator{\spn}{span}
+% error function
+\DeclareMathOperator{\erf}{erf}
+
+% quantities that show up regularly
+\newcommand{\wsln}{\ensuremath{\omega(\sqrt{\log n})}}
+\newcommand{\wslm}{\ensuremath{\omega(\sqrt{\log m})}}
+\newcommand{\wn}{\ensuremath{\omega_{n}}}
+
+% support algorithms
+\newcommand{\sampleZ}{\algo{Sample}\Z}
+\newcommand{\sampleD}{\algo{SampleD}}
+\newcommand{\tobasis}{\algo{ToBasis}}
+\newcommand{\invert}{\algo{Invert}}
+\newcommand{\genbasis}{\algo{GenBasis}}
+\newcommand{\extbasis}{\algo{ExtBasis}}
+\newcommand{\extlattice}{\algo{ExtLattice}}
+\newcommand{\randbasis}{\algo{RandBasis}}
+\newcommand{\gentrap}{\algo{GenTrap}}
+\newcommand{\deltrap}{\algo{DelTrap}}
+\newcommand{\noisy}{\algo{Noisy}}
+
+% problems related to lattices
+\newcommand{\svp}{\cproblem{SVP}}
+\newcommand{\gapsvp}{\cproblem{GapSVP}}
+\newcommand{\cogapsvp}{\cproblem{coGapSVP}}
+\newcommand{\usvp}{\cproblem{uSVP}}
+\newcommand{\sivp}{\cproblem{SIVP}}
+\newcommand{\gapsivp}{\cproblem{GapSIVP}}
+\newcommand{\cvp}{\cproblem{CVP}}
+\newcommand{\gapcvp}{\cproblem{GapCVP}}
+\newcommand{\cvpp}{\cproblem{CVPP}}
+\newcommand{\gapcvpp}{\cproblem{GapCVPP}}
+\newcommand{\bdd}{\cproblem{BDD}}
+\newcommand{\gdd}{\cproblem{GDD}}
+\newcommand{\add}{\cproblem{ADD}}
+\newcommand{\incgdd}{\cproblem{IncGDD}}
+\newcommand{\incivd}{\cproblem{IncIVD}}
+\newcommand{\crp}{\cproblem{CRP}}
+\newcommand{\gapcrp}{\cproblem{GapCRP}}
+% problems on ideal lattices
+\newcommand{\igvp}{\cproblem{IGVP}}
+\newcommand{\incigvp}{\cproblem{IncIGVP}}
+% avg-case stuff
+\newcommand{\sis}{\cproblem{SIS}}
+\newcommand{\isis}{\cproblem{ISIS}}
+\newcommand{\ilwe}{\cproblem{ILWE}}
+\newcommand{\lwe}{\cproblem{LWE}}
+\newcommand{\rlwe}{\cproblem{RLWE}}
+\newcommand{\lwr}{\cproblem{LWR}}
+\newcommand{\rlwr}{\cproblem{RLWR}}
+\newcommand{\dlwe}{\cproblem{DLWE}}
+\newcommand{\lpn}{\cproblem{LPN}}
+\newcommand{\Psibar}{\ensuremath{\bar{\Psi}}}

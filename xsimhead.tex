@@ -1,0 +1,46 @@
+\RequirePackage{xsim}
+\RequirePackage{needspace}
+
+\DeclareExerciseEnvironmentTemplate{QRef}{%
+  \par\addvspace{\baselineskip}
+  \Needspace*{2\baselineskip}
+  \noindent
+  \hyperref[ans:\GetExerciseProperty{ID}]{\textbf{\XSIMmixedcase{\GetExerciseName}~\GetExerciseProperty{counter}.}}
+  \label{ques:\GetExerciseProperty{ID}}
+}{\par\addvspace{\baselineskip}}
+
+\DeclareExerciseEnvironmentTemplate{ARef}{%
+  \Needspace*{2\baselineskip}
+  \noindent
+  \hyperref[ques:\GetExerciseProperty{ID}]{\textbf{\XSIMmixedcase{\GetExerciseParameter{exercise-name}}~\GetExerciseProperty{counter}.}}
+  \label{ans:\GetExerciseProperty{ID}}
+  \GetExerciseBody{exercise}
+  \par \medskip \noindent
+  \textbf{\XSIMmixedcase{\GetExerciseName}.}
+}{\par\addvspace{\baselineskip}}
+
+\DeclareExerciseHeadingTemplate{simple}{%
+  \section*{\XSIMmixedcase{\GetExerciseParameter{solution-name}s}}
+}
+
+\DeclareExerciseType{question}{%
+  exercise-env = question,
+  solution-env = answer,
+  exercise-name = Question,
+  solution-name = Answer,
+  exercise-template = QRef,
+  solution-template = ARef,
+}
+
+\xsimsetup{%
+  path = {questions},
+  file-extension = {aux},
+  print-solutions/headings-template=simple,
+  exercise/template=runin
+}
+
+\loadxsimstyle{layouts}
+
+\AtEndDocument{\pagebreak\printsolutions}
+
+\crefname{question}{Question}{Questions}
