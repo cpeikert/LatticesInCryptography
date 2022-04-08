@@ -5,5 +5,7 @@ script: docker run --mount src=$TRAVIS_BUILD_DIR,target=/usr/src/tex,type=bind c
 
 deploy:
   provider: script
+  on:
+    branch: main
   script: bash deploy.sh
   skip_cleanup: true
