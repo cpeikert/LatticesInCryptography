@@ -1,15 +1,64 @@
-@Misc{draft-irtf-cfrg-vrf,
+@Misc{glp21:_sumhash_spec,
+  author       = {Yossi Gilad and David Lazar and Chris Peikert},
+  title        = {Subset-Sum Hash Specification},
+  howpublished =
+                  {\url{https://github.com/algorand/go-sumhash/blob/master/spec/sumhash-spec.pdf}},
+  month        = {September},
+  year         = 2021
+}
+
+@Misc{khovratovich22:_sumhash_analysis,
+  author       = {Dmitry Khovratovich},
+  title        = {Cryptanalysis of the {Algorand} Subset-Sum Hash
+                  Function},
+  howpublished =
+                  {\url{https://crypto.ethereum.org/blog/algorand-hash-analysis}},
+  year         = 2022,
+  note         = {Version dated June 14, 2022}
+}
+
+@Misc{cryptoeprint:2021/062,
+  author       = {Dominique Unruh},
+  title        = {Compressed Permutation Oracles (And the
+                  Collision-Resistance of Sponge/{SHA3})},
+  howpublished = {Cryptology ePrint Archive, Paper 2021/062},
+  year         = 2021,
+  note         = {\url{https://eprint.iacr.org/2021/062}},
+  url          = {https://eprint.iacr.org/2021/062}
+}
+
+@TechReport{irtf-cfrg-vrf-12,
   author       = {Sharon Goldberg and Leonid Reyzin and Dimitrios
                   Papadopoulos and Jan V{\v{c}}el{\'a}k},
   title        = {{Verifiable Random Functions (VRFs)}},
-  howpublished = {Internet-Draft},
+  institution  = {Internet Engineering Task Force},
+  year         = 2022,
+  type         = {Internet-Draft},
+  number       = {draft-irtf-cfrg-vrf-12},
   month        = May,
-  year         = 2021,
-  note         =
-                  {\url{https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-vrf-09}},
-  series       = {Standards Track},
-  publisher    = {IETF},
-  organization = {Internet Engineering Task Force}
+  note         = {Work in Progress},
+  publisher    = {Internet Engineering Task Force},
+  url          =
+                  {https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-vrf-12},
+  pagetotal    = 45,
+  day          = 26
+}
+
+@TechReport{irtf-cfrg-hash-to-curve-14,
+  author       = {Armando Faz-Hern{\'a}ndez and Sam Scott and Nick
+                  Sullivan and Riad S. Wahby and Christopher A. Wood},
+  title        = {{Hashing to Elliptic Curves}},
+  institution  = {Internet Engineering Task Force},
+  year         = 2022,
+  type         = {Internet-Draft},
+  number       = {draft-irtf-cfrg-hash-to-curve-14},
+  month        = Feb,
+  note         = {Work in Progress},
+  publisher    = {Internet Engineering Task Force},
+  url          =
+                  {https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hash-to-curve-14},
+  pagetotal    = 174,
+  day          = 18
 }
 
 @Misc{cryptoeprint:2020:1274,
@@ -76,20 +125,20 @@
 
 @Misc{cryptoeprint:2012:142,
   author       = {David Galindo and Javier Herranz and Jorge Villar},
-  title	       = {Identity-Based Encryption with Master Key-Dependent
+  title        = {Identity-Based Encryption with Master Key-Dependent
                   Message Security and Applications},
   howpublished = {Cryptology ePrint Archive, Report 2012/142},
-  year	       = 2012,
-  note	       = {\url{http://eprint.iacr.org/}}
+  year         = 2012,
+  note         = {\url{http://eprint.iacr.org/}}
 }
 
 @Misc{cryptoeprint:2011:454,
   author       = {Steven Myers and Mona Sergi and {abhi} {shelat}},
-  title	       = {Threshold Fully Homomorphic Encryption and Secure
+  title        = {Threshold Fully Homomorphic Encryption and Secure
                   Computation},
   howpublished = {Cryptology ePrint Archive, Report 2011/454},
-  year	       = 2011,
-  note	       = {\url{http://eprint.iacr.org/}}
+  year         = 2011,
+  note         = {\url{http://eprint.iacr.org/}}
 }
 
 @Misc{cryptoeprint:2018:202,
@@ -100,6 +149,17 @@
   howpublished = {Cryptology ePrint Archive, Report 2018/202},
   year         = 2018,
   note         = {\url{https://eprint.iacr.org/2018/202}}
+}
+
+@InProceedings{DBLP:conf/sacrypt/Schrottenloher21,
+  author       = {Andr{\'{e}} Schrottenloher},
+  title        = {Improved Quantum Algorithms for the $k$-{XOR}
+                  Problem},
+  booktitle    = {Selected Areas in Cryptography},
+  year         = 2021,
+  volume       = 13203,
+  pages        = {311-331},
+  note         = {Full version at \url{https://ia.cr/2021/407}}
 }
 
 @InProceedings{DBLP:conf/sp/CremeersDFFJ21,
@@ -181,6 +241,16 @@
   pages        = {677-706}
 }
 
+@InProceedings{DBLP:conf/eurocrypt/FuchsbauerPS20,
+  author       = {Georg Fuchsbauer and Antoine Plouviez and Yannick
+                  Seurin},
+  title        = {Blind {Schnorr} Signatures and Signed {ElGamal}
+                  Encryption in the Algebraic Group Model},
+  booktitle    = {EUROCRYPT},
+  year         = 2020,
+  pages        = {63-95}
+}
+
 @InProceedings{DBLP:conf/pkc/KaafaraniKP20,
   author       = {Ali El Kaafarani and Shuichi Katsumata and Federico
                   Pintore},
@@ -189,6 +259,16 @@
   booktitle    = {PKC},
   year         = 2020,
   pages        = {157-186}
+}
+
+@Article{DBLP:journals/tcs/ChenM19,
+  author       = {Jing Chen and Silvio Micali},
+  title        = {Algorand: {A} secure and efficient distributed
+                  ledger},
+  journal      = {Theor. Comput. Sci.},
+  year         = 2019,
+  volume       = 777,
+  pages        = {155-183}
 }
 
 @Misc{cryptoeprint:2019:1147,
@@ -248,10 +328,29 @@
                   {\url{https://csrc.nist.gov/Projects/Post-Quantum-Cryptography}}
 }
 
+@InProceedings{DBLP:conf/crypto/Zhandry19,
+  author       = {Mark Zhandry},
+  title        = {How to Record Quantum Queries, and Applications to
+                  Quantum Indifferentiability},
+  booktitle    = {CRYPTO},
+  year         = 2019,
+  pages        = {239-268}
+}
+
+@InProceedings{DBLP:conf/crypto/DonFMS19,
+  author       = {Jelle Don and Serge Fehr and Christian Majenz and
+                  Christian Schaffner},
+  title        = {Security of the {Fiat--Shamir} Transformation in the
+                  Quantum Random-Oracle Model},
+  booktitle    = {CRYPTO},
+  year         = 2019,
+  pages        = {356-383}
+}
+
 @InProceedings{DBLP:conf/crypto/BonehBF19,
   author       = {Dan Boneh and Benedikt B{\"{u}}nz and Ben Fisch},
   title        = {Batching Techniques for Accumulators with
-                  Applications to IOPs and Stateless Blockchains},
+                  Applications to {IOPs} and Stateless Blockchains},
   booktitle    = {CRYPTO},
   year         = 2019,
   pages        = {561-586}
@@ -424,6 +523,14 @@
   organization = {Internet Engineering Task Force}
 }
 
+@InProceedings{DBLP:conf/asiacrypt/Unruh17,
+  author       = {Dominique Unruh},
+  title        = {Post-quantum Security of {Fiat}-{Shamir}},
+  booktitle    = {ASIACRYPT},
+  year         = 2017,
+  pages        = {65-95}
+}
+
 @InProceedings{DBLP:conf/crypto/KalaiRR17,
   author       = {Yael Tauman Kalai and Guy N. Rothblum and Ron
                   D. Rothblum},
@@ -486,20 +593,20 @@
 @InProceedings{DBLP:conf/asiacrypt/BishopHW15,
   author       = {Allison Bishop and Susan Hohenberger and Brent
                   Waters},
-  title	       = {New Circular Security Counterexamples from Decision
+  title        = {New Circular Security Counterexamples from Decision
                   Linear and Learning with Errors},
   booktitle    = {ASIACRYPT 2015},
-  year	       = 2015,
-  pages	       = {776-800}
+  year         = 2015,
+  pages        = {776-800}
 }
 
 @InProceedings{DBLP:conf/tcc/KoppulaRW15,
   author       = {Venkata Koppula and Kim Ramchen and Brent Waters},
-  title	       = {Separations in Circular Security for Arbitrary
+  title        = {Separations in Circular Security for Arbitrary
                   Length Key Cycles},
   booktitle    = {TCC},
-  year	       = 2015,
-  pages	       = {378-400}
+  year         = 2015,
+  pages        = {378-400}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/AlbrechtR0TZ15,
@@ -557,20 +664,20 @@
 
 @InProceedings{DBLP:conf/scn/MarcedoneO14,
   author       = {Antonio Marcedone and Claudio Orlandi},
-  title	       = {Obfuscation ($\Rightarrow$) ({IND-CPA} Security
+  title        = {Obfuscation ($\Rightarrow$) ({IND-CPA} Security
                   $!\Rightarrow$ Circular Security)},
   booktitle    = {SCN},
-  year	       = 2014,
-  pages	       = {77-90}
+  year         = 2014,
+  pages        = {77-90}
 }
 
 @Book{katz14:_introd_moder_crypt,
   author       = {Jonathan Katz and Yehuda Lindell},
-  title	       = {Introduction to Modern Cryptography},
+  title        = {Introduction to Modern Cryptography},
   publisher    = {Chapman and Hall/CRC Press},
-  year	       = 2014,
+  year         = 2014,
   edition      = {Second},
-  month	       = {November}
+  month        = {November}
 }
 
 @InProceedings{DBLP:conf/sp/Ben-SassonCG0MTV14,
@@ -586,19 +693,19 @@
 
 @InProceedings{DBLP:conf/stoc/SahaiW14,
   author       = {Amit Sahai and Brent Waters},
-  title	       = {How to use indistinguishability obfuscation:
+  title        = {How to use indistinguishability obfuscation:
                   deniable encryption, and more},
   booktitle    = {STOC},
-  year	       = 2014,
-  pages	       = {475-484}
+  year         = 2014,
+  pages        = {475-484}
 }
 
 @InProceedings{DBLP:conf/pkc/BoyleGI14,
   author       = {Elette Boyle and Shafi Goldwasser and Ioana Ivan},
-  title	       = {Functional Signatures and Pseudorandom Functions},
+  title        = {Functional Signatures and Pseudorandom Functions},
   booktitle    = {PKC},
-  year	       = 2014,
-  pages	       = {501-519}
+  year         = 2014,
+  pages        = {501-519}
 }
 
 @Misc{cryptoeprint:2014:039,
@@ -663,40 +770,40 @@
 @InProceedings{DBLP:conf/ccs/KiayiasPTZ13,
   author       = {Aggelos Kiayias and Stavros Papadopoulos and Nikos
                   Triandopoulos and Thomas Zacharias},
-  title	       = {Delegatable pseudorandom functions and applications},
+  title        = {Delegatable pseudorandom functions and applications},
   booktitle    = {CCS},
-  year	       = 2013,
-  pages	       = {669-684}
+  year         = 2013,
+  pages        = {669-684}
 }
 
 @InProceedings{DBLP:conf/asiacrypt/BonehW13,
   author       = {Dan Boneh and Brent Waters},
-  title	       = {Constrained Pseudorandom Functions and Their
+  title        = {Constrained Pseudorandom Functions and Their
                   Applications},
   booktitle    = {ASIACRYPT},
-  year	       = 2013,
-  pages	       = {280-300}
+  year         = 2013,
+  pages        = {280-300}
 }
 
 @InProceedings{DBLP:conf/ccs/FujiokaSXY13,
   author       = {Atsushi Fujioka and Koutarou Suzuki and Keita Xagawa
                   and Kazuki Yoneyama},
-  title	       = {Practical and post-quantum authenticated key
+  title        = {Practical and post-quantum authenticated key
                   exchange from one-way secure key encapsulation
                   mechanism},
   booktitle    = {ASIACCS},
-  year	       = 2013,
-  pages	       = {83-94}
+  year         = 2013,
+  pages        = {83-94}
 }
 
 @InProceedings{DBLP:conf/focs/GargGH0SW13,
   author       = {Sanjam Garg and Craig Gentry and Shai Halevi and
                   Mariana Raykova and Amit Sahai and Brent Waters},
-  title	       = {Candidate Indistinguishability Obfuscation and
+  title        = {Candidate Indistinguishability Obfuscation and
                   Functional Encryption for all Circuits},
   booktitle    = {FOCS},
-  year	       = 2013,
-  pages	       = {40-49}
+  year         = 2013,
+  pages        = {40-49}
 }
 
 @InProceedings{DBLP:conf/pkc/CatalanoF13,
@@ -744,40 +851,40 @@
 
 @InProceedings{DBLP:conf/pkc/CashGH12,
   author       = {David Cash and Matthew Green and Susan Hohenberger},
-  title	       = {New Definitions and Separations for Circular
+  title        = {New Definitions and Separations for Circular
                   Security},
   booktitle    = {PKC 2012},
-  year	       = 2012,
-  pages	       = {540-557}
+  year         = 2012,
+  pages        = {540-557}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/AsharovJLTVW12,
   author       = {Gilad Asharov and Abhishek Jain and Adriana
                   L{\'{o}}pez{-}Alt and Eran Tromer and Vinod
                   Vaikuntanathan and Daniel Wichs},
-  title	       = {Multiparty Computation with Low Communication,
+  title        = {Multiparty Computation with Low Communication,
                   Computation and Interaction via Threshold {FHE}},
   booktitle    = {EUROCRYPT},
-  year	       = 2012,
-  pages	       = {483-501}
+  year         = 2012,
+  pages        = {483-501}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/BellareKPW12,
   author       = {Mihir Bellare and Eike Kiltz and Chris Peikert and
                   Brent Waters},
-  title	       = {Identity-Based (Lossy) Trapdoor Functions and
+  title        = {Identity-Based (Lossy) Trapdoor Functions and
                   Applications},
   booktitle    = {EUROCRYPT},
-  year	       = 2012,
-  pages	       = {228-245}
+  year         = 2012,
+  pages        = {228-245}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/Hofheinz12,
   author       = {Dennis Hofheinz},
-  title	       = {All-But-Many Lossy Trapdoor Functions},
+  title        = {All-But-Many Lossy Trapdoor Functions},
   booktitle    = {EUROCRYPT},
-  year	       = 2012,
-  pages	       = {209-227}
+  year         = 2012,
+  pages        = {209-227}
 }
 
 @Article{DBLP:journals/tit/CatalanoRFM11,
@@ -802,31 +909,41 @@
 
 @Misc{cryptoeprint:2011:066,
   author       = {Markus Duermuth and David Mandell Freeman},
-  title	       = {Deniable Encryption with Negligible Detection
+  title        = {Deniable Encryption with Negligible Detection
                   Probability: An Interactive Construction},
   howpublished = {Cryptology ePrint Archive, Report 2011/066},
-  year	       = 2011,
-  note	       = {\url{http://eprint.iacr.org/}}
+  year         = 2011,
+  note         = {\url{http://eprint.iacr.org/}}
+}
+
+@InProceedings{DBLP:conf/asiacrypt/BonehDFLSZ11,
+  author       = {Dan Boneh and {\"{O}}zg{\"{u}}r Dagdelen and Marc
+                  Fischlin and Anja Lehmann and Christian Schaffner
+                  and Mark Zhandry},
+  title        = {Random Oracles in a Quantum World},
+  booktitle    = {ASIACRYPT},
+  year         = 2011,
+  pages        = {41-69}
 }
 
 @InProceedings{DBLP:conf/asiacrypt/BendlinNNO11,
   author       = {Rikke Bendlin and Jesper Buus Nielsen and Peter
                   Sebastian Nordholt and Claudio Orlandi},
-  title	       = {Lower and Upper Bounds for Deniable Public-Key
+  title        = {Lower and Upper Bounds for Deniable Public-Key
                   Encryption},
   booktitle    = {ASIACRYPT},
-  year	       = 2011,
-  pages	       = {125-142}
+  year         = 2011,
+  pages        = {125-142}
 }
 
 @InProceedings{DBLP:conf/asiacrypt/HemenwayLOV11,
   author       = {Brett Hemenway and Benoit Libert and Rafail
                   Ostrovsky and Damien Vergnaud},
-  title	       = {Lossy Encryption: Constructions from General
+  title        = {Lossy Encryption: Constructions from General
                   Assumptions and Efficient Selective Opening Chosen
                   Ciphertext Security},
   booktitle    = {ASIACRYPT},
-  year	       = 2011
+  year         = 2011
 }
 
 @InProceedings{DBLP:conf/pqcrypto/JaoF11,
@@ -850,27 +967,27 @@
 
 @InProceedings{DBLP:conf/crypto/ONeillPW11,
   author       = {Adam O'Neill and Chris Peikert and Brent Waters},
-  title	       = {Bi-Deniable Public-Key Encryption},
+  title        = {Bi-Deniable Public-Key Encryption},
   booktitle    = {CRYPTO},
-  year	       = 2011,
-  pages	       = {525-542}
+  year         = 2011,
+  pages        = {525-542}
 }
 
 @InProceedings{DBLP:conf/crypto/AsharovLR11,
   author       = {Gilad Asharov and Yehuda Lindell and Tal Rabin},
-  title	       = {Perfectly-Secure Multiplication for Any {\it $<$
+  title        = {Perfectly-Secure Multiplication for Any {\it $<$
                   n}/3},
   booktitle    = {CRYPTO},
-  year	       = 2011,
-  pages	       = {240-258}
+  year         = 2011,
+  pages        = {240-258}
 }
 
 @InProceedings{DBLP:conf/icalp/AroraG11,
   author       = {Sanjeev Arora and Rong Ge},
-  title	       = {New Algorithms for Learning in Presence of Errors},
+  title        = {New Algorithms for Learning in Presence of Errors},
   booktitle    = {ICALP (1)},
-  year	       = 2011,
-  pages	       = {403-415}
+  year         = 2011,
+  pages        = {403-415}
 }
 
 @InProceedings{DBLP:conf/stoc/GentryW11,
@@ -885,69 +1002,69 @@
 @InProceedings{DBLP:conf/eurocrypt/KiltzPCJV11,
   author       = {Eike Kiltz and Krzysztof Pietrzak and David Cash and
                   Abhishek Jain and Daniele Venturi},
-  title	       = {Efficient Authentication from Hard Learning
+  title        = {Efficient Authentication from Hard Learning
                   Problems},
   booktitle    = {EUROCRYPT},
-  year	       = 2011,
-  pages	       = {7-26}
+  year         = 2011,
+  pages        = {7-26}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/Applebaum11,
   author       = {Benny Applebaum},
-  title	       = {Key-Dependent Message Security: Generic
+  title        = {Key-Dependent Message Security: Generic
                   Amplification and Completeness},
   booktitle    = {EUROCRYPT},
-  year	       = 2011,
-  pages	       = {527-546}
+  year         = 2011,
+  pages        = {527-546}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/MalkinTY11,
   author       = {Tal Malkin and Isamu Teranishi and Moti Yung},
-  title	       = {Efficient Circuit-Size Independent Public Key
+  title        = {Efficient Circuit-Size Independent Public Key
                   Encryption with {KDM} Security},
   booktitle    = {EUROCRYPT},
-  year	       = 2011,
-  pages	       = {507-526}
+  year         = 2011,
+  pages        = {507-526}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/DurmuthF11,
   author       = {Markus D{\"u}rmuth and David Mandell Freeman},
-  title	       = {Deniable Encryption with Negligible Detection
+  title        = {Deniable Encryption with Negligible Detection
                   Probability: An Interactive Construction},
   booktitle    = {EUROCRYPT},
-  year	       = 2011,
-  pages	       = {610-626}
+  year         = 2011,
+  pages        = {610-626}
 }
 
 @InProceedings{DBLP:conf/tcc/BellareWY11,
   author       = {Mihir Bellare and Brent Waters and Scott Yilek},
-  title	       = {Identity-Based Encryption Secure against Selective
+  title        = {Identity-Based Encryption Secure against Selective
                   Opening Attack},
   booktitle    = {TCC},
-  year	       = 2011,
-  pages	       = {235-252}
+  year         = 2011,
+  pages        = {235-252}
 }
 
 @InProceedings{DBLP:conf/tcc/BrakerskiGK11,
   author       = {Zvika Brakerski and Shafi Goldwasser and Yael Tauman
                   Kalai},
-  title	       = {Black-Box Circular-Secure Encryption beyond Affine
+  title        = {Black-Box Circular-Secure Encryption beyond Affine
                   Functions},
   booktitle    = {TCC},
-  year	       = 2011,
-  pages	       = {201-218}
+  year         = 2011,
+  pages        = {201-218}
 }
 
 @Article{DBLP:journals/siamcomp/PeikertW11,
   author       = {Chris Peikert and Brent Waters},
-  title	       = {Lossy Trapdoor Functions and Their Applications},
+  title        = {Lossy Trapdoor Functions and Their Applications},
   journal      = {SIAM J. Comput.},
   volume       = 40,
   number       = 6,
-  year	       = 2011,
-  pages	       = {1803-1844},
+  year         = 2011,
+  pages        = {1803-1844},
   prelimyear   = 2008,
-  note	       = {Preliminary version in STOC 2008}
+  note         = {Preliminary version in STOC 2008}
 }
 
 @Article{DBLP:journals/amco/Stolbunov10,
@@ -974,102 +1091,102 @@
 
 @Article{DBLP:journals/joc/KatzSS10,
   author       = {Jonathan Katz and Ji Sun Shin and Adam Smith},
-  title	       = {Parallel and Concurrent Security of the {HB} and
+  title        = {Parallel and Concurrent Security of the {HB} and
                   {HB}$^{\mbox{+}}$ Protocols},
   journal      = {J. Cryptology},
   volume       = 23,
   number       = 3,
-  year	       = 2010,
-  pages	       = {402-421},
-  note	       = {Preliminary version in Eurocrypt 2006},
+  year         = 2010,
+  pages        = {402-421},
+  note         = {Preliminary version in Eurocrypt 2006},
   prelimyear   = 2006
 }
 
 @InProceedings{DBLP:conf/crypto/GentryHV10,
   author       = {Craig Gentry and Shai Halevi and Vinod
                   Vaikuntanathan},
-  title	       = {$i$-Hop Homomorphic Encryption and Rerandomizable
+  title        = {$i$-Hop Homomorphic Encryption and Rerandomizable
                   {Yao} Circuits},
   booktitle    = {CRYPTO},
-  year	       = 2010,
-  pages	       = {155-172}
+  year         = 2010,
+  pages        = {155-172}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/AcarBBC10,
   author       = {Tolga Acar and Mira Belenkiy and Mihir Bellare and
                   David Cash},
-  title	       = {Cryptographic Agility and Its Relation to Circular
+  title        = {Cryptographic Agility and Its Relation to Circular
                   Encryption},
   booktitle    = {EUROCRYPT},
-  year	       = 2010,
-  pages	       = {403-422}
+  year         = 2010,
+  pages        = {403-422}
 }
 
 @InProceedings{DBLP:conf/crypto/BellareC10,
   author       = {Mihir Bellare and David Cash},
-  title	       = {Pseudorandom Functions and Permutations Provably
+  title        = {Pseudorandom Functions and Permutations Provably
                   Secure against Related-Key Attacks},
   booktitle    = {CRYPTO},
-  year	       = 2010,
-  pages	       = {666-684}
+  year         = 2010,
+  pages        = {666-684}
 }
 
 @InProceedings{DBLP:conf/crypto/BrakerskiG10,
   author       = {Zvika Brakerski and Shafi Goldwasser},
-  title	       = {Circular and Leakage Resilient Public-Key Encryption
+  title        = {Circular and Leakage Resilient Public-Key Encryption
                   under Subgroup Indistinguishability - (or: Quadratic
                   Residuosity Strikes Back)},
   booktitle    = {CRYPTO},
-  year	       = 2010,
-  pages	       = {1-20}
+  year         = 2010,
+  pages        = {1-20}
 }
 
 @InProceedings{DBLP:conf/ccs/BonehMR10,
   author       = {Dan Boneh and Hart William Montgomery and Ananth
                   Raghunathan},
-  title	       = {Algebraic pseudorandom functions with improved
+  title        = {Algebraic pseudorandom functions with improved
                   efficiency from the augmented cascade},
   booktitle    = {ACM Conference on Computer and Communications
                   Security},
-  year	       = 2010,
-  pages	       = {131-140}
+  year         = 2010,
+  pages        = {131-140}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/BarakHHI10,
   author       = {Boaz Barak and Iftach Haitner and Dennis Hofheinz
                   and Yuval Ishai},
-  title	       = {Bounded Key-Dependent Message Security},
+  title        = {Bounded Key-Dependent Message Security},
   booktitle    = {EUROCRYPT},
-  year	       = 2010,
-  pages	       = {423-444}
+  year         = 2010,
+  pages        = {423-444}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/DijkGHV10,
   author       = {Marten van Dijk and Craig Gentry and Shai Halevi and
                   Vinod Vaikuntanathan},
-  title	       = {Fully Homomorphic Encryption over the Integers},
+  title        = {Fully Homomorphic Encryption over the Integers},
   booktitle    = {EUROCRYPT},
-  year	       = 2010,
-  pages	       = {24-43}
+  year         = 2010,
+  pages        = {24-43}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/KiltzMO10,
   author       = {Eike Kiltz and Payman Mohassel and Adam O'Neill},
-  title	       = {Adaptive Trapdoor Functions and Chosen-Ciphertext
+  title        = {Adaptive Trapdoor Functions and Chosen-Ciphertext
                   Security},
   booktitle    = {EUROCRYPT},
-  year	       = 2010,
-  pages	       = {673-692}
+  year         = 2010,
+  pages        = {673-692}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/AlwenDNSWW10,
   author       = {Jo{\"e}l Alwen and Yevgeniy Dodis and Moni Naor and
                   Gil Segev and Shabsi Walfish and Daniel Wichs},
-  title	       = {Public-Key Encryption in the Bounded-Retrieval
+  title        = {Public-Key Encryption in the Bounded-Retrieval
                   Model},
   booktitle    = {EUROCRYPT},
-  year	       = 2010,
-  pages	       = {113-134}
+  year         = 2010,
+  pages        = {113-134}
 }
 
 @InProceedings{DBLP:conf/tcc/LibertY10,
@@ -1084,82 +1201,82 @@
 @InProceedings{DBLP:conf/tcc/LyubashevskyPS10,
   author       = {Vadim Lyubashevsky and Adriana Palacio and Gil
                   Segev},
-  title	       = {Public-Key Cryptographic Primitives Provably as
+  title        = {Public-Key Cryptographic Primitives Provably as
                   Secure as Subset Sum},
   booktitle    = {TCC},
-  year	       = 2010,
-  pages	       = {382-400}
+  year         = 2010,
+  pages        = {382-400}
 }
 
 @InProceedings{DBLP:conf/tcc/AbdallaBN10,
   author       = {Michel Abdalla and Mihir Bellare and Gregory Neven},
-  title	       = {Robust Encryption},
+  title        = {Robust Encryption},
   booktitle    = {TCC},
-  year	       = 2010,
-  pages	       = {480-497}
+  year         = 2010,
+  pages        = {480-497}
 }
                   
 @InProceedings{DBLP:conf/tcc/DodisGKPV10,
   author       = {Yevgeniy Dodis and Shafi Goldwasser and Yael Tauman
                   Kalai and Chris Peikert and Vinod Vaikuntanathan},
-  title	       = {Public-Key Encryption Schemes with Auxiliary Inputs},
+  title        = {Public-Key Encryption Schemes with Auxiliary Inputs},
   booktitle    = {TCC},
-  year	       = 2010,
-  pages	       = {361-381}
+  year         = 2010,
+  pages        = {361-381}
 }
 
 @InProceedings{DBLP:conf/ccs/LewkoW09,
   author       = {Allison B. Lewko and Brent Waters},
-  title	       = {Efficient pseudorandom functions from the decisional
+  title        = {Efficient pseudorandom functions from the decisional
                   linear assumption and weaker variants},
   booktitle    = {ACM Conference on Computer and Communications
                   Security},
-  year	       = 2009,
-  pages	       = {112-120}
+  year         = 2009,
+  pages        = {112-120}
 }
 
 @InProceedings{DBLP:conf/asiacrypt/ChoiDMW09,
   author       = {Seung Geol Choi and Dana Dachman-Soled and Tal
                   Malkin and Hoeteck Wee},
-  title	       = {Improved Non-committing Encryption with Applications
+  title        = {Improved Non-committing Encryption with Applications
                   to Adaptively Secure Protocols},
   booktitle    = {ASIACRYPT},
-  year	       = 2009,
-  pages	       = {287-302}
+  year         = 2009,
+  pages        = {287-302}
 }
 
 @InProceedings{DBLP:conf/crypto/GarayWZ09,
   author       = {Juan A. Garay and Daniel Wichs and Hong-Sheng Zhou},
-  title	       = {Somewhat Non-committing Encryption and Efficient
+  title        = {Somewhat Non-committing Encryption and Efficient
                   Adaptively Secure Oblivious Transfer},
   booktitle    = {CRYPTO},
-  year	       = 2009,
-  pages	       = {505-523}
+  year         = 2009,
+  pages        = {505-523}
 }
 
 @InProceedings{alwen09:_survey,
   author       = {Joel Alwen and Yevgeniy Dodis and Daniel Wichs},
-  title	       = {Survey: Leakage Resilience and the Bounded Retrieval
+  title        = {Survey: Leakage Resilience and the Bounded Retrieval
                   Model},
   booktitle    = {ICITS},
-  year	       = 2009
+  year         = 2009
 }
 
 @InProceedings{DBLP:conf/crypto/HohenbergerW09,
   author       = {Susan Hohenberger and Brent Waters},
-  title	       = {Short and Stateless Signatures from the {RSA}
+  title        = {Short and Stateless Signatures from the {RSA}
                   Assumption},
   booktitle    = {CRYPTO},
-  year	       = 2009,
-  pages	       = {654-670}
+  year         = 2009,
+  pages        = {654-670}
 }
                   
 @InProceedings{DBLP:conf/crypto/LeurentN09,
   author       = {Ga{\"e}tan Leurent and Phong Q. Nguyen},
-  title	       = {How Risky Is the Random-Oracle Model?},
+  title        = {How Risky Is the Random-Oracle Model?},
   booktitle    = {CRYPTO},
-  year	       = 2009,
-  pages	       = {445-464}
+  year         = 2009,
+  pages        = {445-464}
 }
                   
 @InProceedings{DBLP:conf/eurocrypt/CamenischCS09,
@@ -1175,131 +1292,140 @@
 
 @InProceedings{DBLP:conf/eurocrypt/BellareHY09,
   author       = {Mihir Bellare and Dennis Hofheinz and Scott Yilek},
-  title	       = {Possibility and Impossibility Results for Encryption
+  title        = {Possibility and Impossibility Results for Encryption
                   and Commitment Secure under Selective Opening},
   booktitle    = {EUROCRYPT},
-  year	       = 2009,
-  pages	       = {1-35}
+  year         = 2009,
+  pages        = {1-35}
 }
                   
 @InProceedings{DBLP:conf/eurocrypt/HohenbergerW09,
   author       = {Susan Hohenberger and Brent Waters},
-  title	       = {Realizing Hash-and-Sign Signatures under Standard
+  title        = {Realizing Hash-and-Sign Signatures under Standard
                   Assumptions},
   booktitle    = {EUROCRYPT},
-  year	       = 2009,
-  pages	       = {333-350}
+  year         = 2009,
+  pages        = {333-350}
 }
 
 @InProceedings{DBLP:conf/crypto/NaorS09,
   author       = {Moni Naor and Gil Segev},
-  title	       = {Public-Key Cryptosystems Resilient to Key Leakage},
+  title        = {Public-Key Cryptosystems Resilient to Key Leakage},
   booktitle    = {CRYPTO},
-  year	       = 2009,
-  pages	       = {18-35}
+  year         = 2009,
+  pages        = {18-35}
+}
+
+@InProceedings{DBLP:conf/pairing/BelenkiyCKL09,
+  author       = {Mira Belenkiy and Melissa Chase and Markulf
+                  Kohlweiss and Anna Lysyanskaya},
+  title        = {Compact E-Cash and Simulatable {VRFs} Revisited},
+  booktitle    = {Pairing},
+  year         = 2009,
+  pages        = {114-131}
 }
 
 @InProceedings{DBLP:conf/tcc/HaitnerH09,
   author       = {Iftach Haitner and Thomas Holenstein},
-  title	       = {On the (Im)Possibility of Key Dependent Encryption},
+  title        = {On the (Im)Possibility of Key Dependent Encryption},
   booktitle    = {TCC},
-  year	       = 2009,
-  pages	       = {202-219}
+  year         = 2009,
+  pages        = {202-219}
 }
 
 @InProceedings{DBLP:conf/tcc/RosenS09,
   author       = {Alon Rosen and Gil Segev},
-  title	       = {Chosen-Ciphertext Security via Correlated Products},
+  title        = {Chosen-Ciphertext Security via Correlated Products},
   booktitle    = {TCC},
-  year	       = 2009,
-  pages	       = {419-436}
+  year         = 2009,
+  pages        = {419-436}
 }
 
 @InProceedings{DBLP:conf/crypto/BonehHHO08,
   author       = {Dan Boneh and Shai Halevi and Michael Hamburg and
                   Rafail Ostrovsky},
-  title	       = {Circular-Secure Encryption from Decision
+  title        = {Circular-Secure Encryption from Decision
                   {Diffie}-{Hellman}},
   booktitle    = {CRYPTO},
-  year	       = 2008,
-  pages	       = {108-125}
+  year         = 2008,
+  pages        = {108-125}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/GrothS08,
   author       = {Jens Groth and Amit Sahai},
-  title	       = {Efficient Non-interactive Proof Systems for Bilinear
+  title        = {Efficient Non-interactive Proof Systems for Bilinear
                   Groups},
   booktitle    = {EUROCRYPT},
-  year	       = 2008,
-  pages	       = {415-432}
+  year         = 2008,
+  pages        = {415-432}
 }
 
 @InProceedings{DBLP:conf/stoc/PeikertW08,
   author       = {Chris Peikert and Brent Waters},
-  title	       = {Lossy trapdoor functions and their applications},
+  title        = {Lossy trapdoor functions and their applications},
   booktitle    = {STOC},
-  year	       = 2008,
-  pages	       = {187-196}
+  year         = 2008,
+  pages        = {187-196}
 }
 
 @InProceedings{DBLP:conf/crypto/BoldyrevaFO08,
   author       = {Alexandra Boldyreva and Serge Fehr and Adam O'Neill},
-  title	       = {On Notions of Security for Deterministic Encryption,
+  title        = {On Notions of Security for Deterministic Encryption,
                   and Efficient Constructions without Random Oracles},
   booktitle    = {CRYPTO},
-  year	       = 2008,
-  pages	       = {335-359}
+  year         = 2008,
+  pages        = {335-359}
 }
                   
 @InProceedings{DBLP:conf/crypto/PeikertVW08,
   author       = {Chris Peikert and Vinod Vaikuntanathan and Brent
                   Waters},
-  title	       = {A Framework for Efficient and Composable Oblivious
+  title        = {A Framework for Efficient and Composable Oblivious
                   Transfer},
   booktitle    = {CRYPTO},
-  year	       = 2008,
-  pages	       = {554-571}
+  year         = 2008,
+  pages        = {554-571}
 }
 
 @InProceedings{DBLP:conf/ccs/BoldyrevaGK08,
   author       = {Alexandra Boldyreva and Vipul Goyal and Virendra
                   Kumar},
-  title	       = {Identity-based encryption with efficient revocation},
+  title        = {Identity-based encryption with efficient revocation},
   booktitle    = {ACM Conference on Computer and Communications
                   Security},
-  year	       = 2008,
-  pages	       = {417-426}
+  year         = 2008,
+  pages        = {417-426}
 }
 
 @InProceedings{DBLP:conf/focs/DziembowskiP08,
   author       = {Stefan Dziembowski and Krzysztof Pietrzak},
-  title	       = {Leakage-Resilient Cryptography},
+  title        = {Leakage-Resilient Cryptography},
   booktitle    = {FOCS},
-  year	       = 2008,
-  pages	       = {293-302}
+  year         = 2008,
+  pages        = {293-302}
 }
 
 @Article{DBLP:journals/siamcomp/DodisORS08,
   author       = {Yevgeniy Dodis and Rafail Ostrovsky and Leonid
                   Reyzin and Adam Smith},
-  title	       = {Fuzzy Extractors: How to Generate Strong Keys from
+  title        = {Fuzzy Extractors: How to Generate Strong Keys from
                   Biometrics and Other Noisy Data},
   journal      = {SIAM J.~Comput.},
   volume       = 38,
   number       = 1,
-  year	       = 2008,
-  pages	       = {97-139},
-  note	       = {Preliminary version in EUROCRYPT 2004},
+  year         = 2008,
+  pages        = {97-139},
+  note         = {Preliminary version in EUROCRYPT 2004},
   prelimyear   = 2004
 }
 
 @Misc{sha3SIMD,
   author       = {Ga{\"e}tan Leurent and Charles Bouillaguet and
                   Pierre-Alain Fouque},
-  title	       = {{SIMD Is a Message Digest}},
-  note	       = {\url{http://www.di.ens.fr/~leurent/files/SIMD.pdf}},
+  title        = {{SIMD Is a Message Digest}},
+  note         = {\url{http://www.di.ens.fr/~leurent/files/SIMD.pdf}},
   howpublished = {Submission to NIST},
-  year	       = 2008
+  year         = 2008
 }
 
 @Article{DBLP:journals/siamcomp/DworkN07,
@@ -1315,23 +1441,23 @@
 
 @Article{DBLP:journals/joc/CanettiHK07,
   author       = {Ran Canetti and Shai Halevi and Jonathan Katz},
-  title	       = {A Forward-Secure Public-Key Encryption Scheme},
+  title        = {A Forward-Secure Public-Key Encryption Scheme},
   journal      = {J. Cryptology},
   volume       = 20,
   number       = 3,
-  year	       = 2007,
-  pages	       = {265-294},
-  note	       = {Preliminary version in EUROCRYPT 2003},
+  year         = 2007,
+  pages        = {265-294},
+  note         = {Preliminary version in EUROCRYPT 2003},
   prelimyear   = 2003
 }
 
 @InProceedings{DBLP:conf/acns/HuangWZ07,
   author       = {Qiong Huang and Duncan S. Wong and Yiming Zhao},
-  title	       = {Generic Transformation to Strongly Unforgeable
+  title        = {Generic Transformation to Strongly Unforgeable
                   Signatures},
   booktitle    = {ACNS},
-  year	       = 2007,
-  pages	       = {1-17}
+  year         = 2007,
+  pages        = {1-17}
 }
 
 @InProceedings{DBLP:conf/crypto/HaleviK06,
@@ -1385,58 +1511,58 @@
 
 @InProceedings{DBLP:conf/eurocrypt/RogawayS06,
   author       = {Phillip Rogaway and Thomas Shrimpton},
-  title	       = {A Provable-Security Treatment of the Key-Wrap
+  title        = {A Provable-Security Treatment of the Key-Wrap
                   Problem},
   booktitle    = {EUROCRYPT},
-  year	       = 2006,
-  pages	       = {373-390}
+  year         = 2006,
+  pages        = {373-390}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/AlmansaDN06,
   author       = {Jes{\'u}s F. Almansa and Ivan Damg{\aa}rd and Jesper
                   Buus Nielsen},
-  title	       = {Simplified Threshold {RSA} with Adaptive and
+  title        = {Simplified Threshold {RSA} with Adaptive and
                   Proactive Security},
   booktitle    = {EUROCRYPT},
-  year	       = 2006,
-  pages	       = {593-611}
+  year         = 2006,
+  pages        = {593-611}
 }
 
 @InProceedings{DBLP:conf/stoc/AkaviaGGM06,
   author       = {Adi Akavia and Oded Goldreich and Shafi Goldwasser
                   and Dana Moshkovitz},
-  title	       = {On basing one-way functions on {NP}-hardness},
+  title        = {On basing one-way functions on {NP}-hardness},
   booktitle    = {STOC},
-  year	       = 2006,
-  pages	       = {701-710}
+  year         = 2006,
+  pages        = {701-710}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/KatzS06,
   author       = {Jonathan Katz and Ji Sun Shin},
-  title	       = {Parallel and Concurrent Security of the {HB} and
+  title        = {Parallel and Concurrent Security of the {HB} and
                   {HB}$^{\mbox{+}}$ Protocols},
   booktitle    = {EUROCRYPT},
-  year	       = 2006,
-  pages	       = {73-87}
+  year         = 2006,
+  pages        = {73-87}
 }
                   
 @InProceedings{DBLP:conf/pkc/ChatterjeeS06,
   author       = {Sanjit Chatterjee and Palash Sarkar},
-  title	       = {Generalization of the Selective-{ID} Security Model
+  title        = {Generalization of the Selective-{ID} Security Model
                   for {HIBE} Protocols},
   booktitle    = {Public Key Cryptography},
-  year	       = 2006,
-  pages	       = {241-256}
+  year         = 2006,
+  pages        = {241-256}
 }
 
 @InProceedings{DBLP:conf/ccs/GoyalPSW06,
   author       = {Vipul Goyal and Omkant Pandey and Amit Sahai and
                   Brent Waters},
-  title	       = {Attribute-based encryption for fine-grained access
+  title        = {Attribute-based encryption for fine-grained access
                   control of encrypted data},
   booktitle    = {CCS},
-  year	       = 2006,
-  pages	       = {89-98}
+  year         = 2006,
+  pages        = {89-98}
 }
 
 @InProceedings{DBLP:conf/ccs/BellareN06,
@@ -1459,12 +1585,12 @@
 @Article{DBLP:journals/ijisec/GalindoMMV05,
   author       = {David Galindo and Sebasti{\`a} Mart\'{\i}n
                   Mollev\'{\i} and Paz Morillo and Jorge Luis Villar},
-  title	       = {{Fujisaki}-{Okamoto} hybrid encryption revisited},
+  title        = {{Fujisaki}-{Okamoto} hybrid encryption revisited},
   journal      = {Int. J. Inf. Sec.},
-  year	       = 2005,
+  year         = 2005,
   volume       = 4,
   number       = 4,
-  pages	       = {228-241}
+  pages        = {228-241}
 }
 
 @InProceedings{DBLP:conf/crypto/Fischlin05,
@@ -1476,80 +1602,90 @@
   pages        = {152-168}
 }
 
+@InProceedings{DBLP:conf/crypto/CoronDMP05,
+  author       = {Jean{-}S{\'{e}}bastien Coron and Yevgeniy Dodis and
+                  C{\'{e}}cile Malinaud and Prashant Puniya},
+  title        = {{Merkle}-{Damg{\aa}rd} Revisited: How to Construct a
+                  Hash Function},
+  booktitle    = {{CRYPTO}},
+  year         = 2005,
+  pages        = {430-448}
+}
+
 @InProceedings{DBLP:conf/crypto/Krawczyk05,
   author       = {Hugo Krawczyk},
-  title	       = {{HMQV}: A High-Performance Secure {Diffie-Hellman}
+  title        = {{HMQV}: A High-Performance Secure {Diffie-Hellman}
                   Protocol},
   booktitle    = {CRYPTO},
-  year	       = 2005,
-  pages	       = {546-566}
+  year         = 2005,
+  pages        = {546-566}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/SahaiW05,
   author       = {Amit Sahai and Brent Waters},
-  title	       = {Fuzzy Identity-Based Encryption},
+  title        = {Fuzzy Identity-Based Encryption},
   booktitle    = {EUROCRYPT},
-  year	       = 2005,
-  pages	       = {457-473}
+  year         = 2005,
+  pages        = {457-473}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/AbeGKS05,
   author       = {Masayuki Abe and Rosario Gennaro and Kaoru Kurosawa
                   and Victor Shoup},
-  title	       = {Tag-{KEM}/{DEM}: A New Framework for Hybrid
+  title        = {Tag-{KEM}/{DEM}: A New Framework for Hybrid
                   Encryption and A New Analysis of
                   {Kurosawa}-{Desmedt} {KEM}},
   booktitle    = {EUROCRYPT},
-  year	       = 2005,
-  pages	       = {128-146}
+  year         = 2005,
+  pages        = {128-146}
 }
 
 @InProceedings{DBLP:conf/esorics/AdaoBHS05,
   author       = {Pedro Ad{\~a}o and Gergei Bana and Jonathan Herzog
                   and Andre Scedrov},
-  title	       = {Soundness of Formal Encryption in the Presence of
+  title        = {Soundness of Formal Encryption in the Presence of
                   Key-Cycles},
   booktitle    = {ESORICS},
-  year	       = 2005,
-  pages	       = {374-396}
+  year         = 2005,
+  pages        = {374-396}
 }
 
 @InProceedings{DBLP:conf/tcc/MicaliPSW05,
   author       = {Silvio Micali and Chris Peikert and Madhu Sudan and
                   David A. Wilson},
-  title	       = {Optimal Error Correction Against Computationally
+  title        = {Optimal Error Correction Against Computationally
                   Bounded Noise},
   booktitle    = {TCC},
-  year	       = 2005,
-  pages	       = {1-16}
+  year         = 2005,
+  pages        = {1-16}
 }
 
 @InProceedings{DBLP:conf/crypto/JuelsW05,
   author       = {Ari Juels and Stephen A. Weis},
-  title	       = {Authenticating Pervasive Devices with Human
+  title        = {Authenticating Pervasive Devices with Human
                   Protocols},
   booktitle    = {CRYPTO},
-  year	       = 2005,
-  pages	       = {293-308}
+  year         = 2005,
+  pages        = {293-308}
 }
 
 @InProceedings{DBLP:conf/tcc/CanettiHK05,
   author       = {Ran Canetti and Shai Halevi and Jonathan Katz},
-  title	       = {Adaptively-Secure, Non-interactive Public-Key
+  title        = {Adaptively-Secure, Non-interactive Public-Key
                   Encryption},
   booktitle    = {TCC},
-  year	       = 2005,
-  pages	       = {150-168}
+  year         = 2005,
+  pages        = {150-168}
 }
 
 @InProceedings{DBLP:conf/chi/GarfinkelMSNM05,
   author       = {Simson L. Garfinkel and David Margrave and Jeffrey
                   I. Schiller and Erik Nordlander and Robert
                   C. Miller},
-  title	       = {How to make secure email easier to use},
+  title        = {How to make secure email easier to use},
   booktitle    = {CHI},
-  year	       = 2005,
-  pages	       = {701-710}
+  year         = 2005,
+  pages        = {701-710}
 }
 
 @Article{DBLP:journals/siamcomp/Kuperberg05,
@@ -1577,69 +1713,80 @@
 
 @InProceedings{DBLP:conf/csfw/Canetti04,
   author       = {Ran Canetti},
-  title	       = {Universally Composable Signature, Certification, and
+  title        = {Universally Composable Signature, Certification, and
                   Authentication},
   booktitle    = {CSFW},
-  year	       = 2004,
-  pages	       = {219-}
+  year         = 2004,
+  pages        = {219-}
 }
 
 @InProceedings{DBLP:conf/podc/LepinskiMP04,
   author       = {Matt Lepinski and Silvio Micali and Chris Peikert
                   and Abhi Shelat},
-  title	       = {Completely fair {SFE} and coalition-safe cheap talk},
+  title        = {Completely fair {SFE} and coalition-safe cheap talk},
   booktitle    = {PODC},
-  year	       = 2004,
-  pages	       = {1-10}
+  year         = 2004,
+  pages        = {1-10}
+}
+
+@InProceedings{DBLP:conf/tcc/MaurerRH04,
+  author       = {Ueli M. Maurer and Renato Renner and Clemens
+                  Holenstein},
+  title        = {Indifferentiability, Impossibility Results on
+                  Reductions, and Applications to the Random Oracle
+                  Methodology},
+  booktitle    = {TCC},
+  year         = 2004,
+  pages        = {21-39}
 }
 
 @InProceedings{DBLP:conf/tcc/MicaliR04,
   author       = {Silvio Micali and Leonid Reyzin},
-  title	       = {Physically Observable Cryptography (Extended
+  title        = {Physically Observable Cryptography (Extended
                   Abstract)},
   booktitle    = {TCC},
-  year	       = 2004,
-  pages	       = {278-296}
+  year         = 2004,
+  pages        = {278-296}
 }
 
 @Article{DBLP:journals/jacm/NaorR04,
   author       = {Moni Naor and Omer Reingold},
-  title	       = {Number-theoretic constructions of efficient
+  title        = {Number-theoretic constructions of efficient
                   pseudo-random functions},
   journal      = {J. ACM},
   volume       = 51,
   number       = 2,
-  year	       = 2004,
-  pages	       = {231-262},
-  note	       = {Preliminary version in FOCS 1997},
+  year         = 2004,
+  pages        = {231-262},
+  note         = {Preliminary version in FOCS 1997},
   prelimyear   = 1997
 }
 
 @Book{goldreich01:_found_crypt,
   author       = {Oded Goldreich},
-  title	       = {Foundations of Cryptography},
+  title        = {Foundations of Cryptography},
   publisher    = {Cambridge University Press},
-  year	       = 2001,
+  year         = 2001,
   volume       = {I}
 }
 
 @Book{goldreich04:_found_of_crypt,
   author       = {Oded Goldreich},
-  title	       = {Foundations of Cryptography},
+  title        = {Foundations of Cryptography},
   publisher    = {Cambridge University Press},
-  year	       = 2004,
+  year         = 2004,
   volume       = {II}
 }
 
 @Article{DBLP:journals/jacm/CanettiGH04,
   author       = {Ran Canetti and Oded Goldreich and Shai Halevi},
-  title	       = {The random oracle methodology, revisited},
+  title        = {The random oracle methodology, revisited},
   journal      = {J. {ACM}},
-  year	       = 2004,
+  year         = 2004,
   volume       = 51,
   number       = 4,
-  pages	       = {557-594},
-  note	       = {Preliminary version in STOC 1998},
+  pages        = {557-594},
+  note         = {Preliminary version in STOC 1998},
   prelimyear   = 1998
 }
 
@@ -1656,27 +1803,27 @@
 @Article{DBLP:journals/dcc/LawMQSV03,
   author       = {Laurie Law and Alfred Menezes and Minghua Qu and
                   Jerome A. Solinas and Scott A. Vanstone},
-  title	       = {An Efficient Protocol for Authenticated Key
+  title        = {An Efficient Protocol for Authenticated Key
                   Agreement},
   journal      = {Des. Codes Cryptography},
-  year	       = 2003,
+  year         = 2003,
   volume       = 28,
   number       = 2,
-  pages	       = {119-134}
+  pages        = {119-134}
 }
 
 @Article{DBLP:journals/siamcomp/CramerS03,
   author       = {Ronald Cramer and Victor Shoup},
-  title	       = {Design and Analysis of Practical Public-Key
+  title        = {Design and Analysis of Practical Public-Key
                   Encryption Schemes Secure against Adaptive Chosen
                   Ciphertext Attack},
   journal      = {SIAM J. Comput.},
   volume       = 33,
   number       = 1,
-  year	       = 2003,
-  pages	       = {167–226},
+  year         = 2003,
+  pages        = {167–226},
   prelimyear   = 1998,
-  note	       = {Preliminary version in CRYPTO 1998}
+  note         = {Preliminary version in CRYPTO 1998}
 }
 
 @InProceedings{DBLP:conf/focs/MicaliRK03,
@@ -1689,62 +1836,62 @@
 
 @InProceedings{DBLP:conf/crypto/Krawczyk03,
   author       = {Hugo Krawczyk},
-  title	       = {{SIGMA}: The '{SIGn}-and-{MAc}' Approach to
+  title        = {{SIGMA}: The '{SIGn}-and-{MAc}' Approach to
                   Authenticated {Diffie}-{Hellman} and Its Use in the
                   {IKE}-Protocols},
   booktitle    = {CRYPTO},
-  year	       = 2003,
-  pages	       = {400-425},
-  note	       = {Full version at
+  year         = 2003,
+  pages        = {400-425},
+  note         = {Full version at
                   \url{http://webee.technion.ac.il/~hugo/sigma.html}}
 }
 
 @InProceedings{DBLP:conf/crypto/CanettiR03,
   author       = {Ran Canetti and Tal Rabin},
-  title	       = {Universal Composition with Joint State},
+  title        = {Universal Composition with Joint State},
   booktitle    = {CRYPTO},
-  year	       = 2003,
-  pages	       = {265-281}
+  year         = 2003,
+  pages        = {265-281}
 }
 
 @InProceedings{DBLP:conf/ctrsa/BellareY03,
   author       = {Mihir Bellare and Bennet S. Yee},
-  title	       = {Forward-Security in Private-Key Cryptography},
+  title        = {Forward-Security in Private-Key Cryptography},
   booktitle    = {CT-RSA},
-  year	       = 2003,
-  pages	       = {1-18}
+  year         = 2003,
+  pages        = {1-18}
 }
 
 @Article{DBLP:journals/jacm/SahaiV03,
   author       = {Amit Sahai and Salil P. Vadhan},
-  title	       = {A complete problem for statistical zero knowledge},
+  title        = {A complete problem for statistical zero knowledge},
   journal      = {J. ACM},
   volume       = 50,
   number       = 2,
-  year	       = 2003,
-  pages	       = {196-249},
-  note	       = {Preliminary version in FOCS 1997},
+  year         = 2003,
+  pages        = {196-249},
+  note         = {Preliminary version in FOCS 1997},
   prelimyear   = 1997
 }
 
 @InProceedings{DBLP:conf/focs/Alekhnovich03,
   author       = {Michael Alekhnovich},
-  title	       = {More on Average Case vs Approximation Complexity},
+  title        = {More on Average Case vs Approximation Complexity},
   booktitle    = {FOCS},
-  year	       = 2003,
-  pages	       = {298-307}
+  year         = 2003,
+  pages        = {298-307}
 }
 
 @Article{DBLP:journals/jacm/DworkNRS03,
   author       = {Cynthia Dwork and Moni Naor and Omer Reingold and
                   Larry J. Stockmeyer},
-  title	       = {Magic Functions},
+  title        = {Magic Functions},
   journal      = {J. ACM},
   volume       = 50,
   number       = 6,
-  year	       = 2003,
-  pages	       = {852-921},
-  note	       = {Preliminary version in FOCS 1999},
+  year         = 2003,
+  pages        = {852-921},
+  note         = {Preliminary version in FOCS 1999},
   prelimyear   = 1999
 }
 
@@ -1763,76 +1910,92 @@
 
 @Article{DBLP:journals/siamcomp/BonehF03,
   author       = {Dan Boneh and Matthew K. Franklin},
-  title	       = {Identity-Based Encryption from the {Weil} Pairing},
+  title        = {Identity-Based Encryption from the {Weil} Pairing},
   journal      = {SIAM J. Comput.},
   volume       = 32,
   number       = 3,
-  year	       = 2003,
-  pages	       = {586-615},
-  note	       = {Preliminary version in CRYPTO 2001},
+  year         = 2003,
+  pages        = {586-615},
+  note         = {Preliminary version in CRYPTO 2001},
   prelimyear   = 2001
 }
 
 @Article{DBLP:journals/joc/Shoup02,
   author       = {Victor Shoup},
-  title	       = {{OAEP} Reconsidered},
+  title        = {{OAEP} Reconsidered},
   journal      = {J. Cryptology},
   volume       = 15,
   number       = 4,
-  year	       = 2002,
-  pages	       = {223-249},
+  year         = 2002,
+  pages        = {223-249},
   prelimyear   = 2001,
-  note	       = {Preliminary version in CRYPTO 2001}
+  note         = {Preliminary version in CRYPTO 2001}
 }
 
 @InProceedings{DBLP:conf/crypto/CanettiK02,
   author       = {Ran Canetti and Hugo Krawczyk},
-  title	       = {Security Analysis of {IKE}'s Signature-Based
+  title        = {Security Analysis of {IKE}'s Signature-Based
                   Key-Exchange Protocol},
   booktitle    = {CRYPTO},
-  year	       = 2002,
-  pages	       = {143-161},
-  note	       = {Full version at
+  year         = 2002,
+  pages        = {143-161},
+  note         = {Full version at
                   \url{http://eprint.iacr.org/2002/120}}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/CanettiK02,
   author       = {Ran Canetti and Hugo Krawczyk},
-  title	       = {Universally Composable Notions of Key Exchange and
+  title        = {Universally Composable Notions of Key Exchange and
                   Secure Channels},
   booktitle    = {EUROCRYPT},
-  year	       = 2002,
-  pages	       = {337-351},
-  note	       = {Full version at
+  year         = 2002,
+  pages        = {337-351},
+  note         = {Full version at
                   \url{http://eprint.iacr.org/2002/059}}
 }
 
 @InProceedings{DBLP:conf/crypto/Nielsen02,
   author       = {Jesper Buus Nielsen},
-  title	       = {Separating Random Oracle Proofs from Complexity
+  title        = {Separating Random Oracle Proofs from Complexity
                   Theoretic Proofs: The Non-committing Encryption
                   Case},
   booktitle    = {CRYPTO},
-  year	       = 2002,
-  pages	       = {111-126}
+  year         = 2002,
+  pages        = {111-126}
 }
                   
 @InProceedings{DBLP:conf/eurocrypt/CramerS02,
   author       = {Ronald Cramer and Victor Shoup},
-  title	       = {Universal Hash Proofs and a Paradigm for Adaptive
+  title        = {Universal Hash Proofs and a Paradigm for Adaptive
                   Chosen Ciphertext Secure Public-Key Encryption},
   booktitle    = {EUROCRYPT},
-  year	       = 2002,
-  pages	       = {45-64}
+  year         = 2002,
+  pages        = {45-64}
 }
                   
 @InProceedings{DBLP:conf/sacrypt/BlackRS02,
   author       = {John Black and Phillip Rogaway and Thomas Shrimpton},
-  title	       = {Encryption-Scheme Security in the Presence of
+  title        = {Encryption-Scheme Security in the Presence of
                   Key-Dependent Messages},
   booktitle    = {Selected Areas in Cryptography},
-  year	       = 2002,
-  pages	       = {62-75}
+  year         = 2002,
+  pages        = {62-75}
+}
+
+@InProceedings{DBLP:conf/ctrsa/MicaliR02,
+  author       = {Silvio Micali and Ronald L. Rivest},
+  title        = {Micropayments Revisited},
+  booktitle    = {CT-RSA},
+  year         = 2002,
+  pages        = {149-163}
+}
+
+@InProceedings{DBLP:conf/crypto/MicaliR01,
+  author       = {Silvio Micali and Leonid Reyzin},
+  title        = {Soundness in the Public-Key Model},
+  booktitle    = {CRYPTO},
+  year         = 2001,
+  pages        = {542-565}
 }
 
 @InProceedings{DBLP:conf/icisc/SteinfeldBZ01,
@@ -1845,114 +2008,114 @@
 
 @InProceedings{DBLP:conf/ctrsa/OkamotoP01,
   author       = {Tatsuaki Okamoto and David Pointcheval},
-  title	       = {{REACT}: Rapid Enhanced-Security Asymmetric
+  title        = {{REACT}: Rapid Enhanced-Security Asymmetric
                   Cryptosystem Transform},
   booktitle    = {CT-RSA},
-  year	       = 2001,
-  pages	       = {159-175}
+  year         = 2001,
+  pages        = {159-175}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/CanettiK01,
   author       = {Ran Canetti and Hugo Krawczyk},
-  title	       = {Analysis of Key-Exchange Protocols and Their Use for
+  title        = {Analysis of Key-Exchange Protocols and Their Use for
                   Building Secure Channels},
   booktitle    = {EUROCRYPT},
-  year	       = 2001,
-  pages	       = {453-474},
-  note	       = {Full version at
+  year         = 2001,
+  pages        = {453-474},
+  note         = {Full version at
                   \url{http://eprint.iacr.org/2001/040}}
 }
 
 @InProceedings{DBLP:conf/focs/Canetti01,
   author       = {Ran Canetti},
-  title	       = {Universally Composable Security: A New Paradigm for
+  title        = {Universally Composable Security: A New Paradigm for
                   Cryptographic Protocols},
   booktitle    = {FOCS},
-  year	       = 2001,
-  pages	       = {136-145}
+  year         = 2001,
+  pages        = {136-145}
 }
 
 @Misc{cryptoeprint:2000:067,
   author       = {Ran Canetti},
-  title	       = {Universally Composable Security: A New Paradigm for
+  title        = {Universally Composable Security: A New Paradigm for
                   Cryptographic Protocols},
   howpublished = {Cryptology ePrint Archive, Report 2000/067},
-  year	       = 2000,
-  note	       = {\url{http://eprint.iacr.org/}}
+  year         = 2000,
+  note         = {\url{http://eprint.iacr.org/}}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/CamenischL01,
   author       = {Jan Camenisch and Anna Lysyanskaya},
-  title	       = {An Efficient System for Non-transferable Anonymous
+  title        = {An Efficient System for Non-transferable Anonymous
                   Credentials with Optional Anonymity Revocation},
   booktitle    = {EUROCRYPT},
-  year	       = 2001,
-  pages	       = {93-118}
+  year         = 2001,
+  pages        = {93-118}
 }
 
 @InProceedings{DBLP:conf/calc/Coppersmith01,
   author       = {Don Coppersmith},
-  title	       = {Finding Small Solutions to Small Degree Polynomials},
+  title        = {Finding Small Solutions to Small Degree Polynomials},
   booktitle    = {CaLC},
-  year	       = 2001,
-  pages	       = {20-31}
+  year         = 2001,
+  pages        = {20-31}
 }
 
 @InProceedings{DBLP:conf/asiacrypt/HopperB01,
   author       = {Nicholas J. Hopper and Manuel Blum},
-  title	       = {Secure Human Identification Protocols},
+  title        = {Secure Human Identification Protocols},
   booktitle    = {ASIACRYPT},
-  year	       = 2001,
-  pages	       = {52-66}
+  year         = 2001,
+  pages        = {52-66}
 }
 
 @InProceedings{DBLP:conf/crypto/ShamirT01,
   author       = {Adi Shamir and Yael Tauman},
-  title	       = {Improved Online/Offline Signature Schemes},
+  title        = {Improved Online/Offline Signature Schemes},
   booktitle    = {CRYPTO},
-  year	       = 2001,
-  pages	       = {355-367}
+  year         = 2001,
+  pages        = {355-367}
 }
 
 @InProceedings{DBLP:conf/asiacrypt/BellareBDP01,
   author       = {Mihir Bellare and Alexandra Boldyreva and Anand
                   Desai and David Pointcheval},
-  title	       = {Key-Privacy in Public-Key Encryption},
+  title        = {Key-Privacy in Public-Key Encryption},
   booktitle    = {ASIACRYPT},
-  year	       = 2001,
-  pages	       = {566-582}
+  year         = 2001,
+  pages        = {566-582}
 }
 
 @Article{DBLP:journals/joc/LenstraV01,
   author       = {Arjen K. Lenstra and Eric R. Verheul},
-  title	       = {Selecting Cryptographic Key Sizes},
+  title        = {Selecting Cryptographic Key Sizes},
   journal      = {J. Cryptology},
-  year	       = 2001,
+  year         = 2001,
   volume       = 14,
-  pages	       = {255-293},
+  pages        = {255-293},
   number       = 4
 } 
 
 @Article{DBLP:journals/siamcomp/NaorRR02,
   author       = {Moni Naor and Omer Reingold and Alon Rosen},
-  title	       = {Pseudorandom Functions and Factoring},
+  title        = {Pseudorandom Functions and Factoring},
   journal      = {SIAM J. Comput.},
   volume       = 31,
   number       = 5,
-  year	       = 2002,
-  pages	       = {1383-1404},
-  note	       = {Preliminary version in STOC 2000},
+  year         = 2002,
+  pages        = {1383-1404},
+  note         = {Preliminary version in STOC 2000},
   prelimyear   = 2000
 }
 
 @InProceedings{DBLP:conf/ctrsa/AbdallaBR01,
   author       = {Michel Abdalla and Mihir Bellare and Phillip
                   Rogaway},
-  title	       = {The Oracle {Diffie}-{Hellman} Assumptions and an
+  title        = {The Oracle {Diffie}-{Hellman} Assumptions and an
                   Analysis of {DHIES}},
   booktitle    = {CT-RSA},
-  year	       = 2001,
-  pages	       = {143-158}
+  year         = 2001,
+  pages        = {143-158}
 }
 
 @Article{DBLP:journals/jcss/Okamoto00,
@@ -1970,189 +2133,198 @@
 
 @InProceedings{DBLP:conf/eurocrypt/Shoup00,
   author       = {Victor Shoup},
-  title	       = {Practical Threshold Signatures},
+  title        = {Practical Threshold Signatures},
   booktitle    = {EUROCRYPT},
-  year	       = 2000,
-  pages	       = {207-220}
+  year         = 2000,
+  pages        = {207-220}
 }
 
 @Article{DBLP:journals/ita/MereghettiP00,
   author       = {Carlo Mereghetti and Beatrice Palano},
-  title	       = {Threshold circuits for iterated matrix product and
+  title        = {Threshold circuits for iterated matrix product and
                   powering},
   journal      = {ITA},
   volume       = 34,
   number       = 1,
-  year	       = 2000,
-  pages	       = {39-46}
+  year         = 2000,
+  pages        = {39-46}
 }
 
 @Article{DBLP:journals/siamcomp/DolevDN00,
   author       = {Danny Dolev and Cynthia Dwork and Moni Naor},
-  title	       = {Nonmalleable Cryptography},
+  title        = {Nonmalleable Cryptography},
   journal      = {SIAM J. Comput.},
-  year	       = 2000,
+  year         = 2000,
   volume       = 30,
   number       = 2,
-  pages	       = {391-437},
-  note	       = {Preliminary version in STOC 1991},
+  pages        = {391-437},
+  note         = {Preliminary version in STOC 1991},
   prelimyear   = 1991
 }
 
 @InProceedings{DBLP:conf/ndss/KrawczykR00,
   author       = {Hugo Krawczyk and Tal Rabin},
-  title	       = {Chameleon Signatures},
+  title        = {Chameleon Signatures},
   booktitle    = {NDSS},
-  year	       = 2000
+  year         = 2000
 }
 
 @InProceedings{DBLP:conf/crypto/Coron00,
   author       = {Jean-S{\'e}bastien Coron},
-  title	       = {On the Exact Security of Full Domain Hash},
+  title        = {On the Exact Security of Full Domain Hash},
   booktitle    = {CRYPTO},
-  year	       = 2000,
-  pages	       = {229-235}
+  year         = 2000,
+  pages        = {229-235}
 }
 
 @Article{DBLP:journals/tissec/CramerS00,
   author       = {Ronald Cramer and Victor Shoup},
-  title	       = {Signature schemes based on the strong {RSA}
+  title        = {Signature schemes based on the strong {RSA}
                   assumption},
   journal      = {ACM Trans. Inf. Syst. Secur.},
   volume       = 3,
   number       = 3,
-  year	       = 2000,
-  pages	       = {161-185},
-  note	       = {Preliminary version in CCS 1999},
+  year         = 2000,
+  pages        = {161-185},
+  note         = {Preliminary version in CCS 1999},
   prelimyear   = 1999
 }
 
 @InProceedings{DBLP:conf/crypto/DamgardN00,
   author       = {Ivan Damg{\aa}rd and Jesper Buus Nielsen},
-  title	       = {Improved Non-committing Encryption Schemes Based on
+  title        = {Improved Non-committing Encryption Schemes Based on
                   a General Complexity Assumption},
   booktitle    = {CRYPTO},
-  year	       = 2000,
-  pages	       = {432-450}
+  year         = 2000,
+  pages        = {432-450}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/Shoup00a,
   author       = {Victor Shoup},
-  title	       = {Using Hash Functions as a Hedge against Chosen
+  title        = {Using Hash Functions as a Hedge against Chosen
                   Ciphertext Attack},
   booktitle    = {EUROCRYPT},
-  year	       = 2000,
-  pages	       = {275-288}
+  year         = 2000,
+  pages        = {275-288}
 }
 
 @Misc{cryptoeprint:1999:012,
   author       = {Victor Shoup},
-  title	       = {On Formal Models for Secure Key Exchange},
+  title        = {On Formal Models for Secure Key Exchange},
   howpublished = {Cryptology ePrint Archive, Report 1999/012},
-  year	       = 1999,
-  note	       = {\url{http://eprint.iacr.org/}}
+  year         = 1999,
+  note         = {\url{http://eprint.iacr.org/}}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/Paillier99,
   author       = {Pascal Paillier},
-  title	       = {Public-Key Cryptosystems Based on Composite Degree
+  title        = {Public-Key Cryptosystems Based on Composite Degree
                   Residuosity Classes},
   booktitle    = {EUROCRYPT '99},
-  year	       = 1999,
-  pages	       = {223-238}
+  year         = 1999,
+  pages        = {223-238}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/NaorPR99,
   author       = {Moni Naor and Benny Pinkas and Omer Reingold},
-  title	       = {Distributed Pseudo-random Functions and {KDC}s},
+  title        = {Distributed Pseudo-random Functions and {KDC}s},
   booktitle    = {EUROCRYPT},
-  year	       = 1999,
-  pages	       = {327-346}
+  year         = 1999,
+  pages        = {327-346}
 }
 
 @Article{DBLP:journals/siamcomp/FeigeLS99,
   author       = {Uriel Feige and Dror Lapidot and Adi Shamir},
-  title	       = {Multiple NonInteractive Zero Knowledge Proofs Under
+  title        = {Multiple NonInteractive Zero Knowledge Proofs Under
                   General Assumptions},
   journal      = {SIAM J. Comput.},
   volume       = 29,
   number       = 1,
-  year	       = 1999,
-  pages	       = {1-28},
+  year         = 1999,
+  pages        = {1-28},
   prelimyear   = 1990,
-  note	       = {Preliminary version in FOCS 1990}
+  note         = {Preliminary version in FOCS 1990}
 }
 
 @InProceedings{DBLP:conf/crypto/BellareM99,
   author       = {Mihir Bellare and Sara K. Miner},
-  title	       = {A Forward-Secure Digital Signature Scheme},
+  title        = {A Forward-Secure Digital Signature Scheme},
   booktitle    = {CRYPTO},
-  year	       = 1999,
-  pages	       = {431-448}
+  year         = 1999,
+  pages        = {431-448}
 }
 
 @Article{DBLP:journals/siamcomp/HastadILL99,
   author       = {Johan H{\aa}stad and Russell Impagliazzo and Leonid
                   A. Levin and Michael Luby},
-  title	       = {A Pseudorandom Generator from any One-way Function},
+  title        = {A Pseudorandom Generator from any One-way Function},
   journal      = {SIAM J. Comput.},
   volume       = 28,
   number       = 4,
-  year	       = 1999,
-  pages	       = {1364-1396}
+  year         = 1999,
+  pages        = {1364-1396}
 }
 
 @Article{DBLP:journals/jcss/NaorR99,
   author       = {Moni Naor and Omer Reingold},
-  title	       = {Synthesizers and Their Application to the Parallel
+  title        = {Synthesizers and Their Application to the Parallel
                   Construction of Pseudo-Random Functions},
   journal      = {J. Comput. Syst. Sci.},
   volume       = 58,
   number       = 2,
-  year	       = 1999,
-  pages	       = {336-375},
-  note	       = {Preliminary version in FOCS 1995},
+  year         = 1999,
+  pages        = {336-375},
+  note         = {Preliminary version in FOCS 1995},
   prelimyear   = 1995
+}
+
+@InProceedings{DBLP:conf/focs/MicaliRV99,
+  author       = {Silvio Micali and Michael O. Rabin and Salil
+                  P. Vadhan},
+  title        = {Verifiable Random Functions},
+  booktitle    = {FOCS},
+  year         = 1999,
+  pages        = {120-130}
 }
 
 @Article{DBLP:journals/joc/NaorR99,
   author       = {Moni Naor and Omer Reingold},
-  title	       = {On the Construction of Pseudorandom Permutations:
-                  {Luby-Rackoff} Revisited},
+  title        = {On the Construction of Pseudorandom Permutations:
+                  {Luby}-{Rackoff} Revisited},
   journal      = {J. Cryptology},
+  year         = 1999,
   volume       = 12,
   number       = 1,
-  year	       = 1999,
-  pages	       = {29-66},
-  note	       = {Preliminary version in STOC 1997},
+  pages        = {29-66},
+  note         = {Preliminary version in STOC 1997},
   prelimyear   = 1997
 }
 
 @InProceedings{DBLP:conf/eurocrypt/CanettiG99,
   author       = {Ran Canetti and Shafi Goldwasser},
-  title	       = {An Efficient {\it Threshold} Public Key Cryptosystem
+  title        = {An Efficient {\it Threshold} Public Key Cryptosystem
                   Secure Against Adaptive Chosen Ciphertext Attack},
   booktitle    = {EUROCRYPT},
-  year	       = 1999,
-  pages	       = {90-106}
+  year         = 1999,
+  pages        = {90-106}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/GennaroHR99,
   author       = {Rosario Gennaro and Shai Halevi and Tal Rabin},
-  title	       = {Secure Hash-and-Sign Signatures Without the Random
+  title        = {Secure Hash-and-Sign Signatures Without the Random
                   Oracle},
   booktitle    = {EUROCRYPT},
-  year	       = 1999,
-  pages	       = {123-139}
+  year         = 1999,
+  pages        = {123-139}
 }
 
 @InProceedings{DBLP:conf/crypto/FujisakiO99,
   author       = {Eiichiro Fujisaki and Tatsuaki Okamoto},
-  title	       = {Secure Integration of Asymmetric and Symmetric
+  title        = {Secure Integration of Asymmetric and Symmetric
                   Encryption Schemes},
   booktitle    = {CRYPTO},
-  year	       = 1999,
-  pages	       = {537-554}
+  year         = 1999,
+  pages        = {537-554}
 }
 
 @InProceedings{DBLP:conf/crypto/GoldreichSV99,
@@ -2167,11 +2339,11 @@
 
 @InProceedings{DBLP:conf/pkc/FujisakiO99,
   author       = {Eiichiro Fujisaki and Tatsuaki Okamoto},
-  title	       = {How to Enhance the Security of Public-Key Encryption
+  title        = {How to Enhance the Security of Public-Key Encryption
                   at Minimum Cost},
   booktitle    = {Public Key Cryptography},
-  year	       = 1999,
-  pages	       = {53-68}
+  year         = 1999,
+  pages        = {53-68}
 }
 
 @InProceedings{DBLP:conf/latin/BrassardHT98,
@@ -2186,21 +2358,21 @@
 @InProceedings{DBLP:conf/crypto/BellareDPR98,
   author       = {Mihir Bellare and Anand Desai and David Pointcheval
                   and Phillip Rogaway},
-  title	       = {Relations Among Notions of Security for Public-Key
+  title        = {Relations Among Notions of Security for Public-Key
                   Encryption Schemes},
   booktitle    = {CRYPTO},
-  year	       = 1998,
-  pages	       = {26-45}
+  year         = 1998,
+  pages        = {26-45}
 }
 
 @InProceedings{DBLP:conf/stoc/BellareCK98,
   author       = {Mihir Bellare and Ran Canetti and Hugo Krawczyk},
-  title	       = {A Modular Approach to the Design and Analysis of
+  title        = {A Modular Approach to the Design and Analysis of
                   Authentication and Key Exchange Protocols (Extended
                   Abstract)},
   booktitle    = {STOC},
-  year	       = 1998,
-  pages	       = {419-428}
+  year         = 1998,
+  pages        = {419-428}
 }
 
 @InProceedings{DBLP:conf/stoc/GoldreichSV98,
@@ -2214,58 +2386,58 @@
 
 @MastersThesis{Fehr98,
   author       = {Serge Fehr},
-  title	       = {Span Programs over Rings and How to Share a Secret
+  title        = {Span Programs over Rings and How to Share a Secret
                   from a Module},
-  year	       = 1998,
+  year         = 1998,
   address      = {Institute for Theoretical Computer Science},
   school       = {ETH Zurich}
 }
 
 @InProceedings{DBLP:conf/asiacrypt/BonehDF98,
   author       = {Dan Boneh and Glenn Durfee and Yair Frankel},
-  title	       = {An Attack on {RSA} Given a Small Fraction of the
+  title        = {An Attack on {RSA} Given a Small Fraction of the
                   Private Key Bits},
   booktitle    = {ASIACRYPT},
-  year	       = 1998,
-  pages	       = {25-34}
+  year         = 1998,
+  pages        = {25-34}
 }
 
 @InProceedings{DBLP:conf/crypto/CramerS98,
   author       = {Ronald Cramer and Victor Shoup},
-  title	       = {A Practical Public Key Cryptosystem Provably Secure
+  title        = {A Practical Public Key Cryptosystem Provably Secure
                   Against Adaptive Chosen Ciphertext Attack},
   booktitle    = {CRYPTO},
-  year	       = 1998,
-  pages	       = {13-25}
+  year         = 1998,
+  pages        = {13-25}
 }
                   
 @InProceedings{DBLP:conf/icics/BellareR97,
   author       = {Mihir Bellare and Phillip Rogaway},
-  title	       = {Minimizing the use of random oracles in
+  title        = {Minimizing the use of random oracles in
                   authenticated encryption schemes},
   booktitle    = {ICICS},
-  year	       = 1997,
-  pages	       = {1-16}
+  year         = 1997,
+  pages        = {1-16}
 }
 
 @Article{DBLP:journals/joc/Coppersmith97,
   author       = {Don Coppersmith},
-  title	       = {Small Solutions to Polynomial Equations, and Low
+  title        = {Small Solutions to Polynomial Equations, and Low
                   Exponent {RSA} Vulnerabilities},
   journal      = {J. Cryptology},
   volume       = 10,
   number       = 4,
-  year	       = 1997,
-  pages	       = {233-260}
+  year         = 1997,
+  pages        = {233-260}
 }
 
 @InProceedings{DBLP:conf/eurocrypt/Shoup97,
   author       = {Victor Shoup},
-  title	       = {Lower Bounds for Discrete Logarithms and Related
+  title        = {Lower Bounds for Discrete Logarithms and Related
                   Problems},
   booktitle    = {EUROCRYPT},
-  year	       = 1997,
-  pages	       = {256-266}
+  year         = 1997,
+  pages        = {256-266}
 }
 
 @Article{DBLP:journals/siamcomp/Shor97,
@@ -2277,7 +2449,7 @@
   volume       = 26,
   number       = 5,
   pages        = {1484-1509},
-  note         = {Preliminary version in FOCS 2004},
+  note         = {Preliminary version in FOCS 1994},
   prelimyear   = 1994
 }
 
@@ -2316,6 +2488,15 @@
   booktitle    = {FOCS},
   year	       = 1996,
   pages	       = {504-513}
+}
+
+@InProceedings{DBLP:conf/stoc/Grover96,
+  author       = {Lov K. Grover},
+  title        = {A Fast Quantum Mechanical Algorithm for Database
+                  Search},
+  booktitle    = {STOC},
+  year         = 1996,
+  pages        = {212-219}
 }
 
 @InProceedings{DBLP:conf/stoc/CanettiFGN96,
@@ -2524,6 +2705,14 @@
   booktitle    = {CRYPTO},
   year	       = 1993,
   pages	       = {278-291}
+}
+
+@InProceedings{DBLP:conf/crypto/ChaumP92,
+  author       = {David Chaum and Torben P. Pedersen},
+  title        = {Wallet Databases with Observers},
+  booktitle    = {CRYPTO},
+  year         = 1992,
+  pages        = {89-105}
 }
 
 @Article{DBLP:journals/jacm/GoldreichMW91,
