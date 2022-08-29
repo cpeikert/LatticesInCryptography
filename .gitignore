@@ -14,3 +14,5 @@
 **/*.toc
 **/*.tar
 **/*.xsim
+**/*.fls
+**/*.fdb_latexmk
