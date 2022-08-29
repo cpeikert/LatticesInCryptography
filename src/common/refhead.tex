@@ -1,0 +1,12 @@
+\RequirePackage{hyperref}
+
+\hypersetup{linkcolor=blue,filecolor=blue,citecolor=blue,urlcolor=blue}
+
+% make references point back to the pages on which they appear
+\renewcommand*{\backref}[1]{}
+\renewcommand*{\backrefalt}[4]{{%
+    \ifcase #1 Not cited.%
+    \or Page~#2.%
+    \else Pages #2.%
+    \fi%
+  }}
