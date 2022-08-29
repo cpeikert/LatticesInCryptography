@@ -3,7 +3,7 @@ language:   generic
 services:   docker
 
 tex-config:
-  - tex-scheme=texliveonfly
+- tex-scheme=small
   - push-type=branch
   - build-pattern=src/*.tex
   - packages=
