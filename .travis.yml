@@ -1,11 +1,20 @@
-language: generic
-services: docker
-script: docker run --mount src=$TRAVIS_BUILD_DIR,target=/usr/src/tex,type=bind cmlsharp/docker-tectonic:v1.0
-  /bin/sh -c 'for i in src/*.tex; do if ! tectonic "$i" --outfmt pdf --outdir .; then exit 1; fi; done;'
+sudo:       required
+language:   generic
+services:   docker
 
-deploy:
-  provider: script
-  on:
-    branch: main
-  script: bash deploy.sh
-  skip_cleanup: true
+tex-config:
+  - tex-scheme=texliveonfly
+  - push-type=branch
+  - build-pattern=src/*.tex
+  - packages=
+
+env:
+  global:
+    ## When you have done the travis encrypting, then it should look
+    ## something like this
+    # secure: ENCRYPTED-GITHUBTOKEN
+    - IS_TRAVIS=true
+
+script:
+  - chmod +x .travis/travis-texbuild.sh
+  - .travis/travis-texbuild.sh
