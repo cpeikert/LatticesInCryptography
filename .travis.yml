@@ -6,7 +6,7 @@ tex-config:
 - tex-scheme=small
   - push-type=branch
   - build-pattern=src/*.tex
-  - packages=
+  - packages=fullpage,microtype
 
 env:
   global:
