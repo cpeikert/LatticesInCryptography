@@ -1,0 +1,545 @@
+\documentclass[11pt]{article}
+
+\usepackage{fullpage}
+\usepackage{newtxtext}
+\usepackage{microtype}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
+\usepackage[pagebackref=true]{hyperref} % must set backref at load time
+\usepackage{fancyhdr}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usepackage{import}
+
+% load after hyperref, algpseudocode to get proper behavior
+\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
+
+\import{common/}{head.tex}
+\import{common/slides/}{tikzhead.tex}
+\definecolor{structure.fg}{rgb}{0.2,0.2,0.7} % from favorite beamer theme
+
+% VARIABLES
+
+\newcommand{\lecturenum}{2}
+\newcommand{\lecturetopic}{SVP, Gram-Schmidt, LLL}
+\newcommand{\scribename}{Hank Carter}
+
+% END OF VARIABLES
+
+\import{common/}{lechead.tex}
+\lecheader                      % execute lecture commands
+
+\pagestyle{plain}               % default: no special header
+
+\begin{document}
+
+\thispagestyle{fancy} % first page should have special header
+
+% LECTURE MATERIAL STARTS HERE
+
+\newcommand{\estsvp}{\cproblem{EstSVP}}
+
+\theoremstyle{plain} \newtheorem{openproblem}[theorem]{Open Problem}
+
+\section{Shortest Vector Problem}
+\label{sec:svp}
+
+Last time we defined the minimum distance $\lambda_{1}(\lat)$ of a
+lattice $\lat \subset \R^{n}$, and showed that it is upper bounded by
+$\sqrt{n} \cdot \det(\lat)^{1/n}$ (Minkowski's theorem), but this
+bound is often very loose. Some natural computational questions are:
+given a lattice (specified by some basis), can we compute its minimum
+distance? Can we find a vector that achieves this distance? Can we
+find good approximations to these? And how efficiently can we perform
+these tasks? These are all versions of the \emph{Shortest Vector
+  Problem}, which we now define formally.
+
+\begin{definition}[Shortest Vector Problem, exact form]
+  \label{def:svp}
+  The \emph{exact} form of $\svp$ has three common variants, which we
+  restrict to \emph{integer} lattices (and so integral bases) without
+  any major loss of generality:\footnote{While there exist irrational
+    lattices that cannot be `scaled up' to integer lattices, in
+    general it is not possible to represent them finitely (e.g., as
+    input to an algorithm), so for simplicity we ignore them.}
+  \begin{enumerate}[itemsep=0pt]
+  \item Decision: given a lattice basis~$\matB$ and a real $d > 0$,
+    distinguish between the cases $\lambda_1(\lat(\matB)) \leq d$ and
+    $\lambda_1(\lat(\matB)) > d$.\footnote{Notice that because the
+      lattice is integral, we can restrict to~$d$ which are square
+      roots of positive integers, and represent them by the positive
+      integer~$d^{2}$.}
+
+  \item Calculation: given a lattice basis $\matB$, find
+    $\lambda_1(\lat(\matB))$.
+
+  \item Search: given a lattice basis $\matB$, find a nonzero
+    $\vecv \in \lat(\matB)$ such that
+    $\length{\vecv} = \lambda_1(\lat(\matB))$.
+  \end{enumerate}
+\end{definition}
+
+It is obvious that solving the Calculation version immediately lets us
+solve the Decision version. More formally, we say that ``Decision
+reduces to Calculation'' and write
+$\text{Decision} \leq \text{Calculation}$; note the directionality of
+these statements. The reverse direction
+($\text{Calculation} \leq \text{Decision}$) also holds, since if we
+have an oracle for Decision, we can solve Calculation via binary
+search, by varying the choice of~$d$. The only subtlety here is that
+in order for the search to succeed in polynomial time, the number of
+possible values for~$\lambda_{1}$ must be bounded by
+$2^{\poly(\len{\matB})}$, where $\len{\matB}$ is the bit length of the
+given basis. This is indeed the case, because the minimum distance is
+the square root of an integer, and is between~$1$ and
+$\sqrt{n} \det(\matB)^{1/n}$ by Minkowski's theorem. The latter is
+bounded by $2^{\poly(\len{\matB})}$ because the determinant can be
+computed in polynomial time. Finally, it also turns out that the
+Search version is equivalent to the other two versions; we will see
+the proof of this later.
+
+\medskip \noindent Also of great interest and wide applicability are
+\emph{approximate} versions of SVP.
+
+\begin{definition}[Approximate SVP]
+  The $\gamma$-approximate Shortest Vector Problem, where
+  $\gamma = \gamma(n) \geq 1$ is a function of the dimension~$n$, has
+  the following variants (again restricted to integer lattices):
+  \begin{enumerate}[itemsep=0pt]
+  \item Decision ($\gapsvp_{\gamma}$): given a lattice basis $\matB$
+    and a real $d > 0$, distinguish between the cases
+    $\lambda_1(\lat(\matB)) \leq d$ and
+    $\lambda_1(\lat(\matB)) > \gamma\cdot d$.\footnote{If
+      $\lambda_1(\lat(\matB))$ falls between $d$ and $\gamma\cdot d$,
+      either answer is acceptable. Alternatively, this version can be
+      considered as a ``promise problem,'' where the input $\matB$ is
+      guaranteed to satisfy one of the two cases.}
+    
+  \item Estimation ($\estsvp_{\gamma}$): given a lattice basis
+    $\matB$, compute $\lambda_1(\lat(\matB))$ up to a $\gamma$ factor,
+    i.e., output some
+    $d \in [\lambda_1(\lat(\matB)),
+    \gamma\cdot\lambda_1(\lat(\matB))]$.
+    
+  \item Search $(\svp_{\gamma}$): given a lattice basis $\matB$, find
+    a nonzero $\vecv \in \lat(\matB)$ such that
+    $\length{\vecv} \leq \gamma\cdot \lambda_1(\lat(\matB))$.
+  \end{enumerate}
+\end{definition}
+
+Observe that taking $\gamma=1$ corresponds to the exact versions of
+the problems (as defined above), and also that the problems cannot
+become harder as $\gamma$ increases. Formally,
+$\gapsvp_{\gamma'} \leq \gapsvp_{\gamma}$ for any
+$\gamma' \geq \gamma$ (again note the directionality), and similarly
+for $\estsvp$ and $\svp$.
+
+It is easy to check that
+\[ \gapsvp_{\gamma} \leq \estsvp_{\gamma} \leq \svp_{\gamma}, \] i.e.,
+being able to solve Search immediately implies being able to solve
+Estimation, which implies being able to solve Decision. It can also be
+seen that $\estsvp_{\gamma} \leq \gapsvp_{\gamma}$, again using binary
+search. So these two variants are polynomial-time equivalent, and we
+usually deal with just $\gapsvp_{\gamma}$. However, for
+``interesting'' $\gamma > 1$ it is currently unknown if solving
+decision is equivalent to solving search! The ``interesting''
+qualifier is needed to rule out very large $\gamma \gtrsim 2^{n}$, for
+which both versions are solvable in polynomial time (as we will see
+shortly), and hence trivially equivalent.
+
+\begin{openproblem}
+  \label{open:svp-search-decision}
+  Prove or disprove that $\svp_{\gamma} \leq \gapsvp_{\gamma}$ for
+  some (or all) ``interesting'' $\gamma > 1$.
+\end{openproblem}
+
+In the remainder of the lecture we will develop tools that let us
+efficiently compute bounds on the minimum distance, and even find
+``somewhat short'' nonzero lattice vectors.
+
+\section{Gram-Schmidt Orthogonalization}
+
+For linearly independent vectors $\vecb_1, \ldots, \vecb_n \in \R^n$,
+we define the \emph{Gram-Schmidt orthogonalized} vectors
+$\gs{\vecb}_1, \ldots, \gs{\vecb}_n$ via an iterative process. First
+we define $\gs{\vecb}_{1} = \vecb_{1}$, and then for $j=2,\ldots,n$,
+we define $\gs{\vecb}_{j}$ to be the component of $\vecb_{j}$
+orthogonal to
+$\spn(\vecb_{1}, \ldots, \vecb_{j-1}) = \spn(\gs{\vecb}_{1}, \ldots,
+\gs{\vecb}_{j-1})$, the linear span of the previous vectors.
+Formally,
+\begin{align*}
+  \gs{\vecb}_1 &:= \vecb_1, \\
+  \gs{\vecb}_2 &:= \vecb_2 - \mu_{1,2} \cdot \gs{\vecb}_1
+               & \text{where } \mu_{1,2}
+               &= \inner{\vecb_2,\gs{\vecb}_1}/\inner{\gs{\vecb}_1,\gs{\vecb}_1}, \\
+  \vdots \\
+  \gs{\vecb}_j &:= \vecb_j - \sum_{i < j} \mu_{i,j} \cdot \gs{\vecb}_j
+               & \text{where } \mu_{i,j}
+               &= \inner{\vecb_j,\gs{\vecb}_i}/\inner{\gs{\vecb}_j,\gs{\vecb}_j}.
+\end{align*}
+We can verify that the vectors~$\gs{\vecb}_{j}$ are mutually
+orthogonal. For example,
+\[ \inner{\gs{\vecb}_{2}, \gs{\vecb}_{1}} = \inner{\vecb_{2},
+    \gs{\vecb}_{1}} - \mu_{1,2} \cdot \inner{\gs{\vecb}_{1},
+    \gs{\vecb}_{1}} = 0. \] The general case can then be proved by
+induction.
+
+\begin{figure}[h!]
+  \centering
+  \begin{tikzpicture}
+    % clip
+    \clip ([shift={(-2pt,-2pt)}] -3,-2) rectangle ([shift={(2pt,2pt)}]
+    4,2);
+    
+    \begin{scope}[Ztrans]
+      \coordinate (orig) at (0,0); \coordinate (b1) at (1,0);
+      \coordinate (b2) at (0,1); \coordinate (b2tilde) at
+      ($(b2)!(orig)!($(b1)+(b2)$)$); \coordinate (b3) at ($-1*(b2)$);
+      \coordinate (b4) at ($1*(b1) - 1*(b2)$); \coordinate (b5) at
+      ($2*(b1) - 2*(b2)$);
+
+      \coordinate (p1) at ($.5*(b1) - .5*(b2tilde)$); \coordinate (p2)
+      at ($.5*(b1) + .5*(b2tilde)$); \coordinate (p3) at
+      ($-.5*(b1) + .5*(b2tilde)$); \coordinate (p4) at
+      ($-.5*(b1) - .5*(b2tilde)$);
+
+      \foreach \off in {b5, b3, b4, orig, b1} { \fill[openball]
+        ($(p1)+(\off)$) -- ($(p2)+(\off)$) -- ($(p3)+(\off)$);
+        \draw[ball] ($(p3)+(\off)$) -- ($(p4)+(\off)$) --
+        ($(p1)+(\off)$); }
+
+      \path[latt] \latt{2pt};
+
+      % basis vectors
+      \draw[->] (orig) -- (b1) node[above,offlabel]
+      {$\gs{\vecb}_{1} = \vecb_1$}; \draw[->] (orig) -- (b2)
+      node[above,offlabel] {$\vecb_2$}; \draw[->,dashed] (orig) --
+      (b2tilde) node[above left,offlabel] {$\gs{\vecb}_{2}$};
+    \end{scope}
+  \end{tikzpicture}
+  \caption{An example of Gram-Schmidt orthogonalization and a
+    (partial) tiling by the fundamental parallelepiped of the
+    resulting vectors.}
+  \label{fig:GS}
+\end{figure}
+
+It is often convenient to view the orthogonalization process as
+corresponding to the following (unique) matrix factorization:
+% 
+\newcommand{\vstrut}{\rule{.5pt}{4ex}}
+\begin{equation}
+  \label{eq:B-BtildeU}
+  \matB =
+  \underbrace{
+    \begin{pmatrix}
+      \vstrut & \vstrut & & \vstrut \\
+      \gs{\vecb}_{1} & \gs{\vecb}_{2} & \cdots & \gs{\vecb}_{n} \\
+      \vstrut & \vstrut & & \vstrut
+    \end{pmatrix}
+  }_{\gs{\matB}}
+  \cdot
+  \underbrace{
+    \begin{pmatrix}
+      1 & \mu_{1,2} & \cdots & \mu_{1,n} \\
+        & 1 & \cdots & \mu_{2,n} \\
+        & & \ddots & \vdots \\
+        & & & 1
+    \end{pmatrix}
+  }_{\matU},
+\end{equation}
+where the columns of~$\gs{\matB}$ are orthogonal and the matrix
+$\matU \in \R^{n \times n}$ is upper unitriangular (i.e., upper
+triangular with $1$s on the diagonal), and hence has determinant one.
+Note that~$\matU$ is typically \emph{not unimodular}, because
+the~$\mu_{i,j}$ are typically \emph{not integers}. Therefore,
+$\gs{\matB}$ is typically not a basis of the lattice generated
+by~$\matB$.
+
+We can further factor out the lengths of the columns $\gs{\vecb}_{i}$
+of $\gs{\matB}$, obtaining
+\begin{equation}
+  \label{eq:Btilde-QD}
+  \gs{\matB} = \matQ \cdot
+  \underbrace{
+    \begin{pmatrix}
+      \length{\gs{\vecb}_{1}} & & & \\
+                              & \length{\gs{\vecb}_{2}} & & \\
+                              & & \ddots & \\
+                              & & & \length{\gs{\vecb}_{n}}
+    \end{pmatrix}
+  }_{\matD}
+\end{equation}
+where $\matQ$ is an \emph{orthogonal} matrix, i.e.,
+$\matQ^{t} \matQ = \matI$. This is because its columns are the
+mutually orthogonal \emph{unit} vectors
+$\gs{\vecb}_{i}/\length{\gs{\vecb}_{i}}$. Altogether, we have the
+(unique) factorization
+\begin{equation}
+  \label{eq:QDU}
+  \matB = \matQ \matD \matU
+\end{equation}
+for orthogonal $\matQ$, diagonal $\matD$ with positive diagonal
+entries, and upper-unitriangular $\matU$. This also corresponds to the
+so-called ``QR'' factorization $\matB = \matQ \matR$, where
+$\matR = \matD \matU$ is an upper-triangular real matrix having
+diagonal entries $\length{\gs{\vecb}_{i}}$.
+
+In the context of lattices, we can often ignore the orthogonal
+matrix~$\matQ$, taking it to be the identity matrix without loss of
+generality. This is because~$\matQ$ simply acts as a rigid rotation
+of~$\R^{n}$, and therefore preserves all the relevant geometrical
+properties of the space, like inner products, Euclidean norms, and
+volumes (but not~$\ell_{p}$ norms!). Therefore, we can usually focus
+on just~$\matD$ and~$\matU$.\footnote{This all can be made formal by
+  working with the \emph{Gram matrix}
+  $\matB^{t} \matB = \matU^{t} \matD (\matQ^{t} \matQ) \matD \matU =
+  \matU^{t} \matD^{2} \matU$ of the basis~$\matB$, which
+  characterizes~$\matB$ and the lattice it generates up to rigid
+  rotations. Essentially all lattice algorithms and mathematical
+  analyses can be made to work with a Gram matrix instead of a basis.}
+
+\medskip
+
+\noindent The Gram-Schmidt vectors have many important connections
+with the geometry of the lattice.
+
+\begin{lemma}
+  \label{lem:gs-det}
+  For any lattice $\lat = \lat(\matB)$, we have
+  $\det(\lat) = \prod_{i=1}^{n} \length{\gs{\vecb}_{i}}$.
+\end{lemma}
+
+\begin{proof}
+  We have
+  $\det(\lat) = \det(\matB) = \det(\matQ) \det(\matD) \det(\matU) =
+  \det(\matD) = \prod_{i=1}^{n} \length{\gs{\vecb}_{i}}$.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:gs-fund-region}
+  For any lattice $\lat = \lat(\matB)$, the body
+  $\piped(\gs{\matB}) = \gs{\matB} \cdot \hohalf^{n}$ is a fundamental
+  region of $\lat$.
+\end{lemma}
+
+\begin{proof}
+  You will prove this in the homework. (Notice that the volume of
+  $\piped(\gs{\matB})$ is $\prod_{i} \length{\gs{\vecb}_{i}}$, as
+  expected.)
+\end{proof}
+
+\noindent A very useful fact is that the Gram-Schmidt vectors gives a
+lower bound on the lattice minimum distance.
+
+\begin{lemma}
+  \label{lem:gs-lower-lambda}
+  For any lattice $\lat = \lat(\matB)$, we have
+  $\lambda_1(\lat) \geq \min_i \length{\gs{\vecb}_i}$.
+\end{lemma}
+
+Before giving the full proof, let's first develop some intuition in
+the two-dimensional case (see \cref{fig:lambdaSlices}). We can
+partition the lattice points $\vecv = \matB \vecz$ for
+$\vecz \in \Z^{2}$ into ``slices'' according to the integer
+coefficient~$z_{2}$ of~$\vecb_{2}$. If~$z_{2} = 0$, then~$\vecv$ is in
+the rank-one sublattice $\lat(\vecb_{1})$, which obviously has minimum
+distance $\length{\vecb_{1}} = \length{\gs{\vecb}_{1}}$. Otherwise,
+$\vecv$ lies in the affine subspace
+$z_{2} \vecb_{2} + \spn(\vecb_{1})$, all of whose points are at least
+$\abs{z_{2}} \cdot \length{\gs{\vecb}_{2}} \geq
+\length{\gs{\vecb}_{2}}$ from the origin, and hence
+$\length{\vecv} \geq \length{\gs{\vecb}_{2}}$. So altogether,
+$\length{\vecv} \geq \min \set{\length{\gs{\vecb}_{1}},
+  \length{\gs{\vecb}_{2}}}$.
+
+\begin{figure}[h!]
+  \centering
+  \begin{tikzpicture}
+    \clip (-3,-1.7) rectangle (4.4,2);
+
+    \begin{scope}[latttrans]
+      \coordinate (b1) at (1,0); \coordinate (b2) at (0,1);
+      \coordinate (b2tilde) at ($(b2)!(orig)!($(b1)+(b2)$)$);
+
+      % the hyperplanes
+      \begin{scope}
+        \path[ball] \foreach \b in {-4, ..., 4} { ([yshift=2pt] -3,
+          \b) -- ([yshift=-2pt] -3, \b) -- ([yshift=-2pt] 5, \b) --
+          ([yshift=2pt] 5, \b) -- cycle } ;
+      \end{scope}
+
+      % lattice
+      \path[latt] \latt{2pt} ;
+
+      % short basis vectors
+      \draw[->] (0,0) -- (b1) node[below right,offlabel]
+      {$\vecb_1$}; \draw[->] (0,0) -- (b2) node[above left,offlabel]
+      {$\vecb_2$}; \draw[dashed,->] (0,0) -- (b2tilde) node[above
+      left,offlabel] {$\gs{\vecb}_{2}$};
+    \end{scope}
+  \end{tikzpicture}
+  \caption{A two-dimensional lattice partitioned into ``slices''
+    according to the integer coefficient of~$\vecb_{2}$.}
+  \label{fig:lambdaSlices}
+\end{figure}
+
+\begin{proof}[Proof of \cref{lem:gs-lower-lambda}]
+  Let $\matB = \matD \matU$ be the unique factorization from
+  \cref{eq:QDU}, where as noted above we can assume $\matQ = \matI$
+  without loss of generality. Let $\vecv = \matB \vecz$ for nonzero
+  $\vecz \in \Z^{n}$ be an arbitrary nonzero lattice point, and let
+  $z_i$ be the last nonzero entry of $\vecz$. Then, letting $\star$s
+  denote arbitrary real numbers, we have
+  \begin{equation}
+    \vecv = \matB \vecz = \matD
+    \begin{pmatrix}
+      1& \star & \star & \cdots & \star\\
+       & 1 & \star  & \cdots  & \star\\
+       & & 1 & \cdots  & \star\\
+       & & & \ddots & \star\\
+       & & & & 1
+    \end{pmatrix}
+    \begin{pmatrix}
+      \star\\
+      \star\\
+      z_i\\
+      0\\
+      \vdots\\
+      0
+    \end{pmatrix} = \matD
+    \begin{pmatrix}
+      \star \\
+      \star \\
+      z_i\\
+      0\\
+      \vdots\\
+      0
+    \end{pmatrix} =
+    \begin{pmatrix}
+      \star \\
+      \star \\
+      z_{i} \length{ \gs{\vecb}_i} \\
+      0\\
+      \vdots\\
+      0
+    \end{pmatrix}.
+  \end{equation}
+  Because $\abs{z_{i}} \geq 1$, we have
+  $\length{\vecv} \geq \length{\gs{\vecb}_{i}} \geq \min_{i}
+  \length{\gs{\vecb}_{i}}$, as claimed.
+\end{proof}
+
+Combining Minkowski's inequality with
+\cref{lem:gs-det,lem:gs-lower-lambda}, we have now have the following
+bounds on the minimum distance:
+\begin{equation}
+  \label{eq:lambda-bounds-gs}
+  \min_i \length{ \gs{\vecb}_i}  \leq \lambda_1(\lat(\matB)) \leq
+  \sqrt{n} \cdot \parens[\bigg]{\prod_{i=1}^{n}
+    \length{\gs{\vecb}_{i}}}^{1/n} = \sqrt{n} \cdot
+  \text{GM}(\length{\gs{\vecb}_{i}}),
+\end{equation}
+where $\text{GM}$ denotes the geometric mean. While this allows us to
+bound $\lambda_{1}$ from above and below in terms of the Gram-Schmidt
+vectors, in the homework you will show that in general, these bounds
+can be arbitrarily loose (simultaneously), even in small dimensions.
+
+\section{Lenstra-Lenstra-Lov{\'a}sz (LLL) Algorithm}
+\label{sec:lll-alg}
+
+The LLL algorithm yields a polynomial-time solution to
+(Search-)$\svp_{\gamma}$ with an approximation factor
+$\gamma = 2^{(n-1)/2}$, which is exponential in the
+dimension.\footnote{In fact, the algorithm can be tuned to yield an
+  approximation factor as small as $\gamma = (2/\sqrt{3})^{n}$, but
+  this is still exponential in~$n$.} While such a large factor might
+not seem so impressive at first, it is nontrivial because it depends
+only on the dimension~$n$ of the lattice; by contrast, the bounds from
+\cref{eq:lambda-bounds-gs} depend on the lengths of the given basis
+vectors, which can be arbitrarily large. Also, an exponential
+approximation factor can be very useful when the dimension~$n$ is
+small, or when a shortest nonzero lattice vector is much shorter than
+all other non-parallel lattice vectors. As we will see, at least one
+of these holds in many applications of LLL.
+
+The LLL algorithm converts an arbitrary lattice basis into one that
+generates the same lattice, and which is ``reduced'' in the following
+sense (the notations~$\mu_{i,j}$ and~$\gs{\vecb}_{i}$ refer to the
+Gram-Schmidt orthogonalization, as in the previous section):
+
+\begin{definition}
+  \label{def:lll}
+  A lattice basis $\matB$ is \emph{LLL-reduced} if the following two
+  conditions are met:
+  \begin{enumerate}
+  \item For every $i < j$, we have $\abs{\mu_{i,j}} \leq \frac{1}{2}$.
+    %
+    \hfill (Such a basis is said to be ``size reduced.'')
+    
+  \item For every $1 \leq i < n$, we have
+    $\frac{3}{4}\length{ \gs{\vecb}_i}^2 \leq
+    \length{\mu_{i,i+1}\gs{\vecb}_i + \gs{\vecb}_{i+1}}^2$.
+    %
+    \hfill (This is the ``Lov{\'a}sz condition.'')
+  \end{enumerate}
+\end{definition}
+
+\noindent The LLL conditions ensure that the lengths of the
+Gram-Schmidt vectors do not ``decrease too quickly.''
+
+\begin{lemma}
+  \label{lem:lll-gs}
+  In an LLL-reduced basis $\matB$, we have
+  $\length{\gs{\vecb}_{i+1}}^{2} \geq \frac12
+  \length{\gs{\vecb}_{i}}^{2}$ for all $1 \leq i < n$.
+\end{lemma}
+
+\begin{proof}
+  Since the Gram-Schmidt vectors are mutually orthogonal, by the
+  Pythagorean theorem we have
+  \begin{align*}
+    \tfrac34 \length{\gs{\vecb}_i}^2
+    &\leq \length{\mu_{i,i+1}\gs{\vecb}_i + \gs{\vecb}_{i+1}}^2 \\
+    &= \mu_{i,i+1}^2\cdot \length{\gs{\vecb}_i}^2 + \length{\gs{\vecb}_{i+1}}^2 \\
+    &\leq \tfrac14 \length{\gs{\vecb}_i}^2 +
+      \length{\gs{\vecb}_{i+1}}^2.
+  \end{align*}
+  The claim follows by rearranging terms.
+\end{proof}
+
+Because the Gram-Schmidt vectors of a lattice basis give a lower bound
+on the lattice's minimum distance, it follows that the first vector in
+an LLL-reduced basis approximates a shortest lattice vector.
+
+\begin{corollary}
+  \label{cor:lll-lambda}
+  In an LLL-reduced basis $\matB$, we have
+  $\length{\vecb_1} \leq 2^{(n-1)/2} \cdot \lambda_{1}(\lat(\matB))$.
+\end{corollary}
+
+\begin{proof}
+  Recall that $\vecb_1 = \gs{\vecb}_1$, so
+  $\length{ \vecb_1} = \length{\gs{\vecb}_1}$. By \cref{lem:lll-gs},
+  we also have
+  $\length{\gs{\vecb}_{i+1}} \geq \frac{1}{\sqrt{2}} \length{
+    \gs{\vecb}_i}$ for $1 \leq i < n$. Therefore,
+  \[ \length{\vecb_1} \leq 2^{(i-1)/2}\cdot \length{\gs{\vecb}_i} \leq
+    2^{(n-1)/2} \cdot \length{\gs{\vecb}_{i}} \] for all $i$. From
+  this and \cref{lem:gs-lower-lambda} we conclude that
+  $\length{\vecb_1} \leq 2^{(n-1)/2} \cdot \min_i
+  \length{\gs{\vecb}_i} \leq 2^{(n-1)/2} \cdot
+  \lambda_1(\lat(\matB))$.
+\end{proof}
+
+\noindent We will describe the LLL algorithm itself, and its ingenious
+analysis, in the next lecture.
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
