@@ -475,8 +475,10 @@ entirely contained in $S$.
 
 \begin{theorem}[Minkowski]
   \label{thm:minkowski-body}
-  Any convex, centrally symmetric body $S$ of volume $\vol(S) >
-  2^n \cdot \det(\lat)$ contains a nonzero lattice point.
+  Let $\lat \subset \R^{n}$ be a lattice. Any convex, centrally
+  symmetric body $S \subset \R^{n}$ of volume
+  $\vol(S) > 2^n \cdot \det(\lat)$ contains a nonzero lattice point,
+  i.e., $S \cap \lat \neq \set{\veczero}$.
 \end{theorem}
 
 \begin{proof}
@@ -514,14 +516,15 @@ factor.
 
 \begin{proof}
   Without loss of generality, assume that $\det(\lat) = 1$ by scaling
-  the lattice by a $\det(\lat)^{-1/n}$ factor, which scales
-  $\lambda_{1}$ by the same factor.  Now take $S = \sqrt{n} \cdot
-  \bar{\ball}$, the (closed) Euclidean ball of radius $\sqrt{n}$.
-  The cube $[-1,1]^{n}$, which has side length $2$ and therefore
-  volume $2^{n}$, is strictly contained in $S$, and so $\vol(S) >
-  2^n$.  Therefore, $S$ contains a nonzero lattice point by
-  \cref{thm:minkowski-body}, and the bound on $\lambda_{1}$
-  follows.
+  the lattice by a $\det(\lat)^{-1/n}$ factor, which
+  scales~$\lambda_{1}$ by the same factor. Now take
+  $S = \sqrt{n} \cdot \bar{\ball}$ to be the (closed) Euclidean ball
+  of radius~$\sqrt{n}$. The cube $[-1,1]^{n}$, which has side
+  length~$2$ and therefore volume $2^{n}$, is strictly contained
+  in~$S$ (when $n > 1$; for $n=1$ the corollary holds trivially),
+  hence $\vol(S) > 2^n$. Therefore, $S$ contains a nonzero lattice
+  point by \cref{thm:minkowski-body}, and the bound on $\lambda_{1}$
+  immediately follows.
 \end{proof}
 
 Note that the bound we used on the volume of a ball was somewhat
