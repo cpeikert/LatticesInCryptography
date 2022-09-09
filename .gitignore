@@ -13,7 +13,6 @@
 **/*.snm
 **/*.toc
 **/*.tar
-**/*.xsim
 **/*.fls
 **/*.brf
 **/*.fdb_latexmk
