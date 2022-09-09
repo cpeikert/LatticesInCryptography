@@ -451,8 +451,9 @@ can be arbitrarily loose (simultaneously), even in small dimensions.
 \section{Lenstra-Lenstra-Lov{\'a}sz (LLL) Algorithm}
 \label{sec:lll-alg}
 
-The LLL algorithm yields a polynomial-time solution to
-(Search-)$\svp_{\gamma}$ with an approximation factor
+The LLL algorithm, due to Lenstra, Lenstra, and
+Lov{\'a}sz~\cite{lenstra82:_factor}, yields a polynomial-time solution
+to (Search-)$\svp_{\gamma}$ with an approximation factor
 $\gamma = 2^{(n-1)/2}$, which is exponential in the
 dimension.\footnote{In fact, the algorithm can be tuned to yield an
   approximation factor as small as $\gamma = (2/\sqrt{3})^{n}$, but
@@ -476,11 +477,11 @@ Gram-Schmidt orthogonalization, as in the previous section):
   A lattice basis $\matB$ is \emph{LLL-reduced} if the following two
   conditions are met:
   \begin{enumerate}
-  \item For every $i < j$, we have $\abs{\mu_{i,j}} \leq \frac{1}{2}$.
+  \item For all $i < j$, we have $\abs{\mu_{i,j}} \leq \frac{1}{2}$.
     %
     \hfill (Such a basis is said to be ``size reduced.'')
     
-  \item For every $1 \leq i < n$, we have
+  \item For all $i < n$, we have
     $\frac{3}{4}\length{ \gs{\vecb}_i}^2 \leq
     \length{\mu_{i,i+1}\gs{\vecb}_i + \gs{\vecb}_{i+1}}^2$.
     %
@@ -495,7 +496,7 @@ Gram-Schmidt vectors do not ``decrease too quickly.''
   \label{lem:lll-gs}
   In an LLL-reduced basis $\matB$, we have
   $\length{\gs{\vecb}_{i+1}}^{2} \geq \frac12
-  \length{\gs{\vecb}_{i}}^{2}$ for all $1 \leq i < n$.
+  \length{\gs{\vecb}_{i}}^{2}$ for all $i < n$.
 \end{lemma}
 
 \begin{proof}
@@ -537,6 +538,9 @@ an LLL-reduced basis approximates a shortest lattice vector.
 
 \noindent We will describe the LLL algorithm itself, and its ingenious
 analysis, in the next lecture.
+
+\bibliography{common/lattices}
+\bibliographystyle{common/alphaabbrvprelim}
 
 \end{document}
 
