@@ -220,12 +220,23 @@ The potential is the product of the determinants of these lattices:
 \end{claim}
 
 \begin{proof}
-  The potential of the input basis~$\matB$ is clearly bounded by
-  $\prod_{i=1}^{n} \length{\vecb_{i}}^{n} \leq \max_{i}
-  \length{\vecb_{i}}^{n^{2}} = 2^{\poly(n,\len{\matB})}$. Every
-  intermediate basis is integral and has positive integer determinant,
-  hence so do the lattices~$\lat_{i}$ associated with that basis.
-  Therefore, the potential of that basis is at least~$1$.
+  Because $\length{\gs{\vecb}_{i}} \leq \length{\vecb_{i}}$  and
+  $\length{\vecb_{i}} \geq 1$ for
+  all~$i$, the potential of the input basis~$\matB$ is bounded by
+  \[ \Phi(\matB) \leq \prod_{i=1}^{n} \length{\vecb_{i}}^{n-i+1} \leq
+    \prod_{i=1}^{n} \length{\vecb_{i}}^{n} \leq \max_{i}
+    \length{\vecb_{i}}^{n^{2}} = 2^{\poly(n,\len{\matB})}. \] Every
+  intermediate basis is integral, hence the lattices~$\lat_{i}$
+  associated with that basis have determinant at
+  least~$1$.\footnote{This requires some care to verify, because the
+    lattices~$\lat_{i}$ are \emph{not full rank} for $i < n$. Letting
+    $\matB_{i} = (\vecb_{1}, \ldots, \vecb_{i}) \in \Z^{n \times i}$
+    be a basis for~$\lat_{i}$, we have
+    $\det(\lat_{i}) = \sqrt{\det(\matB_{i}^{t} \matB_{i})} \geq 1$,
+    because the Gram matrix
+    $\matB_{i}^{t} \matB_{i} \in \Z^{i \times i}$ is integral and
+    nonsingular.} Therefore, the potential of that basis is at
+  least~$1$.
 \end{proof}
 
 \noindent We next analyze how the potential changes when we perform a
