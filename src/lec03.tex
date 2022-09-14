@@ -386,10 +386,11 @@ of this theorem:
 \end{enumerate}
 
 To highlight the heart of the method, in the remainder of this section
-we prove the theorem for a weaker bound of $B \approx N^{2/(d(d+1))}$.
-(We will prove the theorem for $B \approx N^{1/d}$ next time.) The
-strategy is to find another nonzero polynomial
-$h(x) = \sum h_{i} x^{i} \in \Z[x]$ such that:
+we prove the theorem for a weaker bound of $B \approx N^{2/(d(d+1))}$,
+where the approximation hides a small constant factor. (We will prove
+the theorem for $B \approx N^{1/d}$ next time.) The strategy is to
+find another nonzero polynomial $h(x) = \sum h_{i} x^{i} \in \Z[x]$
+such that:
 \begin{enumerate}[itemsep=0pt]
 \item every root of $f(x)$ modulo $N$ is also a root of $h(x)$, and
 \item the polynomial $h(Bx)$ is ``short,'' i.e.,
@@ -413,21 +414,20 @@ find a short nonzero vector in this lattice, and interpret it as the
 polynomial $h(Bx)$. The lattice basis is
 \[ \matB =
   \begin{pmatrix}
-    N & & & & a_0 \\
-      & B N & & & a_1B \\
-      & & B^2 N & & a_2B^2   \\
+    N & & & & f_0 \\
+      & B N & & & f_1 B \\
+      & & B^2 N & & f_2 B^2   \\
       & & & & \\
-      & & & B^{d-1} N & a_{d-1} B^{d-1} \\
+      & & & B^{d-1} N & f_{d-1} B^{d-1} \\
       & & & & B^d
   \end{pmatrix}. \]
 Note that the lattice dimension is $d+1$, and that
 $\det(\matB) = B^{d(d+1)/2} \cdot N^d$. By running the LLL algorithm
-on this basis, we obtain a $2^{d/2}$-approximation~$\vecv$ to a
-shortest nonzero vector in $\lat(\matB)$. By Minkowski's bound,
-\[ \length{\vecv} \leq 2^{d/2} \sqrt{d+1} \cdot B^{d/2} \cdot
-  N^{d/(d+1)} = c_d \cdot B^{d/2} \cdot N^{1-1/(d+1)},
+on this basis, we obtain a nonzero lattice vector~$\vecv \in
+\lat(\matB)$ for which
+\[ \length{\vecv} \leq 2^{d/2} \cdot B^{d/2} \cdot N^{d/(d+1)} =
+  (2B)^{d/2} \cdot N^{1-1/(d+1)}.
 \]
-where $c_d = 2^{d/2} \sqrt{d+1}$ depends only on the degree~$d$.
 
 Define $h(Bx)$ to be the polynomial whose coefficients are given by
 $\vecv$, i.e., $h(x) = v_0 + (v_{1}/B)x + \cdots + (v_{d}/B^{d}) x^d$.
@@ -436,9 +436,9 @@ by construction of the lattice basis, and that every root of $f(x)$
 modulo $N$ is also a root of $h(x)$ by construction. Finally, we see
 that
 \[ \abs{ h_{i} B^{i} } = \abs{v_{i}} \leq \length{v} <
-  \frac{N}{d+1}, \] if we take $B < N^{2/d(d+1)} / c'_{d}$ where
-$c'_{d} = (c_{d} (d+1))^{2/d} = O(1)$ is bounded by a small constant.
-This concludes the proof.
+  \frac{N}{d+1}, \] if we take $(2B)^{d/2} < N^{1/(d+1)}/(d+1)$, which
+is equivalent to $B < N^{2/(d(d+1))}/(2 (d+1)^{2/d})$; note that the
+denominator is upper bounded by a constant. This concludes the proof.
 
 \bibliography{common/lattices}
 \bibliographystyle{common/alphaabbrvprelim}
