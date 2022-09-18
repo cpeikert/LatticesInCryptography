@@ -1,0 +1,299 @@
+\documentclass[11pt]{article}
+
+\usepackage{fullpage}
+\usepackage{newtxtext}
+\usepackage{microtype}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
+\usepackage[pagebackref=true]{hyperref} % must set backref at load time
+\usepackage{fancyhdr}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usepackage{import}
+
+% load after hyperref, algpseudocode to get proper behavior
+\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
+
+\import{common/}{head.tex}
+
+% VARIABLES
+
+\newcommand{\smlmat}[1]{\parens{
+    \begin{smallmatrix}
+      #1
+    \end{smallmatrix}
+  }
+}
+
+\newcommand{\lecturenum}{5}
+\newcommand{\lecturetopic}{Cryptanalysis of Knapsacks}
+\newcommand{\scribename}{Eric Crockett}
+
+% END OF VARIABLES
+
+\import{common/}{lechead.tex}
+\lecheader                      % execute lecture commands
+
+\pagestyle{plain}               % default: no special header
+
+\begin{document}
+
+\thispagestyle{fancy}           % first page should have special header
+
+% LECTURE MATERIAL STARTS HERE
+
+\section{The Subset-Sum Problem}
+\label{sec:knapsack}
+
+We begin by recalling the definition of the \emph{subset-sum}
+problem---sometimes also called the ``knapsack'' problem---in its
+search form.
+
+\begin{definition}[Subset-Sum]
+  \label{def:subset-sum}
+  Given positive integer weights $\veca=(a_1,\ldots,a_n)$ and
+  $s=\sum_{i=1}^n a_i x_i = \inner{\veca,\vecx} \in \Z$ for some bits
+  $x_i \in \bit$, find $\vecx=(x_1,\ldots,x_n)$.
+\end{definition}
+
+The subset-sum problem (in its natural decision variant) is
+\NP-complete. However, recall that \NP-completeness is a
+\emph{worst-case} notion, i.e., there does not appear to be an
+efficient algorithm that solves \emph{every} instance of subset-sum.
+Whether or not ``most instances'' can be solved efficiently, and what
+``most instances'' even means, is a separate question. As we will see
+below, certain ``structured'' instances of subset-sum are easily
+solved. Moreover, we will see that if the bit length of the $a_{i}$ is
+large enough relative to~$n$, then subset-sum is easy to solve for
+almost every choice of $\veca$, using LLL.
+
+\section{Knapsack Cryptography}
+\label{sec:knapsack-crypto}
+
+Motivated by the simplicity and \NP-completeness of subset-sum, in the
+late 1970's there were proposals to use it as the basis of public-key
+encryption schemes; see~\cite{odlyzko90:_rise_and_fall_of_knaps_crypt}
+for a survey. In these systems, the public key consists of weights
+$\veca=(a_1, \ldots a_{n})$ chosen from some specified distribution,
+and to encrypt a message $\vecx \in \bit^{n}$ one computes the
+ciphertext
+\[ s = \pkcenc_\veca(\vecx) = \inner{\veca, \vecx}. \] A major
+advantage of this kind of encryption algorithm is its efficiency:
+encrypting involves just summing up~$n$ integers, which is much faster
+than operations like modular exponentiation, as used in other
+cryptosystems. As for security, recovering the message $\vecx$ from
+the ciphertext is equivalent to solving the subset-sum instance
+$(\veca, s)$, which we would like to be hard.\footnote{For this
+  lecture, we ignore the fact that accepted notions of security for
+  encryption require much more than hardness of recovering the entire
+  message. However, such hardness is clearly necessary: if the message
+  is indeed easy to recover by an eavesdropper, then the scheme is
+  insecure.} Of course, the receiver who generated the public key
+needs to have a way of recovering the message, i.e., decrypting the
+ciphertext. This is achieved by embedding a secret ``trapdoor'' into
+the weights, which allows the receiver to convert the ciphertext into
+a different, easily solvable subset-sum instance.
+
+One class of easily solved subset-sum instances involves weights of
+the following type.
+\begin{definition}
+  \label{def:superincreasing}
+  A \emph{superincreasing sequence} $\veca=(a_{1}, \ldots, a_{n})$ is
+  one where $a_i > \sum_{j=1}^{i-1} a_j$ for all $i$.
+\end{definition}
+Given any superincreasing sequence $\veca$ and $s=\inner{\veca,
+  \vecx}$, it is easy to find $\vecx$: observe that $x_{n} = 1$ if and
+only if $s > \sum_{j=1}^{n-1} a_{i}$.  Having found $x_{n}$, we can
+then recursively solve the instance $(\veca' = (a_{1}, \ldots,
+a_{n-1}), s' = s - a_{n} x_{n})$, which still involves superincreasing
+weights.
+
+Of course, we cannot use a superincreasing sequence as the public key,
+or it would be trivial for an eavesdropper to decrypt. The final idea
+is to embed a superincreasing sequence into a ``random-looking''
+public key, along with a trapdoor that lets us convert the latter back
+to the former. The original method of doing so, proposed by Merkle and
+Hellman~\cite{DBLP:journals/tit/MerkleH78}, permutes and multiplies
+the weights by a random secret (modulo another random modulus), as
+follows:
+\begin{enumerate}[itemsep=0pt]
+\item Start with some superincreasing sequence
+  $\vecb=(b_1,\ldots,b_n)$.
+\item Choose some modulus $m > \sum_{i=1}^n b_i$, a uniformly random
+  multiplier $w \gets \Z_m^*$, and a uniformly random
+  permutation~$\pi$ on $\set{1,\ldots,n}$.
+\item Let $a_{i} = w \cdot b_{\pi(i)} \bmod m$.  The public key is
+  $\veca=(a_1, \ldots, a_{n})$, and the trapdoor is $(m, w, \pi)$.
+\end{enumerate}
+The encryption of a message $\vecx \in \bit^{n}$ is then
+\[ s = \pkcenc_\veca(\vecx) = \inner{\veca, \vecx} = w \cdot
+  \sum_{i=1}^n b_{\pi(i)} x_i. \] Given the trapdoor $(m,w,\pi)$, we
+can decrypt $s$ as follows: simply compute
+\[ s' := w^{-1} s = \sum_{i=1}^n b_{\pi(i)} x_i \bmod m, \] and then
+solve the subset-sum problem for the (permuted)
+superincreasing~$\vecb$ and $s'$, where we treat~$s'$ as its integer
+representative in $\set{0, \ldots, m-1}$. This works because
+$\sum_{i=1}^{n} b_{\pi(i)} x_{i} < m$, so~$s'$ is the true subset-sum
+(not modulo anything).
+
+It turns out that some care is needed in choosing the superincreasing
+sequence $b_1, \ldots, b_{n}$. For example, the natural choice of
+$b_{i} = 2^{i-1}$ ends up admitting some simple attacks. We won't
+discuss this issue in any detail, because it turns out that the
+Merkle-Hellman scheme (and almost all of its subsequent variants) can
+be broken using tools like LLL, regardless of what superincreasing
+sequence is used.
+
+\section{Lattice Attacks on Knapsack Cryptography}
+\label{sec:latt-attacks-knapsack}
+
+In 1982, Shamir~\cite{DBLP:journals/tit/Shamir84} showed how to break
+the basic Merkle-Hellman class of schemes in polynomial time. His
+attack uses Lenstra's polynomial-time algorithm for fixed-dimension
+integer programming, which uses LLL as a subroutine. (Shamir's attack
+has been extended to break many subsequent versions of the
+Merkle-Hellman system.) Shortly thereafter, Lagarias and
+Odlyzko~\cite{DBLP:journals/jacm/LagariasO85} gave an incomparable
+attack, later simplified by
+Frieze~\cite{DBLP:journals/siamcomp/Frieze86}, that solves almost all
+instances of ``low-density'' subset-sum problems.
+\begin{definition}
+  \label{def:density}
+  The \emph{density} of a subset-sum instance is
+  $n/\max_{i} \log a_i$.
+\end{definition}
+
+\begin{theorem}[Lagarias-Odlyzko, Frieze]
+  There is an efficient algorithm that, given uniformly random and
+  independent weights $a_{1},\ldots, a_{n} \in \set{1,\ldots, X}$,
+  where $X \geq 2^{n^2(1/2+\epsilon)}$ for some arbitrary constant
+  $\varepsilon > 0$, and $s = \inner{\veca,\vecx}$ for some arbitrary
+  $\vecx \in \bit^{n}$, outputs~$\vecx$ with probability
+  $1-2^{-n^{2} (\varepsilon - o(1))}$ over the choice of the~$a_{i}$.
+\end{theorem}
+Notice that the density of the above subset-sum instances is
+roughly~$2/n$.
+
+\begin{proof}
+  We are given a subset-sum instance
+  $(\veca = (a_{1}, \ldots, a_{n}), s = \inner{\veca, \vecx})$ for
+  some $\vecx \in \bit^{n}$. Without loss of generality, we may assume
+  that $s \geq (\sum_{i} a_i)/2$: if not, we replace $s$ by
+  $(\sum_{i=1}^{n} a_i) - s$, which corresponds to flipping all the
+  bits of $\vecx$. Note that this assumption implies that
+  $\vecx \neq \veczero$.
+    
+  The main idea is to define a lattice where not only is $\vecx$ a
+  shortest nonzero lattice vector, but all lattice vectors not
+  parallel to~$\vecx$ are much longer, by a factor of~$2^{n/2}$ or
+  more. Then because LLL gives a $2^{n/2}$-factor approximation to the
+  shortest lattice vector, it must yield~$\vecx$.
+
+  Let $B = \ceil{\sqrt{n\cdot 2^n}}$, and define the lattice
+  $\lat = \lat(\matB)$ using the basis
+  \[ \matB =
+    \begin{pmatrix}
+      1 & & & & \\
+        & 1 & & & \\
+        & & \ddots & & \\
+        & & & 1 & \\
+      -B a_1 & -B a_2 & \ldots & -B a_n & B s \\
+    \end{pmatrix}
+    \in \Z^{(n+1)\times (n+1)}. \] Clearly,
+  $\smlmat{\vecx \\ 0} \in \lat$. As we will see in a moment, the $B$
+  factor in the last row serves to amplify the norms of lattice
+  vectors that do not correspond to \emph{exact} equalities
+  $s = \inner{\veca,\vecz}$ for $\vecz \in \Z^{n}$.
+
+  The algorithm simply runs LLL on the above basis $\matB$ to obtain a
+  nonzero lattice vector whose length is within a $2^{n/2}$ factor of
+  $\lambda_{1}(\lat)$. The following analysis shows that with high
+  probability, the obtained vector is of the form
+  $k \smlmat{\vecx \\ 0}$ for some nonzero integer $k$, which reveals
+  the solution $\vecx \in \bit^{n}$.
+  
+  Notice that $\matB \vecz = \smlmat{\vecx \\ 0} \in \lat$ is a
+  nonzero lattice vector, and has norm at most~$\sqrt{n}$. Also, any
+  lattice vector has a final coordinate divisible by~$B$, and if this
+  coordinate is nonzero, then the vector has length at least
+  $B > 2^{n/2} \cdot \length{\vecx} \geq 2^{n/2} \cdot
+  \lambda_{1}(\lat)$. Therefore, LLL always yields some nonzero
+  lattice vector whose final coordinate is zero, and whose norm is at
+  most $2^{n/2} \sqrt{n}$. We next show that with high probability,
+  nonzero integer multiples of $\smlmat{\vecx \\ 0}$ are the
+  \emph{only} such lattice vectors; therefore, LLL must return one of
+  these.
+
+  Consider an arbitrary nonzero vector
+  $\smlmat{\vecz \\ 0} \in \Z^{n+1}$, where
+  $\length{\vecz} \leq 2^{n/2} \sqrt{n}$ and $\vecz$ is not an integer
+  multiple of~$\vecx$. We want to bound the probability that this
+  vector is in $\lat$, i.e., the probability that
+  $\smlmat{\vecz \\ 0} = \matB \smlmat{\vecz \\ z_{n+1}}$ for some
+  $z_{n+1} \in \Z$. In such an event, we have
+  \[ s \cdot \abs{z_{n+1}} = \abs{s \cdot z_{n+1}} =
+    \abs*{\inner{\veca,\vecz}} \leq \length{\vecz} \sum_{i=1}^n a_i
+    \leq 2 \length{\vecz} s, \] so $|z_{n+1}| \leq 2\length{\vecz}$.
+  Fix any such $z_{n+1}$. In order for $\smlmat{\vecz \\ 0}$ to be in
+  $\lat$, it must be the case that
+  \[
+    \inner{\veca, \vecz} = z_{n+1} \cdot s = z_{n+1}
+    \inner{\veca,\vecx}, \] which implies that
+  $\inner{\veca, \vecy} = 0$ where $\vecy = \vecz - z_{n+1} \vecx$.
+  Since $\vecz$ is not an integer multiple of $\vecx$, some
+  $y_{i} \neq 0$, and we can assume that without loss of generality
+  that $i=1$. Therefore, we must have
+  $a_{1} = -(\sum_{i=2}^{n} a_{i} y_{i})/y_{1}$.
+
+  With these observations, for any fixed $\vecz, z_{n+1}$ satisfying
+  the above constraints, the probability that
+  $\smlmat{\vecz \\ 0} \in \lat$ is bounded by
+  \[ \Pr_{a_i} \bracks*{\inner{\veca, \vecy} = 0} =
+    \Pr_{a_1}\bracks*{a_1 = -\parens[\Big]{\sum_{i=2}^n a_i
+        y_{i}}/y_{1}} \leq 1/X, \] because the $a_i$ are chosen
+  uniformly from $\set{1,\ldots,X}$. Finally, we apply the union bound
+  over all legal choices of $\vecz, z_{n+1}$. Because
+  $\length{\vecz} \leq 2^{n/2} \sqrt{n} \leq B$, each coordinate of
+  $\vecz$ has magnitude at most $B$, and similarly,
+  $\abs{z_{n+1}} \leq 2 \length{\vecz} \leq 2B$. Therefore, the number
+  of choices for $\vecz, z_{n+1}$ is at most
+  \[ (2B+1)^{n} \cdot (4B+1) \leq (5B)^{n+1} \leq
+    2^{n^{2}(1/2+o(1))}. \] Because $X = 2^{n^{2}(1/2+\epsilon)}$ for
+  some constant $\epsilon > 0$, the probability that there exists any
+  $\smlmat{\vecz \\ 0} \in \lat$ satisfying the above constraints is
+  at most $2^{-n^{2}(\varepsilon - o(1))}$, as claimed.
+\end{proof}
+
+\paragraph{Variants.}
+
+We have shown that, except for integer multiples of
+$\smlmat{\vecx \\ 0}$, no lattice vector has length less than
+$2^{n/2} \sqrt{n}$. So, LLL's approximation factor of $2^{n/2}$
+guarantees that it returns $k \smlmat{\vecx \\ 0}$ for some nonzero
+integer~$k$. Inspecting the analysis, the~$2^{n/2}$ factor corresponds
+to the density bound of~$2/n$.
+
+What if we had an algorithm that achieves a better approximation
+factor, e.g., one that solves $\svp$ \emph{exactly}, or to within a
+$\poly(n)$ factor? For a density of about $1/1.6$, following the same
+kind of argument, but with tighter bounds on the number of allowed
+$\vecz$, one can show that $\pm \smlmat{\vecx \\ 0}$ are the
+\emph{only} shortest vectors in the lattice (with high probability).
+Similarly, for density $1/\Theta(\log n)$, one can show that all
+lattice vectors not parallel to~$\smlmat{\vecx \\ 0}$ are some
+$\poly(n)$ factor longer than it. However, at densities above~$2/3$ or
+so, $\smlmat{\vecx \\ 0}$ may no longer be a shortest nonzero vector
+in the lattice, so even an exact-$\svp$ oracle might not reveal a
+subset-sum solution.
+    
+\bibliography{common/lattices,common/crypto}
+\bibliographystyle{common/alphaabbrvprelim}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
