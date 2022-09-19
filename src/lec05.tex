@@ -192,13 +192,13 @@ roughly~$2/n$.
         & 1 & & & \\
         & & \ddots & & \\
         & & & 1 & \\
-      -B a_1 & -B a_2 & \ldots & -B a_n & B s \\
+      B a_1 & B a_2 & \ldots & B a_n & -B s \\
     \end{pmatrix}
     \in \Z^{(n+1)\times (n+1)}. \] Clearly,
   $\smlmat{\vecx \\ 0} \in \lat$. As we will see in a moment, the $B$
   factor in the last row serves to amplify the norms of lattice
   vectors that do not correspond to \emph{exact} equalities
-  $s = \inner{\veca,\vecz}$ for $\vecz \in \Z^{n}$.
+  $\inner{\veca,\vecz} = z_{n+1} s$ for integral $\vecz, z_{n+1}$.
 
   The algorithm simply runs LLL on the above basis $\matB$ to obtain a
   nonzero lattice vector whose length is within a $2^{n/2}$ factor of
@@ -207,7 +207,8 @@ roughly~$2/n$.
   $k \smlmat{\vecx \\ 0}$ for some nonzero integer $k$, which reveals
   the solution $\vecx \in \bit^{n}$.
   
-  Notice that $\matB \vecz = \smlmat{\vecx \\ 0} \in \lat$ is a
+  Notice that
+  $\matB \smlmat{\vecx \\ 1} = \smlmat{\vecx \\ 0} \in \lat$ is a
   nonzero lattice vector, and has norm at most~$\sqrt{n}$. Also, any
   lattice vector has a final coordinate divisible by~$B$, and if this
   coordinate is nonzero, then the vector has length at least
@@ -219,11 +220,10 @@ roughly~$2/n$.
   \emph{only} such lattice vectors; therefore, LLL must return one of
   these.
 
-  Consider an arbitrary nonzero vector
-  $\smlmat{\vecz \\ 0} \in \Z^{n+1}$, where
-  $\length{\vecz} \leq 2^{n/2} \sqrt{n}$ and $\vecz$ is not an integer
-  multiple of~$\vecx$. We want to bound the probability that this
-  vector is in $\lat$, i.e., the probability that
+  Fix an arbitrary nonzero vector $\smlmat{\vecz \\ 0} \in \Z^{n+1}$,
+  where $\length{\vecz} \leq 2^{n/2} \sqrt{n}$ and $\vecz$ is not an
+  integer multiple of~$\vecx$. We want to bound the probability that
+  this vector is in $\lat$, i.e., that
   $\smlmat{\vecz \\ 0} = \matB \smlmat{\vecz \\ z_{n+1}}$ for some
   $z_{n+1} \in \Z$. In such an event, we have
   \[ s \cdot \abs{z_{n+1}} = \abs{s \cdot z_{n+1}} =
@@ -243,15 +243,17 @@ roughly~$2/n$.
   With these observations, for any fixed $\vecz, z_{n+1}$ satisfying
   the above constraints, the probability that
   $\smlmat{\vecz \\ 0} \in \lat$ is bounded by
-  \[ \Pr_{a_i} \bracks*{\inner{\veca, \vecy} = 0} =
+  \[ \Pr_{\veca} \bracks*{\inner{\veca, \vecy} = 0} =
     \Pr_{a_1}\bracks*{a_1 = -\parens[\Big]{\sum_{i=2}^n a_i
         y_{i}}/y_{1}} \leq 1/X, \] because the $a_i$ are chosen
-  uniformly from $\set{1,\ldots,X}$. Finally, we apply the union bound
-  over all legal choices of $\vecz, z_{n+1}$. Because
+  uniformly from $\set{1,\ldots,X}$.
+
+  Finally, we apply the union bound over all relevant choices of
+  $\vecz, z_{n+1}$. Because
   $\length{\vecz} \leq 2^{n/2} \sqrt{n} \leq B$, each coordinate of
   $\vecz$ has magnitude at most $B$, and similarly,
   $\abs{z_{n+1}} \leq 2 \length{\vecz} \leq 2B$. Therefore, the number
-  of choices for $\vecz, z_{n+1}$ is at most
+  of choices for $\vecz, z_{n+1}$ is (crudely) upper bounded by
   \[ (2B+1)^{n} \cdot (4B+1) \leq (5B)^{n+1} \leq
     2^{n^{2}(1/2+o(1))}. \] Because $X = 2^{n^{2}(1/2+\epsilon)}$ for
   some constant $\epsilon > 0$, the probability that there exists any
@@ -263,16 +265,21 @@ roughly~$2/n$.
 
 We have shown that, except for integer multiples of
 $\smlmat{\vecx \\ 0}$, no lattice vector has length less than
-$2^{n/2} \sqrt{n}$. So, LLL's approximation factor of $2^{n/2}$
-guarantees that it returns $k \smlmat{\vecx \\ 0}$ for some nonzero
-integer~$k$. Inspecting the analysis, the~$2^{n/2}$ factor corresponds
-to the density bound of~$2/n$.
+$2^{n/2} \sqrt{n}$ (with high probability). So, LLL's approximation
+factor of $2^{n/2}$ guarantees that it returns $k \smlmat{\vecx \\ 0}$
+for some nonzero integer~$k$. Inspecting the analysis, the~$2^{n/2}$
+approximation factor corresponds to the density bound of~$2/n$. More
+generally, for an approximation factor~$\gamma$, to dispense with
+lattice vectors having a nonzero final coordinate we
+set~$B \approx \gamma$, so the union bound is taken over
+$\approx B^{n}$ vectors, so we set $X \approx B^{n}$, giving a density
+of $n/\log X \approx 1/\log B \approx 1/\log \gamma$.
 
 What if we had an algorithm that achieves a better approximation
 factor, e.g., one that solves $\svp$ \emph{exactly}, or to within a
 $\poly(n)$ factor? For a density of about $1/1.6$, following the same
-kind of argument, but with tighter bounds on the number of allowed
-$\vecz$, one can show that $\pm \smlmat{\vecx \\ 0}$ are the
+kind of argument, but with tighter bounds on the number of
+allowed~$\vecz$, one can show that $\pm \smlmat{\vecx \\ 0}$ are the
 \emph{only} shortest vectors in the lattice (with high probability).
 Similarly, for density $1/\Theta(\log n)$, one can show that all
 lattice vectors not parallel to~$\smlmat{\vecx \\ 0}$ are some
