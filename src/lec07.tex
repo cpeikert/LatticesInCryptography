@@ -1,0 +1,484 @@
+\documentclass[11pt]{article}
+
+\usepackage{fullpage}
+\usepackage{newtxtext}
+\usepackage{microtype}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
+\usepackage[pagebackref=true]{hyperref} % must set backref at load time
+\usepackage{fancyhdr}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usepackage{import}
+
+% load after hyperref, algpseudocode to get proper behavior
+\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
+
+\import{common/}{head.tex}
+
+% VARIABLES
+
+\newcommand{\lecturenum}{7}
+\newcommand{\lecturetopic}{(non-)NP-Hardness of SVP, CVP}
+\newcommand{\scribename}{Yi Ding}
+
+% END OF VARIABLES
+
+\import{common/}{lechead.tex}
+\lecheader                      % execute lecture commands
+
+\pagestyle{plain}               % default: no special header
+
+\begin{document}
+
+\thispagestyle{fancy} % first page should have special header
+
+% LECTURE MATERIAL STARTS HERE
+
+In this lecture we will see complexity-theoretic lower and upper
+bounds for $\svp$ and $\cvp$. On the one hand, they are $\NP$-hard
+(under suitable types of reductions) in their exact versions, and even
+for small approximation factors. On the other hand, there is good
+evidence \emph{against} the $\NP$-hardness of their approximate
+versions for factors $\gamma \geq \sqrt{n/\log n}$.
+
+\section{NP-Hardness of CVP and SVP}
+\label{sec:np-hardness-cvp-svp}
+
+\subsection{NP-Hardness of the Closest Vector Problem}
+\label{sec:np-hardness-cvp}
+
+First let us recall the decisional version of the (approximate)
+Closest Vector Problem.
+
+\begin{definition}[CVP, decision version]
+  \label{def:gapcvp}
+  For an approximation factor $\gamma = \gamma(n) \geq 1$, an instance
+  of $\gapcvp_{1}$ is a basis~$\matB$ of a lattice
+  $\lat = \lat(\matB)$, a target point $\vect \in \R^n$, and a
+  distance $d \in \R$. It is a YES instance if
+  $\dist(\vect, \lat) \leq d$, and is a NO instance if
+  $\dist(\vect, \lat) > \gamma \cdot d$.
+\end{definition}
+The problem is equivalent to asking whether the coset $\vect + \lat$
+has an element of length at most $d$ or not.
+
+\begin{theorem}[van Emde Boas~\cite{emde81:_anoth_np}]
+  \label{thm:gapcvp1-np-complete}
+  $\gapcvp_{1}$ is $\NP$-complete.
+\end{theorem}
+
+\begin{proof}
+  To show that a problem is $\NP$-complete, we need to show that it is
+  in $\NP$, and also that it is $\NP$-hard. The former is easy: a
+  witness~$w$ for a YES instance $(\matB, \vect, d)$ is a lattice
+  vector $\vecv \in \lat(\matB)$ such that
+  $\length{\vect - \vecv} \leq d$, which by definition exists for a
+  YES instance and does not exist for a NO instance. Clearly, the
+  conditions can be efficiently verified.\footnote{One technical
+    subtlety is that the witness must have bit length which is
+    polynomial in the instance length. This holds because the bit
+    length of~$\vecv$ is bounded by the sum of those of~$\vect$
+    and~$d$.}
+
+  Next we need to show $\NP$-hardness, i.e., we need to give a
+  reduction from some $\NP$-hard problem to $\gapcvp_{1}$. We reduce
+  from the subset-sum problem, which is a natural choice since it has
+  a very similar linear structure to lattice problems. Recall that the
+  subset-sum problem is: given $\veca = (a_1, \ldots, a_n) \in \Z^n$
+  and $S \in \Z$, decide if there exists $\vecx \in \bit^{n}$ such
+  that $\inner{\veca, \vecx} = \sum_{i=1}^{n} a_{i} x_{i} = S$. Our
+  reduction takes a subset-sum instance $(a_1, \ldots, a_n, S)$ as
+  input, and outputs the $\gapcvp_{1}$ instance $(\matB, \vect, d)$,
+  where
+  \[ \matB =
+    \begin{pmatrix}
+      a_1 & a_2 & \cdots & a_n \\
+      2 &   &   &   \\
+          & 2 &   &   \\
+          &   & \ddots &   \\
+          &   &   & 2
+    \end{pmatrix} \in \Z^{(n+1) \times n}, \quad
+    \vect =
+    \begin{pmatrix}
+      S \\
+      1 \\
+      1 \\
+      \vdots \\
+      1
+    \end{pmatrix} \in \Z^{n+1}, \quad d = \sqrt{n}. \]
+
+  We need to show that the above is a YES instance of $\gapcvp_{1}$ if
+  and only if the given subset-sum instance is a YES instance. In one
+  direction, suppose the subset-sum instance has a solution
+  $\vecx \in \bit^{n}$. Then for the lattice vector
+  $\vecv = \matB \vecx$, we have
+  \[ \vecv - \vect =
+    \begin{pmatrix}
+      S \\
+      2x_1 \\
+      2x_2 \\
+      \vdots \\
+      2x_n
+    \end{pmatrix} -
+    \begin{pmatrix}
+      S \\
+      1 \\
+      1 \\
+      \vdots \\
+      1
+    \end{pmatrix} =
+    \begin{pmatrix}
+      0 \\
+      \pm 1 \\
+      \pm 1 \\
+      \vdots \\
+      \pm 1
+    \end{pmatrix}, \]
+  so $\length{\vecv - \vect} = \sqrt{n}$ and
+  $(\matB, \vect, d)$ is a YES instance of $\gapcvp_{1}$.
+
+  In the other direction, suppose that there exists some lattice
+  vector $\vecv = \matB \vecx$ for $\vecx \in \Z^{n}$ such that
+  $\length{\vecv - \vect} \leq \sqrt{n}$. Since the last~$n$ entries
+  of~$\vecv$ are even, the last~$n$ entries of $\vecv-\vect$ are odd,
+  and hence must all be $\pm 1$ because
+  $\length{\vecv-\vect} \leq \sqrt{n}$. Therefore,
+  $\vecx \in \bit^{n}$. Moreover, the first entry of $\vecv-\vect$
+  must be zero (against because $\length{\vecv-\vect} \leq \sqrt{n}$),
+  so~$\vecx$ is a solution to the subset-sum instance.
+\end{proof}
+
+The above theorem is presented only for the $\ell_2$ norm. It is not
+difficult to generalize it to the $\ell_p$ norm for any $p > 1$,
+including $p = \infty$.
+
+\subsection{NP-Hardness of the Shortest Vector Problem}
+\label{sec:np-hardness-svpinfty}
+
+One might wonder whether similar methods can be used to prove that the
+decisional Shortest Vector Problem ($\gapsvp_{1}$) is $\NP$-complete.
+For the~$\ell_{2}$ norm, it turns out to be \emph{much more
+  challenging} to show this---in fact, it was not until 1998 that
+Ajtai showed $\NP$-hardness, but under a \emph{randomized}
+reduction~\cite{DBLP:conf/stoc/Ajtai98}. This means that an efficient
+(possibly randomized) algorithm for $\gapsvp_{1}$ would imply that
+$\NP \subseteq \class{RP}$ (but not necessarily that $\NP = \P$). Even
+today, it is still not known whether $\gapsvp_{1}$ in the~$\ell_{2}$
+norm is $\NP$-hard under a \emph{deterministic} reduction!
+
+Here we show a much easier result, that $\gapsvp_{1}$ is $\NP$-complete
+in the $\ell_{\infty}$ norm (also known as max norm), defined as
+$\length{\vecx}_{\infty} = \max_{i} \abs{x_{i}}$.
+
+\begin{definition}(SVP in $\ell_{\infty}$, decision version)
+  \label{def:gapsvp-inf}
+  For an approximation factor $\gamma = \gamma(n) \geq 1$, an instance
+  of $\gapsvp_{\gamma}^{(\infty)}$ is a basis $\matB$ of a lattice
+  $\lat= \lat(\matB)$ and a distance $d \in \R$. It is a YES instance
+  if the minimum distance of $\lat$ in $\ell_{\infty}$ norm is at
+  most~$d$, i.e., if $\lambda_{1}^{(\infty)}(\lat) \leq d$, and is a
+  NO instance if $\lambda_{1}^{(\infty)}(\lat) > \gamma \cdot d$.
+\end{definition}
+
+\begin{theorem}[van Emde Boas~\cite{emde81:_anoth_np}]
+  \label{thm:gapsvp1-infty}
+  $\gapsvp_{1}^{(\infty)}$ is $\NP$-complete.
+\end{theorem}
+
+\begin{proof}
+  Membership in $\NP$ is easy to see: a witness for instance
+  $(\matB, d)$ is a vector $\vecv \in \lat(\matB)$ for which
+  $\length{\vecv}_{\infty} \leq d$, which can be efficiently checked.
+  
+  For $\NP$-hardness, we reduce from the $\NP$-hard ``weak partition''
+  problem, which is a homogeneous variant of the subset-sum problem.
+  The weak partition problem is: given
+  $\veca = (a_1, \ldots, a_n) \in \Z^n$, determine whether there exist
+  disjoint sets $X, Y \subseteq \set{1, \ldots, n}$, not both empty,
+  such that $\sum_{i \in X} a_i = \sum_{i \in Y} a_i$. Equivalently,
+  it asks whether there is a nonzero $\vecx \in \set{-1, 0, +1}^{n}$
+  such that $\inner{\veca, \vecx} = 0$. (The indices of the $-1$
+  entries of~$\vecx$ correspond to the elements of~$X$, and the
+  indices of the $+1$ entries correspond to the elements of~$Y$.)
+
+  The reduction works as follows: given an instance
+  $\veca = (a_{1}, \ldots, a_{n})$ of the weak partition problem, it
+  outputs the following instance $(\matB, d)$ of
+  $\gapsvp_{1}^{(\infty)}$:
+  \[ \matB =
+    \begin{pmatrix}
+      2a_1 & 2a_{2} & \cdots & 2a_n \\
+      1 & &   &   \\
+           & 1 & & \\
+           & & \ddots &   \\
+           & &  & 1 
+    \end{pmatrix} \in \Z^{(n+1) \times n}, \quad d=1. \]
+
+  We need to show that the given weak partition instance is a YES
+  instance if and only if the above $\gapsvp_{1}^{(\infty)}$ instance
+  is a YES instance. In one direction, suppose that there exists a
+  nonzero solution $\vecx \in \set{0, \pm 1}^{n}$ to the weak
+  partition instance, so that $\inner{\veca, \vecx} = 0$. Then the
+  lattice vector $\matB \vecx \in \lat(\matB)$ is nonzero and
+  has~$\ell_{\infty}$ norm $\length{\matB \vecx}_{\infty} = 1$, as
+  desired. In the other direction, suppose there exists a nonzero
+  lattice vector
+  $\vecv = \matB \vecx = \smlmat{2\inner{\veca,\vecx} \\ \vecx} \in
+  \Z^{n+1}$ for $\vecx \in \Z^{n}$ such that
+  $\length{\vecv}_{\infty} \leq 1$. The first entry
+  $2\inner{\veca,\vecx}$ of $\vecv$ is even, so it must be zero. The
+  remainder of~$\vecv$ is just the vector~$\vecx$, so we must have
+  $\vecx \in \set{0, \pm 1}^{n}$ and $\vecx \neq \veczero$. This means
+  that~$\vecx$ is a solution to the weak partition instance, which
+  completes the proof.
+\end{proof}
+
+\subsection{Other Results}
+\label{sec:other-results}
+
+As mentioned above, in 1998 Ajtai~\cite{DBLP:conf/stoc/Ajtai98} showed
+that $\gapsvp_{1}$ in the~$\ell_{2}$ norm is $\NP$-complete under a
+randomized reduction. This has since been substantially improved: over
+a series of
+works~\cite{DBLP:journals/siamcomp/Micciancio00,DBLP:journals/jacm/Khot05,DBLP:conf/stoc/HavivR07},
+it has been shown that $\gapsvp_{c}$ in~$\ell_{2}$ is $\NP$-complete
+(still under randomized reduction) for any \emph{constant}
+approximation factor~$\gamma = O(1)$, and even under nearly polynomial
+factors $\gamma = 2^{\log^{1-\epsilon} n}$ for any constant
+$\epsilon > 0$ if~$\NP$ cannot be solved in (randomized)
+quasi-polynomial $2^{\poly(\log n)}$ time. For CVP, the state of the
+art is that $\gapcvp_{\gamma}$ is $\NP$-complete under deterministic
+reduction for factors as large as
+$\gamma = n^{\Omega(1/{\log\log
+    n})}$~\cite{DBLP:journals/jcss/AroraBSS97}, which is ``almost
+polynomial'' in~$n$.
+
+A natural question is, how far might we hope to increase the
+approximation factors $\gamma$ for the $\NP$-hardness of $\gapsvp$ and
+$\gapcvp$? There are (at least) two answers:
+\begin{enumerate}
+\item Clearly, we should not expect to have $\NP$-hardness for very large
+  factors $\gamma \geq 2^n$, because $\gapsvp_{\gamma}$ and
+  $\gapcvp_{\gamma}$ for such factors can be solved in polynomial time
+  using LLL.
+\item More interestingly, we should not expect to have $\NP$-hardness for
+  factors $\gamma \geq \sqrt{n/\log n}$. We will show why this is the
+  case in the next section.
+\end{enumerate}
+
+\section{The Goldreich--Goldwasser Protocol}
+\label{sec:gg-protocol}
+
+\newcommand{\cogapcvp}{\cproblem{coGapCVP}}
+
+Clearly, $\gapcvp_\gamma \in \NP$ for any $\gamma \geq 1$. To show
+that $\gapcvp_{\gamma}$ is not likely to be $\NP$-complete for
+$\gamma \geq \sqrt{n/\log n}$, Goldreich and
+Goldwasser~\cite{DBLP:journals/jcss/GoldreichG00} proved that it
+belongs to the complexity class $\coAM$. That is, the
+\emph{complement} problem $\cogapcvp_{\gamma}$---which simply flips
+the YES and NO instances of $\gapcvp_{\gamma}$---is in the class $\AM$
+of problems that have ``Arthur--Merlin protocols,'' defined below.
+
+The Goldreich--Goldwasser result is significant because if
+$\gapcvp_{\gamma}$ was $\NP$-complete for some
+$\gamma \geq \sqrt{n/\log n}$, then it would follow that
+$\NP \subseteq \coAM$.\footnote{There are some technical subtleties
+  here related to the fact that $\gapcvp_{\gamma}$ is a \emph{promise}
+  problem, but the chain of reasoning holds for a wide class of
+  reductions by which $\gapcvp_{\gamma}$ might be shown
+  $\NP$-complete.} It is known that this would imply the collapse of
+the polynomial-time hierarchy, which is considered very unlikely.
+Therefore, this can be considered strong evidence (but not proof!)
+that $\gapcvp_{\sqrt{n/\log n}}$ is not $\NP$-complete.
+
+\subsection{$\cogapcvp_{\sqrt{n/\log n}} \in \AM$}
+\label{sec:cogapcvp-in-am}
+
+Informally, the complexity class $\AM$ consists of decision/promise
+problems for which an unbounded prover can convince an efficient
+randomized verifier that an instance is a YES instance, but even a
+(possibly malicious) unbounded prover cannot reliably convince the
+verifier on a NO instance.
+
+\begin{definition}[$\AM$]
+  \label{def:AM}
+  A promise problem $L = (L_{\text{YES}}, L_{\text{NO}})$ is in $\AM$
+  if there exists a constant-round protocol between a probabilistic
+  polynomial-time Turing machine $A$ (``Arthur'') and a
+  computationally unbounded Turing machine $M$ (``Merlin'') with the
+  following properties:
+  \begin{itemize}
+  \item \emph{Completeness:} for any YES instance
+    $x \in L_{\text{YES}}$, we have that
+    $\Pr[A(x) \leftrightarrow M(x) \text{ accepts}] = 1$, i.e., $M$
+    always convinces $A$ to accept.
+
+  \item \emph{Soundness:} for any NO instance $x \in L_{\text{NO}}$
+    and for any unbounded~$M^*$, we have that
+    $\Pr[A(x) \leftrightarrow M^*(x) \text{ accepts}] \leq 1-
+    1/\poly(\len{x})$, i.e., $A$ rejects with some noticeable
+    probability.
+  \end{itemize}
+\end{definition}
+It is straightforward to show that by repeating the protocol in
+parallel a polynomial number of times, the ``soundness error'' (i.e.,
+the probability that~$A$ accepts on a NO instance) can be made very
+small, e.g., $2^{-n}$.
+
+\begin{theorem}[Goldreich--Goldwasser~\cite{DBLP:journals/jcss/GoldreichG00}]
+  \label{thm:gapcvp-coAM}
+  $\cogapcvp_{\gamma} \in \AM$ for $\gamma = \sqrt{n/\log n}$ (or more
+  generally, any $\gamma = \Omega(\sqrt{n \log n})$).
+\end{theorem}
+
+To prove this theorem, we need to give an Arthur--Merlin protocol which
+causes Arthur to accept whenever the target point~$\vect$ is
+\emph{far} from the given lattice~$\lat$, i.e., when all the vectors
+in the coset $\vect+\lat$ have length more than $\gamma d$ (these are
+the YES instances of $\cogapcvp$). On the other hand, when the coset
+$\vect+\lat$ contains a vector of length at most~$d$ (a NO instance of
+$\cogapcvp$), Arthur should reject with noticeable probability. Note
+that it's not obvious how to convincingly prove the \emph{absence} of
+a short vector in a lattice coset; this is where \emph{interaction}
+with an unbounded prover helps.
+
+The intuition behind the protocol is as follows. Arthur first flips a
+fair coin. If it comes up heads, he chooses a ``uniformly random''
+point in the lattice~$\lat$; if it comes up tails, he chooses a
+``uniformly random'' point in the coset $\vect + \lat$. Let~$\vecw$
+denote the resulting point. Arthur then randomly chooses uniform
+``noise''~$\vece$ from the ball of radius $(\gamma d)/2$, and sends
+$\vecx = \vecw + \vece$ to Merlin. Merlin---who, to recall, is
+computationally unbounded---is supposed to figure out whether Arthur's
+coin came up heads or not, i.e., whether $\vecw \in \lat$ or
+$\vecw \in \vect + \lat$. Under what conditions can Merlin always do
+this, versus necessarily having some noticeable probability of
+failing?
+
+Notice that if $\dist(\vect, \lat) \geq \gamma d$, then there is
+\emph{no overlap} between the balls centered at the points of~$\lat$
+and ones centered at the points of $\vect + \lat$, so Merlin can
+always give the correct answer. On the other hand, if
+$\dist(\vect, \lat) \leq d$, we will argue that the \emph{overlap}
+between the two collections of balls is relatively large, hence Merlin
+must make a mistake with some noticeable probability. We now formalize
+the protocol and its analysis to prove the theorem. In particular, we
+eliminate the (mathematically problematic) need for a ``uniformly
+random'' lattice point by working \emph{modulo the lattice}, using the
+fundamental parallelepiped of the input basis as a fundamental region.
+
+\begin{proof}[Proof of \cref{thm:gapcvp-coAM}]
+  The Arthur--Merlin protocol is as follows. Arthur and Merlin are
+  given some $\coGapCVP$ instance $(\matB, \vect, d)$ as input. Arthur
+  chooses a bit $b \in \bit$ and $\vece \leftarrow r \bar{\cal{B}}$
+  uniformly at random, where $r = (\gamma d/2)$ and $\bar{\cal{B}}$ is
+  the closed unit ball. Arthur then sends the vector
+  \[ \vecx := (b\cdot \vect + \vece) \bmod \matB \] to Merlin,
+  i.e.,~$\vecx$ is the unique element of
+  $(b \vect + \vece + \lat(\matB)) \cap \piped(\matB)$ (which is easy
+  to compute). If $\dist(\vecx, \lat) \leq r$, Merlin returns
+  $b' = 0$; otherwise he returns $b'=1$. Arthur accepts if $b' = b$.
+
+  First we show completeness. Let $(\matB, \vect, d)$ be a YES
+  instance of $\cogapcvp_{\gamma}$, so $\dist(\vect, \lat) > \gamma d$
+  where $\lat=\lat(\matB)$. By the triangle inequality, for \emph{any}
+  $\vecx \in \R^{n}$, at most one of $\dist(\vecx, \lat) \leq r$ and
+  $\dist(\vecx - \vect, \lat) \leq r$ can hold. When $b=0$, we have
+  $\vecx = \vece \bmod \matB$, so
+  $\dist(\vecx,\lat) = \dist(\vece,\lat) \leq r$, hence Merlin
+  correctly returns $b'=0$. Similarly, when $b=1$, we have
+  $\vecx = \vect + \vece \bmod \matB$, so
+  $\dist(\vecx - \vect, \lat) \leq r$, so $\dist(\vecx,\lat) > r$ and
+  Merlin correctly return $b'=1$.
+
+  Proving soundness is more involved. Let $(\matB, \vect, d)$ be a NO
+  instance, so $\dist(\vect,\lat) \leq d$ where $\lat=\lat(\matB)$; we
+  need to show that Merlin answers incorrectly with some noticeable
+  $1/\poly(n)$ probability.
+
+  To see this, let $\vecv \in \lat$ be a lattice vector for which
+  $\length{\vect'} \leq d$ where $\vect' = \vect - \vecv$. Now observe
+  that Arthur's message~$\vecx$ in the protocol is \emph{identically
+    distributed} to one generated in a slightly different way in the
+  case $b=1$, as $\vecx := \vect' + \vece \bmod \matB$ (the case $b=0$
+  is unchanged). This is simply because $\vect' + \vece \bmod \matB$
+  equals $\vect + \vece \bmod \matB$ for any $\vecv \in \lat$ and
+  $\vece \in \R^{n}$. Now let
+  $I = r \bar{\cal{B}} \cap (\vect' + r \bar{\cal{B}})$ be the
+  intersection of the balls centered at the origin and at~$\vect'$,
+  and observe that for any $\vecy \in I$ (even before reducing
+  modulo~$\matB$), it is equally likely that Arthur chose $b=0$ and
+  $\vece=\vecy$ versus $b=1$ and $\vece=\vecy-\vect'$.\footnote{This
+    is not quite rigorous, because we are conditioning on an event of
+    probability zero. This can be fixed by instead using measure.} So,
+  in this case Merlin cannot do any better than a random guess, which
+  succeeds with probability~$1/2$. Therefore, the probability that
+  Merlin answers incorrectly is at least half of
+  \begin{equation}
+    \label{eq:ratio-ball-intersection}
+    \frac{\vol(r \bar{\cal{B}} \cap (\vect' + r
+      \bar{\cal{B}}))}{\vol(r \bar{\cal{B}})} .
+  \end{equation}
+
+  Therefore, it suffices to give a lower bound on the above quantity,
+  which by rescaling is the fraction of overlap between two
+  $n$-dimensional balls of unit radius whose centers are
+  $\delta \leq 2/\gamma$ apart. It is not hard to see that the
+  intersection contains a cylinder~$C$ with radius $\sqrt{1-\delta^2}$
+  and height~$\delta$. The volume of an $n$-dimensional unit ball is
+  known to be
+  \[ V_n = \frac{\pi^{n/2}}{(n/2)!} , \] where the generalized
+  factorial function satisfies $0! = 1$, $n! = n(n-1)!$ for all real
+  $n \geq 1$, and $(1/2)! = \sqrt{\pi}$. We also need the fact that
+  $(n+\frac{1}{2})!/{n!} = \Theta(\sqrt{n})$.
+
+  Therefore, the quantity in \cref{eq:ratio-ball-intersection} is at
+  least
+  \begin{align*}
+    \frac{\delta \cdot (1-\delta^{2})^{(n-1)/2} \cdot V_{n-1}}{V_{n}}
+    &= \frac{\delta \cdot (1-\delta^{2})^{(n-1)/2} \cdot \pi^{(n-1)/2}
+      \cdot (n/2)!}{(n/2-1/2)! \cdot \pi^{n/2}} \\
+    &= (1-\delta^{2})^{(n-1)/2} \cdot \Theta(\delta \sqrt{n}).
+  \end{align*}
+  
+  Recalling that $(1-1/n)^n = 1/O(1)$ (indeed, it approaches $1/e$
+  as~$n$ grows), we have
+  $(1 - (\log n)/n)^{n} = 1/O(1)^{\log n} = 1/\poly(n)$. So for any
+  $\delta = O(\sqrt{(\log n)/n})$ and hence any
+  $\gamma = \Omega(\sqrt{n/\log n})$, the above quantity is
+  $1/\poly(n)$, as needed.
+\end{proof}
+
+\subsection{Summary}
+
+To summarize:
+\begin{itemize}
+\item $\gapcvp_{n^{1/\log \log n}}$ is $\NP$-complete.
+\item $\gapcvp_{\sqrt{n/\log n}} \in \coAM$, so it is unlikely to be
+  $\NP$-hard.
+\item A work of Aharonov and
+  Regev~\cite{DBLP:journals/jacm/AharonovR05} (which we will cover
+  later in this course) showed that $\gapcvp_{\sqrt{n}}$ is in
+  $\coNP$, and hence is unlikely to be $\NP$-hard.
+\item $\gapcvp_{2^n}$ is in~$\P$, due to the LLL algorithm.
+\end{itemize}
+% From Gap-CVP$_{n}$ to Gap-CVP$_{2^n}$ is where we can
+% construction cryptosystems.
+% Meanwhile finding the right boundary of
+% $\gamma$ between ${n^{\frac{1}{\log \log n}}}$ and
+% ${\sqrt{\frac{n}{\log n}}}$ that transforms Gap-CVP$_{\gamma}$ from
+% NP-complete to most unlikely NP-complete is still an open question.
+
+\bibliography{common/lattices,common/crypto}
+\bibliographystyle{common/alphaabbrvprelim}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
