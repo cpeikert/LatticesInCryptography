@@ -67,7 +67,7 @@ $\int_{\R^n} \abs{f(\vecx)} \, d\vecx < \infty$.
 \begin{definition}
   For a $\Z^{n}$-periodic function $g \colon \R^{n}/\Z^{n} \to \C$,
   its Fourier series $\hat{g} \colon \Z^{n} \to \C$ is defined as
-  \[ \hat{f}(\vecw) = \int_{\vecx\in \R^n / \Z^n} f(\vecx) \exp(-2 \pi
+  \[ \hat{g}(\vecw) = \int_{\vecx\in \R^n / \Z^n} g(\vecx) \exp(-2 \pi
     i\inner{\vecx,\vecw}) \, d\vecx . \]
 \end{definition}
 
@@ -203,11 +203,11 @@ following claim establishes that~$\lat^*$ actually is a lattice.
 
 \begin{proof}
   By Minkowski's inequality we have
-  $\lambda_1(\lat) \leq \sqrt{n} \det(\lat^{1/n})$ and
+  $\lambda_1(\lat) \leq \sqrt{n} \det(\lat)^{1/n}$ and
   $\lambda_1(\lat^*) \leq \sqrt{n}\det(\lat^*)^{1/n}$, so by
   \cref{clm:dual-determinant},
   \[ \lambda_{1}(\lat) \cdot \lambda_{1}(\lat^{*}) \leq n \cdot
-    \det(\lat)^{1/n} \cdot \det(\lat^*)^{1/n} \leq n . \]
+    \det(\lat)^{1/n} \cdot \det(\lat^*)^{1/n} = n . \]
 \end{proof}
 
 \subsection{Properties of the Fourier Series}
