@@ -37,7 +37,7 @@
 
 % LECTURE MATERIAL STARTS HERE
 
-\section{Fourier transform and Fourier series in $n$-dimension}
+\section{Fourier Transform and Series}
 
 Recall from last lecture that in the one dimensional case, the Fourier
 transform of a function $f \colon \R \to \C$ is the function
@@ -236,7 +236,7 @@ $\lat$-translates, i.e., define $g \colon \R^{n}/\lat \to \C$ as
   \vecv) .
 \end{equation}
 
-\begin{lemma}
+\begin{lemma}[Periodization lemma]
   \label{lem:periodize-series}
   The Fourier series of~$g$ is
   $\hat{g}(\vecw) = \hat{f}(\vecw) / \det(\lat) = \det(\lat^{*})
@@ -249,14 +249,15 @@ $\lat$-translates, i.e., define $g \colon \R^{n}/\lat \to \C$ as
   \begin{align*}
     \hat{g}(\vecw)
     &= \frac{1}{\det(\lat)} \int_{\vecx \in \R^n/\lat} g(\vecx) \exp(-
-      2 \pi i  \inner{\vecx,\vecw}) d\vecx  \\
+      2 \pi i  \inner{\vecx,\vecw}) \, d\vecx  \\
     &= \frac{1}{\det(\lat)} \int_{\vecc \in \cal{F}} g(\vecc + \lat) \exp(-
-      2 \pi i  \inner{\vecc,\vecw}) d\vecx  \\
+      2 \pi i  \inner{\vecc,\vecw}) \, d\vecc  \\
     &= \frac{1}{\det(\lat)} \int_{\vecc \in \cal{F}} \sum_{\vecv \in
       \lat} f(\vecc + \vecv) \exp(- 2 \pi i \inner{\vecc +
-      \vecv,\vecw}) d\vecx \\
+      \vecv,\vecw}) \, d\vecc \\
     &= \frac{1}{\det(\lat)} \int_{\vecu \in \R^{n}} f(\vecu) \exp(-2
-      \pi i \inner{\vecu,\vecw}) d\vecu \\
+      \pi i \inner{\vecu,\vecw}) \, d\vecu
+    & \text{($\vecu=\vecc+\vecv$ runs over $\R^{n}$)} \\
     &= \frac{1}{\det(\lat)} \hat{f}(\vecw).
   \end{align*}
 
@@ -280,182 +281,225 @@ $\lat$-translates, i.e., define $g \colon \R^{n}/\lat \to \C$ as
     \hat{f}(\vecw)/\det(\lat) = \hat{f}(\lat^{*}) / \det(\lat). \]
 \end{proof}
 
-\section{Application}
+\section{Application: Closest Vector Problem with Preprocessing}
 
-In this section, we discuss an application of high dimensional Fourier
-transform, which provides a way of distinguishing ``close'' points
-from ``far'' points away from a lattice $\lat$, using a ``hint.''
+In this section, we give an application of Fourier series over
+lattices, due to Aharonov and
+Regev~\cite{DBLP:journals/jacm/AharonovR05} and building on
+foundational work by Banaszczyk~\cite{banaszczyk93:_new}. It provides
+a way of distinguishing points that are ``close'' to a lattice~$\lat$
+from those that are ``far'' from the lattice, using some
+polynomial-sized (but typically inefficient-to-compute) ``advice.''
+More generally, the techniques developed here will prove extremely
+useful in other complexity-theoretic and cryptographic contexts.
 
-\paragraph{Problem definition.}
+\paragraph{Problem statement.}
 
-Given~$\lat$, we preprocess it to a hint~$W$, which allows us to later
-answer queries: ``Given a point $\vecx$, is $\dist(\vecx,\lat) \leq 1$
-or $\dist(\vecx,\lat) \geq \sqrt{n}$?''
+For a given $n$-dimensional lattice~$\lat$, we wish to preprocess it
+to some advice~$W$, which will allow us to later efficiently answer
+queries of the form: ``Given a point $\vecx$, is
+$\dist(\vecx,\lat) \leq 1$ or $\dist(\vecx,\lat) \geq \sqrt{n}$?''
+(The advice will not necessarily be useful for distances between these
+two thresholds.) That is, the advice lets us efficiently solve
+$\gapcvp_{\sqrt{n}}$ on the preprocessed lattice.
 
 \paragraph{Strategy.}
 
-Our strategy is to find a $\lat$-periodic function $f$ such that:
+Our strategy is to use a $\lat$-periodic function~$g$ such that:
 \begin{enumerate}
-\item $f(x) \geq 1/1000$ for $d(\vecx,\lat)\leq 1$.
-\item $f(x) \leq 2^{-n}$ for $d(\vecx,\lat)\geq \sqrt{n}$.
-\item $f$ can be succinctly represented, and there exists a good
-  approximation to compute $f$.
+\item $g(\vecx) \geq 1/1000$ (say) whenever
+  $\dist(\vecx,\lat) = \lambda(\vecx+\lat) \leq 1$,
+\item $g(\vecx) \leq 2^{-n}$ whenever
+  $\dist(\vecx,\lat) = \lambda(\vecx+\lat) \geq \sqrt{n}$, and
+\item there is a succinct (polynomial-sized) advice that allows us to
+  efficiently estimate~$g$ (to within, say, $1/\poly(n)$ additive
+  error).
 \end{enumerate}
-Our main tool to create a function $f$ is high dimensional Fourier
-transform and series. However, we need another tool, namely, the
-Gaussian function.
+Then, to determine if a given point~$\vecx$ is ``close'' to or ``far''
+from the lattice, we simply estimate $g(\vecx+\lat)$ using the advice.
+We construct such~$g$ by periodizing the Gaussian function.
 
 \begin{definition}
-  Define the Gaussian function
+  \label{def:gaussian}
+  The Gaussian function $\rho \colon \R^{n} \to \R^{+}$ is defined as
   $\rho(\vecx) = \exp(-\pi \length{\vecx}^2) = \exp(-\pi
-  \inner{\vecx,\vecx})$.
+  \inner{\vecx,\vecx})$. For an $n$-dimensional lattice~$\lat$, define
+  the (scaled) $\lat$-periodized Gaussian
+  $g \colon \R^{n}/\lat \to \R^{+}$ as
+  \begin{equation}
+    \label{eq:g}
+    g(\vecx + \lat) = \frac{\rho(\vecx+\lat)}{\rho(\lat)} =
+    \frac{\sum_{\vecv \in \lat} \rho(\vecx - \vecv)}{\rho(\lat)}.
+  \end{equation}
 \end{definition}
 
-\begin{definition}
-  
-\end{definition}
-Define
-\[ f(\vecx) = \frac{\sum_{\vecv \in
-      \lat}{\rho(\vecx-\vecv)}}{\rho(\lat)} =
-  \frac{\rho(\vecx+\lat)}{\rho(\lat)}. \] Note that~$f$ is
-$\lat$-periodic. The expression $\rho(\vecx+\lat)$ can be thought of
-as sum of the weights at $\mathbf{0}$ of the Gaussian functions
-centered at points in the coset $\vecx + \lat$. Intuitively, when
-$\vecx$ is not close to any lattice point, $\mathbf{0}$ is not close
-to any point in the coset $\vecx + \lat$, and the tail weights at
-$\mathbf{0}$ are all small. When $\vecx$ is close to a lattice point,
-$\mathbf{0}$ is close to a point in the coset $\vecx + \lat$, and the
-weight of the Gaussian function centered at that point is large. In
-the next part of the lecture, we will show that $f$ actually satisfies
-our above three requirements. First, we have the following easy
-claims:
+The denominator is simply a normalizing factor that makes
+$g(\lat) = 1$. The expression $\rho(\vecx+\lat)$ in the numerator is
+the sum of the Gaussian function over all elements of the coset
+$\vecx+\lat$. This can equivalently be seen as the sum of Gaussian
+functions centered at every lattice point, evaluated at~$\vecx$.
+When~$\vecx$ is fairly close to a lattice point, the Gaussian centered
+at that point contributes significantly to the sum. (Equivalently, the
+Gaussian mass of the shortest vector in $\vecx+\lat$ is fairly large.)
+Whereas when~$\vecx$ is far from every lattice point, none of the
+lattice-centered Gaussians contribute much. In what follows, we will
+show that~$g$ does indeed satisfy our above three requirements. We
+start with two fairly simple claims.
 
 \begin{claim}
-  $\rho(\vecx + \lat) \leq \rho(\lat)$ for any $\vecx \in \R^n.$
+  We have $\rho(\vecx + \lat) \leq \rho(\lat)$ for any $\vecx \in
+  \R^n$, i.e., $g(\vecx) \in [0,1]$.
 \end{claim}
 
 \begin{proof}
+  By the Poisson Summation Formula (twice), the shift property, and
+  the fact that $\hat{\rho} = \rho$, we have
   \begin{align*}
     \rho(\vecx + \lat)
     &= \det(\lat^*) \sum_{\vecw \in \lat^*} \hat{\rho}(\vecw)\exp(2 \pi \inner{\vecx,\vecw} ) \\
     &\leq   \det(\lat^*)\sum_{\vecw \in \lat^*} \rho(\vecw) \\
     &=  \rho(\lat).
   \end{align*}
-  Note that we used Poisson Summation Formula and the fact that
-  $\hat{\rho}(\vecw) = \rho(\vecw)$ for Gaussian function.
 \end{proof}
 
 \begin{claim}
-  \label{claim2}
-  For any $s \geq 1$, $\rho_s(\lat) \leq s^n \rho(\lat)$, where
+  \label{clm:gaussian-scale}
+  For any $s \geq 1$, we have
+  $\rho_s(\lat) \leq s^{n} \cdot \rho(\lat)$, where
   $\rho_s(\vecx) = \rho(\vecx/s)$.
 \end{claim}
 
 \begin{proof}
-  From Poisson Summation Formula:
-  \[\rho_s(\lat) = \det(\lat^*)\hat{\rho}_{s}(\lat^*).\]
-  Since $\hat{\rho}_s = s^n \rho_{1_s}$, we can write:
-  \[\rho_s(\lat) = \det(\lat^*)s^n\rho_{1/s}(\lat^*).\]
-  Notice that $\rho_{1/s} \leq \rho_{1}$ for $s \geq 1$, therefore:
-  \[\rho_s(\lat) \leq \det(\lat^*)s^n\rho(\lat^*).\]
-  Now apply the Poisson Summation Formula again,
-  $\rho(\lat) = \det(\lat^*)\hat{\rho}(\lat^*) =
-  \det(\lat^*)\rho(\lat^*)$, we have
-  $\rho(\lat^*) = \rho(\lat)/\det(\lat^*)$. Therefore:
-  \[\rho_s(\lat) \leq s^n\rho(\lat).\]
+  By the Poisson Summation Formula (twice) and the fact that
+  $\widehat{\rho_{s}} = s^{n} \cdot \rho_{1/s} \leq s^{n} \cdot
+  \rho_{1}$ for $s \geq 1$,
+  \[ \rho_s(\lat) = \det(\lat^*) \cdot \widehat{\rho_{s}}(\lat^*) =
+    \det(\lat^{*}) \cdot s^{n} \cdot \rho_{1/s}(\lat^{*}) \leq
+    \det(\lat^{*}) \cdot s^{n} \cdot \rho(\lat^{*}) = s^{n} \cdot
+    \rho(\lat). \]
 \end{proof}
-Next, we state three lemmas whose results directly show that
-function~$f$ that we defined meets our requirements.
+
+\noindent Next, we establish three lemmas which show that the
+function~$g$ meets our requirements.
 
 \begin{lemma}
-  $f(\vecx) \geq \exp(-\pi \dist(\vecx,\lat)^2) \,\, \forall \vecx$
+  For all $\vecx \in \R^{n}$, we have
+  $g(\vecx) \geq \exp(-\pi \dist(\vecx,\lat)^2)$.
 \end{lemma}
 
 \begin{proof}
-  Since $\rho(\vecx+\lat) = \rho(\vecx-\lat)$:
-  \[ \rho(\vecx+\lat) = 1/2 (\rho(\vecx+\lat) + \rho(\vecx-\lat)). \]
-  By the definition of Gaussian function:
+  Since $\rho(\vecx+\lat) = \rho(\vecx-\lat)$, we have
+  \[ \rho(\vecx+\lat) = \frac{\rho(\vecx+\lat) +
+      \rho(\vecx-\lat)}{2}. \] Now, by definition of the Gaussian
+  function and the fact that $\exp(t) + \exp(-t) \geq 2$ for all~$t$,
+  we have
   \begin{align*}
     \rho(\vecx+\lat)
-    &= 1/2 \sum_{\vecv \in \lat} ( \exp(-\pi \length{\vecx+\vecv}^2)+ \exp(-\pi \length{\vecx-\vecv}^2)) \\
-    &= 1/2 \exp(-\pi \length{\vecx}^2)  \sum_{\vecv \in \lat} \exp(-\pi \length{\vecv}^2) (\exp(-2\pi \inner{\vecx,\vecv})+\exp(2\pi \inner{\vecx,\vecv})).
+    &= \frac12 \sum_{\vecv \in \lat} ( \exp(-\pi \length{\vecx+\vecv}^2)+ \exp(-\pi \length{\vecx-\vecv}^2)) \\
+    &= \frac12 \exp(-\pi \length{\vecx}^2)
+      \sum_{\vecv \in \lat} \exp(-\pi \length{\vecv}^2) \cdot
+      (\exp(-2\pi \inner{\vecx,\vecv})+\exp(2\pi \inner{\vecx,\vecv})) \\
+    &\geq \exp(-\pi \length{\vecx}^{2}) \cdot \rho(\lat) .
   \end{align*}
-  By the Cauchy-Schwarz inequality
-  $\exp(-2\pi \inner{\vecx,\vecv})+\exp(2\pi \inner{\vecx,\vecv}) \geq
-  2$. We have:
-  \[ \rho(\vecx+\lat) \geq \exp(-\pi \length{\vecx}^2) \sum_{\vecv \in
-      \lat} \exp(-\pi \length{\vecv}^2) = \exp(-\pi \length{\vecx}^2)
-    \rho(\lat).\] Therefore,
-  \[ f(\vecx) = \rho(\vecx+\lat)/ \rho(\lat) \geq \exp(-\pi
-    \length{\vecx}^2).\] Now for all points in the coset
-  $\vecx + \lat$, there is a point $\vecx_0$ such that
-  $ \length{\vecx_0}=d(\vecx_0,\lat) = d(\vecx,\lat)$. Represent
-  $\vecx + \lat$ as $\vecx_0 + \lat$ and we have:
-  \[ f(\vecx) = \rho(\vecx_0+\lat)/ \rho(\lat) \geq \exp(-\pi
-    \length{\vecx_0}^2) = \exp(-\pi d(\vecx_0,\lat)^2) = \exp(-\pi
-    d(\vecx,\lat)^2).\]
+  The claim follows by observing that there is a point
+  $\vecx_0 \in \vecx + \lat$ for which
+  $\length{\vecx_0}=\dist(\vecx_0,\lat) = \dist(\vecx,\lat)$.
 \end{proof}
-From the above lemma, we see that if $d(\vecx,\lat) = \mathcal{O}(1)$,
-then $f(\vecx) = \Omega(1)$, so $f$ satisfies our first requirement.
+From the above lemma, we see that $g(\vecx) = \Omega(1)$ whenever
+$\dist(\vecx,\lat) = O(1)$, so~$g$ satisfies our first requirement.
 
 \begin{lemma}
-  For any coset $\vecx + \lat$,
-  $\rho((\vecx + \lat)\backslash \sqrt{n}\ball) \leq 2^{-n}
-  \rho(\lat)$, where $\ball$ represents the unit ball.
+  \label{lem:gaussian-mass-far}
+  For any coset $\vecx + \lat$, we have
+  $\rho((\vecx + \lat) \setminus \sqrt{n}\ball) \leq 2^{-n} \cdot
+  \rho(\lat)$, where~$\ball$ is the (open) unit ball.
 \end{lemma}
 
 \begin{proof}
-  From the Claim \ref{claim2} above,
-  $2^n \rho(\lat) \geq \rho_2(\vecx + \lat)$, therefore:
+  By \cref{clm:gaussian-scale} above,
+  $2^n \cdot \rho(\lat) \geq \rho_2(\vecx + \lat)$, so
   \begin{align*}
-    2^n \rho(\lat)
+    2^n \cdot \rho(\lat)
     &\geq \rho_2(\vecx + \lat) \\
-    &\geq \rho_2((\vecx + \lat)\backslash \sqrt{n}\ball) \\
-    &= \sum_{\vecv \in (\vecx + \lat) \backslash \sqrt{n}\ball} \exp(-\pi \length{\vecv}^2/4) \\
-    &= \sum_{\vecv \in (\vecx + \lat) \backslash \sqrt{n}\ball} \exp(3\pi \length{\vecv}^2/4)\exp(-\pi \length{\vecv}^2) \\
-    &\geq \exp(3\pi n/4) \sum_{\vecv \in (\vecx + \lat) \backslash \sqrt{n}\ball}\exp(-\pi \length{\vecv}^2) \\
-    &\geq  4^n \rho_1((\vecx + \lat)\backslash \sqrt{n}\ball).
+    &\geq \rho_2((\vecx + \lat)\setminus \sqrt{n}\ball) \\
+    &= \sum_{\vecv \in (\vecx + \lat) \setminus \sqrt{n}\ball} \exp(-\pi \length{\vecv}^2/4) \\
+    &= \sum_{\vecv \in (\vecx + \lat) \setminus \sqrt{n}\ball}
+      \exp(3\pi \length{\vecv}^2/4) \cdot \exp(-\pi \length{\vecv}^2) \\
+    &\geq \exp(3\pi n/4) \sum_{\vecv \in (\vecx + \lat) \setminus
+      \sqrt{n}\ball}\exp(-\pi \length{\vecv}^2) \\
+    &\geq  4^n \cdot \rho((\vecx + \lat)\setminus \sqrt{n}\ball).
   \end{align*}
-  Therefore,
-  $\rho((\vecx + \lat)\backslash \sqrt{n}\ball) \leq 2^{-n}
-  \rho(\lat)$ as desired.
+  The claim follows by rearranging terms.
 \end{proof}
 
 \begin{corollary}
-  If $d(\vecx,\lat) \geq \sqrt{n}$ then $f(\vecx) \leq 2^{-n}$.
+  If $\dist(\vecx,\lat) \geq \sqrt{n}$ then $g(\vecx) \leq 2^{-n}$.
 \end{corollary}
 
 \begin{proof}
-  If $d(\vecx,\lat) \geq \sqrt{n}$,
-  $\vecx + \lat = (\vecx + \lat) \backslash \sqrt{n}\ball$, since
-  there is no point of coset $\vecx + \lat$ in the ball radius
-  $\sqrt{n}$ centered at the origin. Therefore,
-  \[ \rho(\vecx + \lat) = \rho((\vecx + \lat)\backslash \sqrt{n}\ball)
-    \leq 2^{-n} \rho(\lat), \] And $f(\vecx) \leq 2^{-n}$ as desired.
+  If $\dist(\vecx,\lat) \geq \sqrt{n}$, then
+  $\vecx + \lat = (\vecx + \lat) \setminus \sqrt{n}\ball$, since
+  $\vecx + \lat$ does not have any point of length less
+  than~$\sqrt{n}$. Therefore, by \cref{lem:gaussian-mass-far} we have
+  \[ g(\vecx + \lat) = \frac{\rho(\vecx + \lat)}{\rho(\lat)} =
+    \frac{\rho((\vecx + \lat)\setminus \sqrt{n}\ball)}{\rho(\lat)}
+    \leq 2^{-n} . \]
 \end{proof}
 
-Next we need to show that $f$ can be approximately computed.
 \begin{lemma}
-  $f$ can be approximated efficiently.
+  Given appropriate polynomial-sized advice about~$\lat$, the
+  function~$g$ can be efficiently approximated to within additive
+  $1/\poly(n)$ error.
 \end{lemma}
 
-\begin{proof}
-  The idea is we can represent $f$ by its Fourier series
-  $\hat{f}(\vecw)$, with $\vecw \in \lat^*$. We know that:
-  \[ \hat{f}(\vecw) = \hat{\rho}(\vecw) \det(\lat^*) / \rho(\lat) =
-    \hat{\rho}(\vecw)/\rho(\lat^*).\] Therefore,
-  $\sum_{\vecw \in \lat^*} \hat{f}(\vecw) = 1$, and we can view
-  $\hat{f}$ as a probability distribution. Then the expectation:
-  \[ \E_{\vecw \leftarrow \hat{f}}(\exp(2 \pi i \inner{\vecx,\vecw} ))
-    = \sum_{\vecw \in \lat^*}\hat{f}(\vecw) \exp(2 \pi i
-    \inner{\vecx,\vecw} ) = f(\vecx). \] The first equality is just
-  the definition of expectation, and the second one follows from the
-  Poisson Summation Formula. Therefore, to approximate $f$, we can
-  estimate the expectation above. We preprocess the lattice by output
-  many values of $\vecw$ from the probability distribution $\hat{f}$,
-  and store them. Then, given a query point $\vecx$, we can just
-  compute average value of $\exp(2 \pi i \inner{\vecx,\vecw} )$ to be
-  an estimator of $f(\vecx)$.
+\begin{proof}[Proof sketch]
+  The first key idea is that by the inversion formula, $g$ can be
+  evaluated using its Fourier series coefficients $\hat{g}(\vecw)$,
+  over all $\vecw \in \lat^{*}$. Of course, there are an infinite
+  number of these coefficients, which we cannot represent (much less
+  sum over) efficiently.
+
+  The second key idea is that the Fourier series can be thought of as
+  a \emph{probability distribution}, and the inversion formula as an
+  \emph{expectation} taken over this distribution. Observe that by
+  definition of~$g$ (\cref{eq:g}), the periodization lemma
+  (\cref{lem:periodize-series}), and the Poisson Summation Formula
+  (\cref{lem:psf}), the Fourier coefficients are
+  \[ \hat{g}(\vecw) = \frac{\hat{\rho}(\vecw) /
+      \det(\lat)}{\rho(\lat)} =
+    \frac{\rho(\vecw)/\det(\lat)}{\rho(\lat^{*})/\det(\lat)} =
+    \rho(\vecw) / \rho(\lat^{*}) \in [0,1]. \] Therefore,
+  $\hat{g}(\lat^{*}) = \sum_{\vecw \in \lat^{*}} \hat{g}(\vecw) = 1$,
+  and we can think of the Fourier coefficient~$\hat{g}(\vecw)$ as the
+  probability assigned to~$\vecw$ by distribution~$\hat{g}$. The
+  inversion formula can then be expressed (using the symmetry
+  of~$\lat^{*}$) as
+  \[ g(\vecx + \lat) = \sum_{\vecw \in \lat^{*}} \hat{g}(\vecw)
+    \exp(2\pi i \inner{\vecx,\vecw}) = \E_{\vecw \gets
+      \hat{g}}[\cos(2\pi \inner{\vecx,\vecw})] . \] Therefore, to
+  approximate~$g$, we can estimate the above expectation by random
+  sampling. That is, we sample many values of~$\vecw$ from the
+  probability distribution~$\hat{g}$. Then, given a query
+  point~$\vecx$, we estimate $g(\vecx + \lat)$ simply by computing the
+  average value of $\cos(2 \pi \inner{\vecx,\vecw})$. By standard
+  Chernoff-style bounds, this estimate will be with $1/\poly(n)$ of
+  the true value, with high probability. By the probabilistic method,
+  this implies that there \emph{exists} preprocessing advice that
+  gives a good enough estimate of $g(\vecx+\lat)$.
+
+  The above shows that a suitable random sampling of dual lattice
+  vectors $\vecw \in \lat^{*}$ lets us approximate $g(\vecx + \lat)$
+  for a \emph{single} coset $\vecx + \lat$. But what we really want is
+  that the \emph{same collection} of samples is likely to work for
+  \emph{all cosets} simultaneously. This can be shown via a (somewhat
+  grungy) union-bound argument. First, we fix a huge (but finite),
+  exponential-size ``dense net''~$S$ of points that contains a good
+  enough approximation to any $\vecx + \lat$. Then, we can take enough
+  samples so that, by Chernoff-like bounds, the probability that our
+  estimator is inaccurate for any \emph{fixed} point in the net is
+  $\ll 1/\abs{S}$. By the union bound, with positive probability, the
+  estimator is accurate on all net points simultaneously. So, there
+  exists some good advice that works for all query points.
 \end{proof}
 
 \bibliography{common/lattices,common/crypto}
