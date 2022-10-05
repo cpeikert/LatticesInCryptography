@@ -351,6 +351,7 @@ show that~$g$ does indeed satisfy our above three requirements. We
 start with two fairly simple claims.
 
 \begin{claim}
+  \label{clm:gaussian-shift}
   We have $\rho(\vecx + \lat) \leq \rho(\lat)$ for any $\vecx \in
   \R^n$, i.e., $g(\vecx) \in [0,1]$.
 \end{claim}
@@ -362,7 +363,7 @@ start with two fairly simple claims.
   \begin{align*}
     \rho(\vecx + \lat)
     &= \det(\lat^*) \sum_{\vecw \in \lat^*} \hat{\rho}(\vecw)\exp(2 \pi \inner{\vecx,\vecw} ) \\
-    &\leq   \det(\lat^*)\sum_{\vecw \in \lat^*} \rho(\vecw) \\
+    &\leq \det(\lat^*)\sum_{\vecw \in \lat^*} \rho(\vecw) \\
     &=  \rho(\lat).
   \end{align*}
 \end{proof}
@@ -421,7 +422,7 @@ $\dist(\vecx,\lat) = O(1)$, so~$g$ satisfies our first requirement.
 \end{lemma}
 
 \begin{proof}
-  By \cref{clm:gaussian-scale} above,
+  By \cref{clm:gaussian-shift,clm:gaussian-scale} above,
   $2^n \cdot \rho(\lat) \geq \rho_2(\vecx + \lat)$, so
   \begin{align*}
     2^n \cdot \rho(\lat)
