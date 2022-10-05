@@ -390,9 +390,22 @@ start with two fairly simple claims.
 function~$g$ meets our requirements.
 
 \begin{lemma}
+  \label{lem:g-close}
   For all $\vecx \in \R^{n}$, we have
   $g(\vecx) \geq \exp(-\pi \dist(\vecx,\lat)^2)$.
 \end{lemma}
+
+It is tempting to think that this claim is trivial: letting
+$\vecv \in \lat$ be a closest lattice vector to~$\vecx$, the Gaussian
+centered at~$\vecv$ contributes
+$\rho(\vecx-\vecv) = \exp(-\pi \dist(\vecx,\lat)^{2})$ to the sum of
+Gaussians centered at all lattice points. The issue is that this sum
+is merely the \emph{numerator} of~$g(\vecx + \lat)$, and it is
+normalized by $\rho(\lat) > \rho(\veczero) = 1$. So, the contribution
+of the $\vecv$-centered Gaussian alone is definitely not enough to
+prove the claim. Instead, we use a clever symmetrization argument that
+pairs up the contributions from the centers $\pm \vecv$, over all
+$\vecv \in \lat$.
 
 \begin{proof}
   Since $\vecx+\lat = \vecx-\lat$, we have
@@ -408,12 +421,13 @@ function~$g$ meets our requirements.
       (\exp(-2\pi \inner{\vecx,\vecv})+\exp(2\pi \inner{\vecx,\vecv})) \\
     &\geq \exp(-\pi \length{\vecx}^{2}) \cdot \rho(\lat) .
   \end{align*}
-  The claim follows by observing that there is a point
+  The claim follows by noticing that there is a point
   $\vecx_0 \in \vecx + \lat$ for which
   $\length{\vecx_0}=\dist(\vecx_0,\lat) = \dist(\vecx,\lat)$.
 \end{proof}
-From the above lemma, we see that $g(\vecx) = \Omega(1)$ whenever
-$\dist(\vecx,\lat) = O(1)$, so~$g$ satisfies our first requirement.
+By \cref{lem:g-close}, we see that
+$g(\vecx + \lat) \geq \exp(-\pi) > \tfrac{1}{24}$ whenever
+$\dist(\vecx,\lat) \leq 1$, so~$g$ satisfies our first requirement.
 
 \begin{lemma}
   \label{lem:gaussian-mass-far}
