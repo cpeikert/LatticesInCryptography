@@ -436,6 +436,22 @@ $\dist(\vecx,\lat) \leq 1$, so~$g$ satisfies our first requirement.
   \rho(\lat)$, where~$\ball$ is the (open) unit ball.
 \end{lemma}
 
+Let us consider what \cref{lem:gaussian-mass-far} says, and give some
+intuition for the proof. It is a ``tail bound,'' which says that the
+total Gaussian mass of the points in $\vecx+\lat$ having norm at
+least~$\sqrt{n}$ is a tiny fraction of the total Gaussian mass
+of~$\lat$ itself. To prove this, we will go through the scaled
+Gaussian~$\rho_{2}$. For simplicity, consider the coset
+$\vecx+\lat=\lat$. By \cref{clm:gaussian-scale}, we know that
+$\rho_{2}(\lat) \leq 2^{n} \cdot \rho_{1}(\lat)$, i.e., $\lat$'s total
+mass under~$\rho_{2}$ is no more than~$2^{n}$ times larger than its
+mass under~$\rho_{1}$. On the other hand, every vector that is
+sufficiently far from the origin has \emph{much larger} mass
+under~$\rho_{2}$ than it has under~$\rho_{1}$, by a multiplicative
+factor of at least (say)~$2^{2n}$. The only way both statements can be
+true is if, under~$\rho_{1}$, the ``far'' vectors account for at most
+a $2^{n}/2^{2n} = 2^{-n}$ fraction of the total mass.
+
 \begin{proof}
   By \cref{clm:gaussian-shift,clm:gaussian-scale} above,
   $2^n \cdot \rho(\lat) \geq \rho_2(\vecx + \lat)$, so
@@ -450,7 +466,7 @@ $\dist(\vecx,\lat) \leq 1$, so~$g$ satisfies our first requirement.
       \sqrt{n}\ball}\exp(-\pi \length{\vecv}^2) \\
     &\geq  4^n \cdot \rho((\vecx + \lat)\setminus \sqrt{n}\ball).
   \end{align*}
-  The claim follows by rearranging terms.
+  The claim follows by dividing.
 \end{proof}
 
 \begin{corollary}
