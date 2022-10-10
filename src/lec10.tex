@@ -96,13 +96,13 @@ $\hat{\rho_{s}} = s^{n} \cdot \rho_{1/s}$.
 \section{Smoothing Parameter}
 \label{sec:smoothing-parameter}
 
-Last time, we considered the (normalized) $\lat$-periodic Gaussian
-function $g(\vecx+\lat) = \rho(\vecx+\lat)/\rho(\lat)$, and showed
-that it can be ``lumpy,'' in the sense that:
+Last time, we considered the $\lat$-periodic Gaussian function
+$\rho(\vecx+\lat)$, and showed that it can be ``lumpy,'' in the sense
+that:
 \begin{enumerate}
-\item $g(\vecx+\lat) \geq \frac{1}{1000} \cdot \rho(\lat)$ when
+\item $\rho(\vecx+\lat) \geq \frac{1}{1000} \cdot \rho(\lat)$ when
   $\dist(\vecx,\lat) \leq 1$
-\item $g(\vecx+\lat) \leq 2^{-n} \cdot \rho(\lat)$ when
+\item $\rho(\vecx+\lat) \leq 2^{-n} \cdot \rho(\lat)$ when
   $\dist(t,\lat) \geq \sqrt{n}$, which is equivalent to
   $(\vecx+\lat) \cap \sqrt{n} \ball = \emptyset$.
 \end{enumerate}
