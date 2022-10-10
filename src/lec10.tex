@@ -1,0 +1,402 @@
+\documentclass[11pt]{article}
+
+\usepackage{fullpage}
+\usepackage{newtxtext}
+\usepackage{microtype}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
+\usepackage[pagebackref=true]{hyperref} % must set backref at load time
+\usepackage{fancyhdr}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usepackage{import}
+
+% load after hyperref, algpseudocode to get proper behavior
+\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
+
+\import{common/}{head.tex}
+
+% VARIABLES
+
+\newcommand{\lecturenum}{10}
+\newcommand{\lecturetopic}{Smoothing Parameter}
+\newcommand{\scribename}{Hank Carter}
+
+% END OF VARIABLES
+
+\import{common/}{lechead.tex}
+\lecheader                      % execute lecture commands
+
+\pagestyle{plain}               % default: no special header
+
+\begin{document}
+
+\thispagestyle{fancy}           % first page should have special header
+
+% LECTURE MATERIAL STARTS HERE
+
+
+Here we introduce a fundamental lattice quantity called the
+\emph{smoothing parameter}, which is essentially the amount of
+Gaussian noise needed to completely ``smooth out'' the discrete
+structure of a lattice.
+
+\section{Background}
+\label{sec:background}
+
+Recall the following material from previous lectures.
+
+\begin{definition}[Dual lattice]
+  For a (full-rank) lattice $\lat \subset \R^{n}$, its \emph{dual
+    lattice} is
+  \[ \lat^{*} := \set{\vecw \in \R^{n} : \inner{\vecw,\lat} \subseteq
+      \Z}. \]
+\end{definition}
+
+Last time we showed several basic facts about the dual lattice, e.g.,
+$(\lat^{*})^{*} = \lat$, $\det(\lat^{*}) = \det(\lat)^{-1}$, and
+$\matB$ is a basis of $\lat$ if and only if $\matB^{-t}$ is a basis of
+$\lat^{*}$.
+
+\begin{lemma}[Poisson Summation Formula (PSF)]
+  \label{lem:psf}
+  For any ``nice enough'' $f \colon \R^n \to \C$ having Fourier
+  transform $\hat{f}$, we have
+  \begin{equation}
+    \label{eq:psf}
+    f(\lat) = \det(\lat^*)\cdot \hat{f}(\lat^*).
+  \end{equation}
+\end{lemma}
+
+\begin{lemma}[Periodization]
+  \label{lem:periodization}
+  For any full-rank lattice $\lat \subset \R^{n}$ and ``nice enough''
+  function $f \colon \R^{n} \to \C$, the induced $\lat$-periodic
+  function $g \colon \R^{n}/\lat \to \C$ defined as
+  \[ g(\vecx+\lat) = f(\vecx+\lat) = \sum_{\vecv \in \vecx+\lat}
+    f(\vecv) \] has Fourier series
+  $\hat{g}(\vecw) = \det(\lat^{*}) \cdot \hat{f}(\vecw)$ for all
+  $\vecw \in \lat^{*}$.
+\end{lemma}
+
+The \emph{Gaussian function} $\rho \colon \R^{n} \to \R^{+}$ is
+defined as
+\begin{equation}
+  \label{eq:gaussian}
+  \rho(\vecx) = \exp(-\pi \length{\vecx}^{2}) = \exp(-\pi \inner{\vecx,
+    \vecx}),
+\end{equation}
+and its scaling with parameter $s > 0$ is
+$\rho_{s}(\vecx) = \rho(\vecx/s) = \exp(-\pi
+\length{\vecx}^{2}/s^{2})$. Recall that $\hat{\rho} = \rho$, and
+$\hat{\rho_{s}} = s^{n} \cdot \rho_{1/s}$.
+
+\section{Smoothing Parameter}
+\label{sec:smoothing-parameter}
+
+Last time, we considered the (normalized) $\lat$-periodic Gaussian
+function $g(\vecx+\lat) = \rho(\vecx+\lat)/\rho(\lat)$, and showed
+that it can be ``lumpy,'' in the sense that:
+\begin{enumerate}
+\item $g(\vecx+\lat) \geq \frac{1}{1000} \cdot \rho(\lat)$ when
+  $\dist(\vecx,\lat) \leq 1$
+\item $g(\vecx+\lat) \leq 2^{-n} \cdot \rho(\lat)$ when
+  $\dist(t,\lat) \geq \sqrt{n}$, which is equivalent to
+  $(\vecx+\lat) \cap \sqrt{n} \ball = \emptyset$.
+\end{enumerate}
+
+Today, we consider sufficient conditions that make this function
+``smooth,'' i.e., nearly equal on every coset $\vecx+\lat$. First,
+recall that by the shift rule for the Fourier transform and the PSF
+(twice),
+\begin{align}
+  \rho(\vecx+\lat) 
+  &= \det(\lat^*) \cdot \sum_{\vecw \in
+    \lat^*} \rho(\vecw) \cdot \exp(2\pi i \inner{\vecw,\vecx})
+    \label{eq:rho-coset} \\
+  &\leq \det(\lat^*) \cdot \rho(\lat^{*}) = \rho(\lat), \nonumber
+\end{align}  
+where the inequality follows because
+$\exp(2\pi i \inner{\vecw,\vecx}) \in \C$ is on the complex unit
+circle and $\rho(\vecw) > 0$.
+
+When is this upper bound essentially tight, i.e., when do we have
+near-equality? The following important theorem gives a sufficient
+condition.
+
+\begin{theorem}
+  \label{thm:smooth}
+  If $\rho(\lat^* \setminus \set{\veczero}) \leq \varepsilon$ for some
+  $\varepsilon > 0$, then
+  $\rho(\vecx + \lat) \geq \frac{1-\varepsilon}{1+\varepsilon} \cdot
+  \rho(\lat)$ for all $\vecx \in \R^{n}$.
+\end{theorem}
+
+\begin{proof}
+  Continuing from \cref{eq:rho-coset}, and separating out the case
+  $\vecw=\veczero$, we have
+  \begin{align*}
+    \rho(\vecx+\lat) 
+    &= \det(\lat^*) \cdot (1 + \sum_{\vecw \in \lat^*
+      \setminus \set{\veczero}} \rho(\vecw) \cdot \exp(2\pi i
+      \inner{\vecw,\vecx})) \\
+    &\geq \det(\lat^{*}) \cdot (1 - \sum_{\vecw \in \lat^{*} \setminus
+      \set{0}} \rho(\vecw)) \\
+    &\geq \det(\lat^{*}) \cdot (1-\varepsilon) \\
+    &\geq \frac{1-\varepsilon}{1+\varepsilon} \cdot \det(\lat^{*}) \cdot
+      \rho(\lat^{*}) \\
+    &= \frac{1-\varepsilon}{1+\varepsilon} \cdot \rho(\lat),
+  \end{align*} 
+  where the first inequality (again) uses the fact that
+  $\abs{\exp(2 \pi i \inner{\vecw,\vecx})} = 1$ and $\rho(\vecw) > 0$,
+  and the second and third inequalities uses the hypothesis.
+\end{proof}
+
+\Cref{thm:smooth} says that if the dual lattice has small Gaussian
+mass, then shifting the (primal) lattice has little effect on its
+Gaussian mass. The mass is maximized on the lattice's zero coset, but
+the mass changes only slightly as one shifts the lattice around. This
+fact motivates the following definition.
+
+\begin{definition}[Smoothing
+  parameter~\cite{DBLP:journals/siamcomp/MicciancioR07}]
+  For an $\varepsilon > 0$, the \emph{smoothing parameter}
+  $\smooth_{\varepsilon}(\lat)$ of a lattice~$\lat$ is the smallest
+  $s > 0$ such that
+  $\rho_{1/s}(\lat^* \setminus \set{\veczero}) \leq \varepsilon$.
+\end{definition}
+
+Note that as~$s$ increases, $1/s$ decreases, so
+$\rho_{1/s}(\lat^* \setminus \set{\veczero})$ decreases. So for any
+$s \geq \smooth_{\varepsilon}(\lat)$, we have
+$\rho_{1/s}(\lat^{*} \setminus \set{\veczero}) \leq \varepsilon$. This
+in turn means that
+\[ \rho_{s}(\vecx + \lat) \geq \frac{1-\varepsilon}{1+\varepsilon}
+  \cdot \rho_{s}(\lat) \] for any $\vecx \in \R^{n}$, simply by
+scaling and applying \cref{thm:smooth}.
+
+The following small claim will be useful for bounding the smoothing
+parameter by bounding the \emph{fraction} of Gaussian mass on the
+non-zero points of the dual lattice.
+
+\begin{claim}
+  \label{clm:relative-smoothing}
+  If
+  $\rho_{1/s}(\lat^* \setminus \set{\veczero}) \leq
+  \frac{\varepsilon}{1+\varepsilon} \cdot \rho_{1/s}(\lat^*)$, then
+  $\rho_{1/s}(\lat^* \setminus \set{\veczero}) \leq \varepsilon$, and
+  hence $s \geq \smooth_{\varepsilon}(\lat)$.
+\end{claim}
+
+\begin{proof}
+  We have
+  $\rho_{1/s}(\lat^*) = 1 + \rho_{1/s}(\lat^* \setminus
+  \set{\veczero}) \leq 1 + \frac{\varepsilon}{1+\varepsilon} \cdot
+  \rho_{1/s}(\lat^{*})$. Rearranging proves the claim.
+\end{proof}
+
+We can relate $\smooth_\varepsilon(\lat)$ to ``standard'' lattice
+quantities. We first connect it to the minimum distance of the dual
+lattice.
+
+\begin{lemma}
+  For any (full-rank) lattice $\lat \in \R^{n}$ and
+  $\varepsilon = 4^{-n}$, we have that
+  \[ \smooth_\varepsilon(\lat) \leq
+    \frac{\sqrt{n}}{\lambda_1(\lat^*)} . \]
+\end{lemma}
+
+\begin{proof}
+  For notational convenience, by scaling~$\lat$ (and its dual) we can
+  assume that $s = \sqrt{n}/\lambda_{1}(\lat^{*}) = 1$, so
+  $\lambda_{1}(\lat^{*}) = \sqrt{n}$. We then need to show that
+  $\rho(\lat^* \setminus \set{\veczero}) \leq \varepsilon = 2^{-n}$.
+
+  Recall from the previous lecture that the Gaussian mass of any
+  lattice (coset) outside the radius-$\sqrt{n}$ ball is a tiny
+  fraction of the lattice's total Gaussian mass:
+  $\rho((\vecx+\lat^*) \setminus \sqrt{n}\ball) \leq 5^{-n} \cdot
+  \rho(\lat^*)$.\footnote{We previously stated the claim with only
+    a~$2^{-n}$ factor, but a~$5^{-n}$ factor can be obtained from the
+    same proof and the fact that $\exp(3 \pi/4) > 10$.} Since
+  $\lambda_1(\lat^*) \geq \sqrt{n}$, we have that
+  \begin{align*}
+    \rho(\lat^{*} \setminus \set{\veczero})
+    &= \rho(\lat^{*} \setminus \sqrt{n} \ball) \\
+    &\leq 5^{-n} \cdot \rho(\lat^{*}) \\
+    &\leq \frac{1}{4^{n}+1} \cdot \rho(\lat^{*}).
+  \end{align*}
+  The lemma then follows from \cref{clm:relative-smoothing}.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:smoothing-lower}
+  For any lattice~$\lat$ and $\varepsilon \leq 2\exp(-\pi)$, we have
+  that $\smooth_\varepsilon(\lat) \geq 1/\lambda_1(\lat^*)$.
+\end{lemma}
+
+\begin{proof}
+  Again, by scaling we can assume that $s = 1/\lambda_1(\lat^*) = 1$,
+  so $\lambda_{1}(\lat^{*}) = 1$. Then
+  $\rho(\lat^* \setminus \set{\veczero}) \geq 2 \exp(-\pi)$, by
+  considering just the Gaussian mass on any shortest nonzero vector
+  and its negation.
+\end{proof}
+
+We next relate the smoothing parameter $\smooth_{\varepsilon}(\lat)$
+to quantities of the primal lattice~$\lat$ itself. For intuition,
+consider the possibility that $\smooth(\lat) \leq \lambda_1(\lat)$,
+which intuitively could hold in many cases. However, this is false in
+general. As a counterexample, consider the lattice with basis
+$(1,0), (0,100)$. While the sum of the lattice-centered Gaussians on
+the $x$-axis is fairly ``smooth,'' the lattice points on the $y$-axis
+are too far separated, making the Gaussians ``lumpy'' in that
+direction.
+
+This can be seen in another way---which corresponds to the actual
+definition of the smoothing parameter---by looking at the dual
+lattice, which has basis $(1,0), (0,1/100)$. The Gaussian mass of
+nonzero dual points on the $x$-axis is very small, but the mass of
+those on the $y$-axis is fairly large, because they are so tightly
+spaced together. Indeed, \cref{lem:smoothing-lower} says that
+$\smooth_{\varepsilon} \geq 1/\lambda_{1}(\lat^{*}) = 100 \gg
+\lambda_{1}(\lat) = 1$ even for a moderately small
+constant~$\varepsilon > 0$.
+
+Below we will give a general smoothing-parameter bound which shows
+that, in this particular example (and as one might expect), to get
+``smoothness'' we need to use Gaussians of width approximately~$100$,
+times small extra factor.
+
+\begin{definition}
+  \label{def:successive-minimum}
+  The \emph{$i$th successive minimum} of a
+  lattice~$\lat$ is defined as
+  \begin{align*}
+    \lambda_i(\lat)
+    &= \min \set{r : (\lat \cap r\ball) \text{
+      contains at least~$i$ linearly independent vectors}} \\
+    &= \min \set{r : \dim(\spn(\lat \cap r\ball)) \geq i} .
+  \end{align*}
+\end{definition}
+Thus, for a (full-rank) $n$-dimensional lattice,
+$\lambda_1 \leq \lambda_2 \leq \cdots \leq \lambda_n$.
+
+\begin{theorem}[\cite{DBLP:journals/siamcomp/MicciancioR07}]
+  \label{thm:smoothing-lambda_n}
+  For any $\varepsilon > 0$ and (full-rank) $n$-dimensional lattice
+  $\lat$, we have
+  \[ \smooth_\varepsilon(\lat) \leq
+    \lambda_n(\lat)\cdot\sqrt{\ln(2n(1+1/\varepsilon))/\pi}
+    = \lambda_{n}(\lat) \cdot O(\sqrt{\ln(2n/\varepsilon)}). \]
+\end{theorem}
+
+For example, if we use an exponentially small
+$\varepsilon = \exp(-n)$, then
+$\sqrt{\ln(2n/\varepsilon)} \approx \sqrt{n}$. Or, we can use an
+inverse-quasipolynomial $\varepsilon = 1/n^{\log n}$ to get
+$\sqrt{\ln(2n/\varepsilon)} \approx \log n$. To prove
+\cref{thm:smoothing-lambda_n}, we will use a new discrete tail bound
+for Gaussians.
+
+\begin{definition}
+  For a unit vector $\vecu \in \R^{n}$ and real $t \geq 0$, define the
+  (open) \emph{halfspace}
+  \[ H_{\vecu,t} = \set{\vecx \in \R^n : \inner{\vecx,\vecu} < t} . \]
+  In words, $H_{\vecu,t}$ is the set of points in $\R^{n}$ that are at
+  most~$t$ from the origin in the direction of~$\vecu$.
+\end{definition}
+
+\begin{lemma}[\cite{DBLP:journals/dcg/Banaszczyk95}]
+  \label{lem:gaussian-halfspace}
+  For any lattice~$\lat$, unit vector~$\vecu \in \R^{n}$, real
+  $t \geq 0$, and $\vecx \in \R^n$, we have that
+  \[ \rho((\vecx+\lat) \setminus H_{\vecu,t}) \leq \exp(-\pi t^2)
+    \cdot \rho(\lat) . \]
+\end{lemma}
+
+The proof works somewhat similarly to the proof of the tail bound from
+the previous lecture. That is, we consider multiplying the Gaussian
+mass of the coset points that are \emph{outside} the halfspace by some
+very large factor. Then we show that the resulting mass is upper
+bounded by a not-too-large multiple of the Gaussian mass on the
+lattice. The only way this can be possible is if the (original)
+Gaussian mass outside the halfspace is a small fraction of the
+lattice's total mass.
+
+\begin{proof}
+  Because $\inner{\vecv, \vecu} \geq t$ for every
+  $\vecv \not\in H_{\vecu,t}$, and by completing the square, we have
+  \begin{align*}
+    \exp(2 \pi t^{2}) \cdot \rho((\vecx+\lat) \setminus H_{\vecu,t})
+    &\leq \sum_{\vecv \in \vecx+\lat} \rho(\vecv) \cdot \exp(2\pi
+      \inner{\vecv, t\vecu}) \\
+    &= \sum_{\vecv \in \vecx+\lat} \exp(-\pi (\inner{\vecv,\vecv} -
+      2 \inner{\vecv, t\vecu})) \\
+    &= \sum_{\vecv \in \vecx+\lat} \exp(-\pi \inner{\vecv-t\vecu,
+      \vecv-t\vecu}) \cdot \exp(\pi \inner{t \vecu, t \vecu}) \\
+    &= \exp(\pi t^{2}) \cdot \sum_{\vecw \in \vecx-t\vecu + \lat}
+      \exp(-\pi \inner{\vecw,\vecw}) \\
+    &= \exp(\pi t^{2}) \cdot \rho(\vecx-t\vecu + \lat) \\
+    &\leq \exp(\pi t^{2}) \cdot \rho(\lat) .
+  \end{align*}
+  Dividing both sides of the inequality by $\exp(2 \pi t^2)$ proves
+  the claim.
+\end{proof}
+
+(An interesting fact related to \cref{lem:gaussian-halfspace} is that
+a \emph{continuous} Gaussian has the same kind of tail behavior: the
+tail probability outside $H_{\vecu,t}$ is upper bounded by
+$\exp(-\pi t^2)$. This can be shown by a similar argument using
+integrals.)
+
+\begin{proof}[Proof of \cref{thm:smoothing-lambda_n}]
+  By \cref{clm:relative-smoothing}, it suffices to show that
+  $\rho_{1/s}(\lat^* \setminus \set{\veczero}) \leq
+  \frac{\varepsilon}{1+\varepsilon} \cdot \rho(\lat^{*})$. As usual,
+  by scaling the lattice we can assume that
+  $s = \lambda_{n}(\lat) \cdot \sqrt{\ln(2n(1+1/\varepsilon))/\pi} =
+  1$.
+
+  Let $\vecv_{1}, \vecv_{2}, \ldots, \vecv_{n} \in \lat$ be such that
+  $\length{\vecv_{i}} = \lambda_{i} := \lambda_{i}(\lat)$ for all~$i$.
+  (Actually, it will be enough that
+  $\length{\vecv_{i}} \leq \lambda_{n}$.) Observe that any
+  $\vecw \in \lat^{*} \setminus \set{\veczero}$ has \emph{nonzero
+    integer} inner product with at least one of the~$\vecv_{i}$,
+  because they span~$\R^{n}$ and~$\vecw$ is in the dual lattice. So,
+  $\abs{\inner{\vecw, \vecv_{i}}} \geq 1$, which implies that
+  \[ \abs{\inner{\vecw, \vecu_{i}}} \geq 1/\length{\vecv_{i}} \geq
+    1/\lambda_{n} = \sqrt{\ln(2n(1+1/\varepsilon))/\pi} , \] where
+  $\vecu_{i} = \vecv_{i}/\length{\vecv_{i}}$ is the unit vector in the
+  direction of~$\vecv_{i}$. Therefore, every
+  $\vecw \in \lat^{*} \setminus \set{\veczero}$ is outside \emph{at
+    least one} halfspace $H_{\pm \vecu_{i}, 1/\lambda_{n}}$, so we
+  have
+  \[
+    \rho(\lat^{*} \setminus \set{\veczero}) \leq \sum_{i=1}^{n}
+    \rho(\lat^{*} \setminus H_{\vecu_{i}, 1/\lambda_{n}}) +
+    \rho(\lat^{*} \setminus H_{-\vecu_{i}, 1/\lambda_{n}}) .
+  \]
+  
+  We complete the proof by invoking \cref{lem:gaussian-halfspace}: it
+  says that each term in the above sum is at most
+  \[ \exp(-\pi / \lambda_{n}^{2}) \cdot \rho(\lat^{*}) =
+    \exp(-\ln(2n(1+1/\varepsilon))) \cdot \rho(\lat^{*}) =
+    \frac{\varepsilon}{2n(1+\varepsilon)} \cdot \rho(\lat^{*}). \] The
+  sum has~$2n$ such terms, so we have shown that
+  $\rho(\lat^{*} \setminus \set{\veczero}) \leq
+  \frac{\varepsilon}{1+\varepsilon} \cdot \rho(\lat^{*})$, as desired.
+\end{proof}
+
+\bibliography{common/lattices,common/crypto}
+\bibliographystyle{common/alphaabbrvprelim}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
