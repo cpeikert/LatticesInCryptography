@@ -1,0 +1,430 @@
+\documentclass[11pt]{article}
+
+\usepackage{fullpage}
+\usepackage{newtxtext}
+\usepackage{microtype}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
+\usepackage[pagebackref=true]{hyperref} % must set backref at load time
+\usepackage{fancyhdr}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+\usepackage{import}
+
+% load after hyperref, algpseudocode to get proper behavior
+\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
+
+\import{common/}{head.tex}
+
+% VARIABLES
+
+\newcommand{\lecturenum}{11}
+\newcommand{\lecturetopic}{Worst- to Average-Case Reductions}
+\newcommand{\scribename}{Abhishek Banerjee}
+
+% END OF VARIABLES
+
+\import{common/}{lechead.tex}
+\lecheader                      % execute lecture commands
+
+\pagestyle{plain}               % default: no special header
+
+\begin{document}
+
+\thispagestyle{fancy}           % first page should have special header
+
+% LECTURE MATERIAL STARTS HERE
+
+\section{Worst-Case and Average-Case Hardness}
+\label{sec:worst-average}
+
+In this lecture we will cover (most of) a \emph{worst-case to
+  average-case} reduction for lattice problems, as first pioneered by
+Ajtai~\cite{ajtai04:_gener_hard_instan_lattic_probl}, and
+significantly simplified and tightened by Micciancio and
+Regev~\cite{DBLP:journals/siamcomp/MicciancioR07} using the Gaussian
+and harmonic analysis tools developed in the previous lectures.
+
+The primary significance of these reductions is as follows: they show
+that a certain short-vector problem~$A$ is hard to solve (even with
+small but noticeable probability) on a \emph{random} lattice---drawn
+from an explicit, very simple probability distribution---as long as a
+related short-vector problem~$W$ is hard in the \emph{worst case},
+i.e., if there exist some hard instances (however rare and elusive
+they may be). This is shown by giving an efficient \emph{reduction}
+that successfully solves problem~$W$ on an \emph{arbitrary} instance,
+using a hypothetical oracle that is only guaranteed to solve
+\emph{random} instances of problem~$A$ (with noticeable probability).
+So, if~$W$ is indeed hard in the worst case, then there cannot be any
+efficient implementation of the oracle, i.e.,~$A$ is hard on the
+average.
+
+\paragraph{Cryptography and average-case hardness.}
+
+For cryptography, average-case hardness is essential: we need a
+cryptosystem's \emph{randomly chosen} instances---keys, ciphertexts,
+etc.---to be hard to break. (It is not enough that there merely
+\emph{exist} worst-case-hard instances, if we don't know what form
+they take or how to generate them!) Often in cryptography, one simply
+\emph{assumes} that a problem is hard on the average, for some
+specified distribution of instances. For example, one may assume that
+factoring the product of two uniformly random $n$-bit primes is hard.
+(As far as we can tell, these seem like the hardest instances to
+factor, though we have no proof of this.) But this approach can be
+fraught: as we have seen in previous lectures, cryptosystems sometimes
+use instances with certain ``structure'' (e.g., small-exponent RSA,
+low-density knapsacks) that makes them much easier to solve than in
+the general case.
+
+We note that some other cryptographic problems have worst-case to
+average-case reductions, of a limited kind. For example, for the
+\emph{discrete logarithm} problem in a fixed finite cyclic group
+(e.g.,~$\Z_{p}^{*}$ for a prime~$p$), it is easy to show that finding
+the discrete log of a \emph{uniformly random} group element is hard,
+unless the discrete log problem is easy in the worst case (i.e., for
+all group elements). However, this reduction is limited to a specific
+fixed group, and tells us nothing about how hard it is to compute
+discrete logs in that group. (In many groups, it is easy!) By
+contrast, the reduction we will see in this lecture applies to
+\emph{all} lattices, without any restriction.
+
+\section{The SIS Problem}
+\label{sec:sis-problem}
+
+We start by defining the average-case problem for which we will prove
+worst-case hardness. This problem has many cryptographic applications,
+as we will see in future lectures.
+
+\begin{definition}[Shortest Integer Solution Problem]
+  \label{def:sis-problem}
+  For a positive integer modulus~$q$, dimensions~$n,m$ and a norm
+  bound~$\beta > 0$, the $\sis_{n,q,\beta,m}$ problem is defined as
+  follows: given uniformly random
+  $\matA = (\veca_{1}, \veca_{2}, \ldots, \veca_{m}) \in \Zq^{n \times
+    m}$ where each $\veca_{i} \in \Zq^{n}$, find a nonzero ``short''
+  solution $\vecz \in \Z^{m}$ such that
+  $\matA \cdot \vecz = \sum_{i=1}^{m} \veca_{i} \cdot z_{i} = \veczero
+  \in \Zq^{n}$ and $\length{\vecz} \leq \beta$.
+\end{definition}
+
+In order to make the problem nontrivial, we must take $\beta < q$;
+otherwise, $\vecz = (q, 0, \ldots, 0) \in \Z^{m}$ is always a
+solution. In order to guarantee that a solution exists, we typically
+take $m > n \log q$ and $\beta \geq \sqrt{m}$. Then consider the
+function that maps any $\vecx \in \bit^{m}$ to
+$\matA \vecx \in \Zq^{n}$. Because this maps a domain of size
+$2^{m} > q^{n}$ to a range of size~$q^{n}$, by the pigeonhole
+principle it has a \emph{collision}, i.e., some $\vecx \neq \vecx'$
+such that $\matA \vecx = \matA \vecx'$. Letting
+$\vecz = \vecx - \vecx' \in \set{0, \pm 1}^{m}$, we have that
+$\matA \vecz = \veczero$, $\vecz \neq \veczero$, and
+$\length{\vecz} \leq \sqrt{m} \leq \beta$, as needed.
+
+\paragraph{Views of SIS.}
+
+One can see the $\sis$ problem from some different perspectives.
+\begin{enumerate}
+\item We can view $\sis$ as a kind of approximate-$\svp$ problem on
+  the following random integer lattice (where~$\matA$ is uniformly
+  random):
+  \[ \latperp(\matA) = \set{\vecz \in \Z^{m} \colon \matA \cdot \vecz
+      = \veczero \pmod*{q}} . \] Note that since
+  $\latperp \subseteq \Z^{m}$, it is discrete, and it can also easily
+  be checked that it is a \emph{subgroup} of~$\Z^{m}$, hence it is a
+  lattice. Moreover, it is ``$q$-ary'' in the sense that
+  $q\Z^{m} \subseteq \latperp(\matA)$, so a vector $\vecv \in \Z^{m}$
+  is in $\latperp(\matA)$ if and only if $\vecv \bmod q$ is in
+  $\latperp(\matA)$.
+
+  The $\sis$ problem asks for a ``short'' nonzero
+  $\vecz \in \latperp(\matA)$, which is similar to what the $\svp$
+  problem requires. Indeed, it is possible to show that for
+  $m \geq (1+\delta) n \log q$, we have
+  $\lambda_{1}(\latperp(\matA)) = \Omega(\sqrt{n \log q})$ with high
+  probability. So, solving $\sis$ effectively solves $\svp$ with
+  approximation factor $O(\beta/\sqrt{n \log q})$ on a random lattice
+  from this family.
+
+\item We can also view $\sis$ as a sort of a subset-sum or
+  weak-partition problem.
+
+  In the subset-sum problem, we are given weights
+  $a_{1}, a_{2}, \ldots, a_{m} \in \Z$, and a subset-sum
+  $s = \sum_{i=1}^{m} a_i x_i$ for $x_i \in \bit$, and we need to find
+  the $x_i$. The natural generalization of this problem,
+  replacing~$\Z$ with $\Zq^{n}$, is closely related to the $\sis$
+  problem. In this form, the \emph{density} of the problem is
+  $m/\log(q^{n}) = m/n\log(q) \geq 1$. We have previously seen that
+  subset sum is easy if the density is at most $1/n$, and the $\sis$
+  problem lies outside this realm.
+
+  In the weak-partition problem, we are given weights
+  $A = \parens{a_1, \ldots, a_m}$ from some additive group, and are
+  required to find a nonzero $\vecx \in \set{-1,0,1}^{m}$ such that
+  $\sum_{i=1}^{m} a_{i} x_{i} = 0$. It is evident that this,
+  specialized to the group~$\Zq^{n}$, is just a restricted case of the
+  $\sis$ problem, where the solution must be ternary.
+\end{enumerate}
+
+It should be noted that there is nothing sacrosanct about choosing the
+``weights''~$\veca_{i}$ from the group $\Zq^{n}$. This choice is
+particularly convenient for the reduction and for cryptographic
+applications. However, we could instead have used, say,
+$\Z_{q_1} \times \Z_{q_2} \times \cdots \times \Z_{q_n}$ for large
+enough moduli~$q_i$. Note that if these moduli~$q_i$ are pairwise
+coprime, then
+$\Z_{q_1} \times \Z_{q_2} \times \cdots \times \Z_{q_n} \cong \Z_{q_1
+  q_2 \cdots q_n}$ by the Chinese Remainder Theorem.
+
+\section{Reduction from SIVP}
+\label{sec:reduction-from-sivp}
+
+We now define the worst-case lattice problem we will reduce to $\sis$.
+It is the analog of the shortest vector problem, generalized to the
+concept of the~$n$th successive minimum~$\lambda_{n}$. (Recall from
+the previous lecture that~$\lambda_{n}$ is the smallest real~$r$ such
+that the lattice contains~$n$ linearly independent vectors of length
+at most~$r$.)
+
+\begin{definition}
+  \label{def:sivp}
+  For an approximation factor $\gamma = \gamma(n) \geq 1$, the
+  $\gamma$-approximate \emph{Shortest Independent Vectors Problem}
+  $\sivp_{\gamma}$ is defined as follows: given a basis~$\matB$ of an
+  $n$-dimensional lattice $\lat = \lat(\matB)$, output~$n$ linearly
+  independent lattice vectors
+  $\matV = \set{\vecv_{1}, \ldots, \vecv_{n}} \subset \lat$ such that
+  $\length{\matV} := \max_{i} \length{\vecv_{i}} \leq \gamma \cdot
+  \lambda_{n}(\lat)$.
+\end{definition}
+(Notice that each vector~$\vecv_{i}$ does \emph{not} need to
+approximate the~$i$th successive minimum, only the~$n$th one.)
+
+The following theorem gives a worst-case to average-case reduction
+from $\sivp$ to $\sis$. We have not presented the most optimized
+parameters, but the approximation factor for $\sivp$ can be made as
+small as $\gamma = \beta \cdot \Otil(\sqrt{n})$ (where $\Otil$ hides
+polylogarithmic factors), i.e., there is no direct dependence on~$m$.
+In addition, a slightly better bound on~$q$ can be obtained by using
+\emph{discrete} Gaussian sampling, as detailed
+in~\cite{DBLP:conf/stoc/GentryPV08}.
+
+\begin{theorem}
+  \label{thm:sivp-to-sis}
+  For any $m=\poly(n)$ and any
+  $q \geq 4 \beta n \sqrt{m} = \beta \cdot \poly(n)$, there is a
+  randomized polynomial-time reduction from $\sivp_{\gamma}$ on
+  $n$-dimensional lattices to $\sis_{n,q,\beta,m}$, where
+  $\gamma = \Otil(\beta \sqrt{n m})$.
+\end{theorem}
+
+In what follows we present the key ideas behind the proof of this
+theorem, but gloss over some ancillary technical details. The
+reduction has access to a hypothetical oracle~$\Ora$ for $\sis$, and
+works as follows. Given a basis~$\matB$ of an $n$-dimensional
+lattice~$\lat$, it repeatedly performs the following \emph{core step}
+using~$\Ora$ to produce a new, shorter basis~$\matB'$ of~$\lat$. Then
+it does the same with~$\matB'$ to get an even shorter basis~$\matB''$,
+and so on. We show below that, if the current basis is not already an
+$\sivp$ solution, then the next basis will be shorter than the current
+one, by a factor of two. So, the reduction just iteratively generates
+such shorter and shorter bases until the process stops working, at
+which point it outputs the current basis (which must be an $\sivp$
+solution). Because we can start from a $2^{n}$-approximate $\sivp$
+solution thanks to LLL, the total number of iterations will be
+$\poly(n)$.
+
+\paragraph{The core step.}
+
+In summary, the core step works as follows. It generates~$m$
+independent and ``somewhat short'' (relative to the current
+basis~$\matB$) lattice vectors
+$\vecv_{1}, \ldots, \vecv_{m} \in \lat$, by sampling from a Gaussian
+of suitable width and ``rounding off'' to the lattice using~$\matB$.
+It then invokes the $\sis$ oracle on instance
+$(\veca_{1}, \ldots, \veca_{m})$, where each~$\veca_{i} \in \Zq^{n}$
+is the integer coefficient vector of $\vecv_{i} \in \lat$, reduced
+modulo~$q$. In other words, each~$\veca_{i}$ corresponds to the coset
+of $\lat/q\lat$ to which~$\vecv_{i}$ belongs. Using the smoothing
+parameter, we can show that these~$\veca_{i}$ are very close to
+uniformly random, as required. So, the oracle is obliged to output a
+valid (nonzero) $\sis$ solution $\vecz \in \Z^{m}$ with some
+noticeable probability. If it does, we have
+$\sum_{i} \veca_{i} z_{i} = \veczero \in \Zq^{n}$. This implies that
+$\sum_{i} \vecv_{i} z_{i} \in q\lat$ (not just~$\lat$), so we can
+divide by~$q$ and still have a lattice vector. Because
+$q \gg \beta \geq \length{\vecz}$, the division by~$q$ more than
+compensates for the $\vecz$-weighted sum of the vectors~$\vecv_{i}$,
+which makes the resulting lattice vector significantly shorter than
+those in the basis~$\matB$. We repeat the core step many times until
+we get~$n$ linearly independent lattice vectors, which can be
+transformed into a basis~$\matB'$.\footnote{We are skipping over some
+  important technical details here. Most significantly, we need it to
+  be the case that repeating the core step is likely to produce
+  \emph{linearly independent} lattice vectors, even if the oracle
+  behaves ``deviously.'' This can be shown using an
+  information-theoretic argument, as outlined in
+  \cref{lem:basis-guarantee} and its proof. Second, the transformation
+  from linearly independent lattice vectors to a \emph{basis} requires
+  some care, so that it does not worsen the ``quality'' of the vectors
+  by too much.}
+
+Here is the core step in detail:
+\begin{enumerate}
+\item Sample independent Gaussian vectors
+  $\vecx_1, \vecx_2, \ldots, \vecx_{m} \in \R^{n}$ with parameter
+  $s = q \cdot \frac{\length{\matB}}{4 \beta \sqrt{n m}}$.
+
+\item Let $\vecc_{i} = \round{\matB^{-1} \vecx_{i}} \in \Z^{n}$ be the
+  coefficient vector of~$\vecx_{i}$ relative to~$\matB$, rounded off
+  to the nearest integer in each coordinate. Let
+  $\vecv_{i} = \matB \vecc_{i} \in \lat$ and
+  $\veca_{i} = \vecc_{i} \bmod q\Z^{n} \in \Zq^{n}$.
+
+  (Note that~$\veca_{i}$ corresponds to the coset of
+  $\matB \veca_{i} \in \lat/q\lat$ to which~$\vecv_{i}$ belongs.)
+
+\item Call the $\sis$ oracle $\Ora(\veca_{1}, \ldots, \veca_{m})$ to
+  obtain a possible solution $\vecz \in \Z^{m}$.
+
+\item Output $\vecv = q^{-1} \cdot \sum_{i = 1}^{m} \vecv_{i} z_{i}$.
+\end{enumerate}
+
+In what follows, we present a few lemmas establishing the key
+properties of this core step. The first two lemmas show that whenever
+the $\sis$ oracle outputs a solution, the core step outputs a lattice
+vector that is significantly shorter than the current basis.
+
+\begin{lemma}
+  \label{lem:membership}
+  If~$\vecz$ is a solution to the generated $\sis$ instance, then
+  $\vecv \in \lat$.
+\end{lemma}
+
+\begin{proof}
+  We have that $\vecv_{i} = \matB \vecc_{i} \in \lat$ for some
+  $\vecc_{i} \in \Z^{n}$, and $\veca_{i} = \vecc_{i} \pmod*{q\Z^{n}}$.
+  So,
+  \[ \vecv = q^{-1} \sum_{i = 1}^{m} \vecv_{i} z_{i} = q^{-1} \matB
+    \sum_{i = 1}^{m} \vecc_{i} z_{i} . \] Now, since
+  $\vecz \in \Z^{m}$ is an $\sis$ solution, we have that
+  $\sum_{i=1}^{m} \vecc_{i} z_{i} \in q\Z^{n}$ and thus
+  $\vecv \in \matB\cdot\Z^{n} = \lat$.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:length-guarantee}
+  If $\length{\vecz} \leq \beta$, then
+  $\length{\vecv} \leq \length{\matB}/2$ with high probability.
+\end{lemma}
+
+\begin{proof}
+  Each $\length{\vecx_{i}} \leq s \sqrt{n}$ with high probability, by
+  Gaussian concentration. Also, each
+  $\length{\vecv_{i} - \vecx_{i}} \leq \sum_{j=1}^{n}
+  \length{\vecb_{j}} \leq \length{\matB} n$. So, recalling that
+  $q \geq 4\beta n\sqrt{m}$, and by the triangle and Cauchy-Schwartz
+  inequalities,
+  \begin{align*}
+    q \length{\vecv}
+    &= \length*{\sum_{i=1}^{m} \vecv_{i} z_{i}} \\
+    &\leq \length*{\sum_{i=1}^{m} \vecx_{i}z_{i}} +
+      \length*{\sum_{i=1}^{m} (\vecv_{i} - \vecx_{i})z_{i}} \\
+    &\leq (s\sqrt{n}) (\beta \sqrt{m}) +
+      (\length{\matB} n) (\beta \sqrt{m}) \\
+    &\leq q \cdot \frac{\length{\matB}}{4} + q \cdot \frac{\length{\matB}}{4}\\
+    &= q \length{\matB}/2.
+  \end{align*}
+\end{proof}
+
+The next lemma gives us the exit condition for the procedure
+surrounding the core step: if the core step ever stops working (i.e.,
+stops producing sufficiently short lattice vectors after enough
+attempts), then the current basis~$\matB$ must fail to satisfy the
+hypothesis from the lemma, and hence it is a
+$\Otil(\beta \sqrt{n m})$-approximate $\sivp$ solution.
+
+\begin{lemma}
+  \label{lem:sis-random}
+  If
+  $\length{\matB} \geq 4 \beta \sqrt{n m} \cdot \log n \cdot
+  \lambda_{n}(\lat)$, then
+  $\matA = \parens{\veca_{1}, \ldots, \veca_{m}}$ is
+  $n^{-\omega(1)}$-close (in statistical distance) to a uniformly
+  random $\sis_{n,q,\beta,m}$ instance, and hence the oracle~$\Ora$
+  must output a solution with noticeable probability.
+\end{lemma}
+
+\begin{proof}
+  We have
+  $s \geq q \cdot \log n \cdot \lambda_{n}(\lat) \geq q \cdot
+  \smootheps(\lat) = \smootheps(q \lat)$ for $\epsilon = n^{-\log n}$,
+  by the theorem from the previous lecture. So
+  $\rho_{s}\parens{\vect + q\lat} \approx \rho_{s}(q\lat)$ for every
+  coset $\vect + q\lat$, where the approximation hides a
+  multiplicative factor of at most
+  $\frac{1+\varepsilon}{1-\varepsilon}$. Therefore, the
+  Gaussian-distributed vectors~$\vecx_{i}$ are $n^{-\omega(1)}$-far
+  from uniform modulo~$q\lat$, which implies that their real
+  coefficient vectors $\matB^{-1} \vecx_{i} \in \R^{n}$ are similarly
+  close to uniform modulo $q\Z^{n}$. Integrating over all (real)
+  cosets that map to any fixed $\veca \in \Zq^{n}$ yields the claim.
+\end{proof}
+
+Our final lemma addresses the concern that a potentially ``devious''
+oracle~$\Ora$ could, by carefully crafting its $\sis$ solutions based
+on how the instances are generated, somehow prevent the core step from
+generating a full-rank linearly independent set of shorter lattice
+vectors.
+
+\begin{lemma}
+  \label{lem:basis-guarantee}
+  Upon success, the~$\vecv$ output by the basic step is not
+  concentrated on any fixed hyperplane. More formally, conditioned
+  on~$\vecz$ being an $\sis$ solution, for any $(n-1)$-dimensional
+  hyperplane $\calH$,
+  $\Pr_{\vecx_{i}}[\vecv \in \calH] \leq \frac{3}{4}$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+  We use an information-theoretic argument. Conditioned solely on the
+  $\sis$ instance $\veca_{i}$, or even on the full cosets
+  $\vecx_{i} + q\lat \in \R^{n}/q\lat$ (which determine
+  the~$\veca_{i}$), we claim that the~$\vecx_{i}$ are still
+  ``well-spread'' enough that no fixed $\sis$ solution~$\vecz$ is very
+  likely to place~$\vecv$ in~$\calH$. More specifically, since
+  each~$\vecx_{i}$ was sampled from a Gaussian of parameter~$s$, the
+  conditional distribution of~$\vecx_{i}$, given that it is in some
+  coset $\vect_{i} + q\lat$, is a \emph{discrete Gaussian}:
+  \[ \calD_{\vect_{i} + q\lat, s}(\vecx_{i}) :=
+    \frac{\rho_{s}(\vecx_{i})}{\rho_{s}\parens{\vect_{i} + q\lat}}. \]
+  Note that
+  $q \vecv = \sum_{i=1}^{m} \vecv_{i} z_{i} = \sum_{i=1}^{m}
+  \vecx_{i}z_{i} + \sum_{i=1}^{m} (\vecv_{i} - \vecx_{i}) z_{i}$, and
+  the second summation~$\vecs$ is fixed given~$\vecz$ and the cosets
+  $\vecx_{i} + q\lat$, because each ``round-off'' term
+  $\vecv_{i} - \vecx_{i}$ is fully determined by the corresponding
+  coset (and not~$\vecx_{i}$ itself). So, $\vecv \in \calH$ if and
+  only if $\sum_{i=1}^{m}\vecx_{i}z_{i} \in \calH - \vecs$. Since
+  $\vecz \neq 0$, we can assume without loss of generality that
+  $z_{1} \neq 0$. Then, fixing all the $\vecx_{i}$ except~$\vecx_{1}$,
+  we have that $\vecv \in \calH$ only if
+  $\vecx_{1} \in \calH - \vecs'$ for a certain fixed
+  $\vecs' \in \R^{n}$. It is shown
+  in~\cite{DBLP:journals/siamcomp/MicciancioR07} that a discrete
+  Gaussian over any fixed lattice coset, whose width exceeds the
+  lattice's smoothing parameter, is not concentrated on any affine
+  subspace, as needed.
+\end{proof}
+
+\bibliography{common/lattices,common/crypto}
+\bibliographystyle{common/alphaabbrvprelim}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
