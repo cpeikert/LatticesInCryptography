@@ -288,15 +288,17 @@ suitable adjustment of the parameters.
 \label{sec:regular-one-way}
 
 \begin{definition}
-  A function family $\calF = \set{f_a \colon \calD \to \calR}$ is
+  \label{def:regular}
+  A function family $\calF = \set{f \colon \calD \to \calR}$ is
   \emph{$\varepsilon$-regular} if
-  \[ (f_a, f_a(x)) \approx_{\varepsilon} (f_a, y) , \] where
-  $f_{a} \gets \calF, x \gets \calD, y \gets \calR$,
+  \[ (f, f(x)) \approx_{\varepsilon} (f, y) , \] where
+  $f \gets \calF, x \gets \calD, y \gets \calR$,
   and~$\approx_{\varepsilon}$ denotes that the two distributions have
   statistical distance at most~$\varepsilon$.
 \end{definition}
 
 \begin{definition}
+  \label{def:one-way}
   A function family
   $\calF_{\lambda} = \set{f_{a} \colon \calD_{\lambda} \to
     \calR_{\lambda}}$ is \emph{one way} if for all efficient
@@ -387,6 +389,7 @@ signatures and public-key encryption, among many others.
 \end{proof}
 
 \begin{definition}
+  \label{def:universal}
   A function family $\calF = \set{f_{a} \colon \calD \to \calR}$ is
   \emph{universal} if for all distinct $x, x' \in \calD$,
   \[ \Pr_{f_a \gets \calF}[f_a(x)=f_a(x')] = \frac{1}{\abs{\calR}}
@@ -413,11 +416,48 @@ signatures and public-key encryption, among many others.
   probability over~$\veca_{1}$ alone.
 \end{proof}
 
-\begin{lemma}[Leftover Hash Lemma]
+\begin{lemma}[Leftover Hash Lemma~\cite{DBLP:journals/siamcomp/HastadILL99}]
   \label{lem:universal-regular}
-  Any universal hash family is $\varepsilon$-regular for
+  Any universal hash family~$\calF$ of functions from~$\calD$
+  to~$\calR$ is $\varepsilon$-regular for
   $\varepsilon=\sqrt{\abs{\calR}/{\abs{\calD}}}$.
 \end{lemma}
+
+\begin{proof}
+  Because the first components of the two distributions in
+  \cref{def:regular} are a uniformly random function $f \gets \calF$,
+  the statistical distance in question is simply the expected (i.e.,
+  average) statistical distance between $f(x)$ and~$y$ (where
+  $x \gets \calD$ and $y \gets \calR$), over the choice of~$f$.
+  
+  For any fixed hash function $f \in \calF$, let~$D_{f}$ be the
+  distribution of $f(x)$. The squared~$\ell_{2}$ norm of this
+  distribution is
+  \[ \length{D_{f}}_{2}^{2} := \sum_{y \in \calR} D_{f}(y)^{2} =
+    \Pr_{x,x' \gets \calD}[f(x)=f(x')] \leq \frac{1}{\abs{\calD}} +
+    \Pr_{x,x'}[f(x)=f(x') \mid x \neq x'] . \] Taking the expectation
+  over the uniformly random choice of $f \in \calF$, and using
+  universality, we have that
+  \[ \E_{f \gets \calF} \bracks[\big]{\length{D_{f}}_{2}^{2}} \leq
+    \frac{1}{\abs{\calD}} + \frac{1}{\abs{\calR}} . \] So, by the
+  relation between the~$\ell_{2}$ and~$\ell_{1}$ norms, the fact that
+  the values of each~$D_{f}$ sum to unity, and Jensen's inequality,
+  the expected statistical distance between~$D_{f}$ and the uniform
+  distribution is
+  \begin{align*}
+    \E_{f \gets \calF} \bracks[\Big]{\sum_{y \in \calR} \abs[\big]{D_{f}(y)
+    - \frac{1}{\abs{\calR}}}}
+    &\leq \E_{f} \bracks[\Big]{ \abs{\calR}^{1/2} \cdot
+      \parens[\Big]{\sum_{y \in \calR}
+      \parens[\big]{D_{f}(y) - \frac{1}{\abs{\calR}}}^{2}}^{1/2}} \\
+    &= \abs{\calR}^{1/2} \cdot \E_{f} \bracks[\Big]{ \parens[\Big]{
+      \sum_{y \in \calR} D_{f}(y)^{2} - \frac{1}{\abs{\calR}}}^{1/2}} \\
+    &\leq \abs{\calR}^{1/2} \cdot \E_{f}
+      \bracks[\Big]{\length{D_{f}}_{2}^{2} -
+      \frac{1}{\abs{\calR}}}^{1/2} \\
+    &\leq \sqrt{\abs{\calR}/\abs{\calD}} .
+  \end{align*}
+\end{proof}
 
 \bibliography{common/lattices,common/crypto}
 \bibliographystyle{common/alphaabbrvprelim}
