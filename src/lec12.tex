@@ -58,22 +58,20 @@ integer solution) lattices. We first recall the SIS problem.
   Equivalently, the goal is to find a non-zero vector of norm at
   most~$\beta$ in the following integer ``SIS lattice'' (it is easy to
   verify that this set is a discrete additive subgroup):
-  \[ \latperp(\matA) := \set{\vecz \in \Z^{m} : \underbrace{\matA\vecz
-        = \veczero \pmod*{q}}_{\mathclap{\text{parity-check
-            relation}}}} . \] Borrowing a term from coding theory,
-  matrix~$\matA$ is often called a \emph{parity-check matrix} for the
-  lattice $\latperp(\matA)$.
+  \[ \latperp(\matA) := \set{\vecz \in \Z^{m} : \matA\vecz = \veczero}
+    . \] Borrowing a term from coding theory, matrix~$\matA$ is often
+  called a \emph{parity-check matrix} for the lattice
+  $\latperp(\matA)$.
 \end{definition}
 
 We begin with some mathematical properties of SIS lattices. First,
 these lattices are called ``$q$-ary'' because they contain every
-integer vector whose entries are all multiples of~$q$, so a vector's
-membership in $\latperp(\matA)$ is solely determined by its entries
-modulo~$q$:
+integer vector whose entries are all multiples of~$q$:
 \[
-  \underbrace{q\Z^{m} \subseteq \lat^{\perp}(\matA)}_{q\text{-ary
-      lattice}} \subseteq \Z^{m}.
+  q\Z^{m} \subseteq \lat^{\perp}(\matA) \subseteq \Z^{m}.
 \]
+So, a vector's membership in $\latperp(\matA)$ is determined solely by
+its entries modulo~$q$.
 
 \paragraph{Cosets.}
 
@@ -92,9 +90,9 @@ because $\matA (\vecx'-\vecx) = \veczero$.
 
 \paragraph{Determinant.}
 
-We have that
-\[ \det(\latperp(\matA)) = \underbrace{\abs{\Z^m /
-      \latperp(\matA)}}_{\mathclap{\text{\# of cosets}}} =
+By the bijective correspondence between integer cosets and syndromes
+in the image of~$\matA$, we have that
+\[ \det(\latperp(\matA)) = \abs{\Z^m / \latperp(\matA)} =
   \abs{\text{Image}(\matA)} \leq q^{n} , \] with equality if the image
 of~$\matA$ is all of~$\Zq^{n}$ (i.e., the columns of~$\matA$
 generate~$\Zq^{n}$), which will be the setting we are almost always
