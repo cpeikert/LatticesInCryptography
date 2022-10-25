@@ -171,17 +171,32 @@ term conceals~$\vecs$.
 \paragraph{Error distribution.}
 
 A typical choice of the error distribution~$\chi$, and one for which
-the worst-case-hardness theorems apply, is a \emph{discrete Gaussian}
-$D_{\Z, r}$ where $r = \alpha q \geq \sqrt{n}$ for some $\alpha < 1$.
-Recall that $D_{\Z,r}$ is a Gaussian of width~$r$ restricted to the
-integers, which assigns probability proportional to
-$\exp(-\pi z^{2}/r^{2})$ to each $z \in \Z$. We can think of
-$D_{\Z,r}$ as being concentrated on an interval of width about~$r$
-(centered at zero), which covers about an $\alpha$-fraction of~$\Zq$,
-so~$\alpha$ can be thought of as the \emph{error rate} relative
-to~$q$. Applications frequently take a sufficiently small
-$\alpha = 1/\poly(n)$, although smaller error rates are sometimes
-used.
+the worst-case-hardness theorems apply (see \cref{thm:lwe-hard}
+below), is a \emph{discrete Gaussian} $D_{\Z, r}$ where
+$r = \alpha q \geq \sqrt{n}$ for some $\alpha < 1$. Recall that
+$D_{\Z,r}$ is a Gaussian of width~$r$ restricted to the integers,
+which assigns probability proportional to $\exp(-\pi z^{2}/r^{2})$ to
+each $z \in \Z$. We can think of $D_{\Z,r}$ as being concentrated on
+an interval of width about~$r$ (centered at zero), which covers about
+an $\alpha$-fraction of~$\Zq$, so~$\alpha$ can be thought of as the
+\emph{error rate} relative to~$q$. Applications frequently take a
+sufficiently small $\alpha = 1/\poly(n)$, although smaller error rates
+are sometimes used as well.
+
+The following is a central result
+from~\cite{DBLP:journals/jacm/Regev09}. Notice that the approximation
+factor for the worst-case lattice problem varies inversely
+with~$\alpha$, i.e., the smaller the error rate, the weaker the
+hardness guarantee.
+
+\begin{theorem}
+  \label{thm:lwe-hard}
+  For $\chi = D_{\Z,\alpha q}$ where $\alpha q \geq \sqrt{n}$ and any
+  $m=\poly(n)$, the search-$\lwe_{n,q,\chi,m}$ problem is hard on the
+  average (even for quantum algorithms) if $\sivp_{\Otil(n/\alpha)}$
+  (among others) on $n$-dimensional lattices is hard in the worst case
+  for \emph{quantum} algorithms.
+\end{theorem}
 
 Real-world practical constructions sometimes use an error distribution
 that is narrower and/or simpler to sample from, e.g., a (narrow)
