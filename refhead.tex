@@ -1,12 +1,37 @@
-\RequirePackage{hyperref}
+\RequirePackage[pagebackref=true]{hyperref}
 
-\hypersetup{breaklinks=true,colorlinks=true,linkcolor=blue,filecolor=blue,citecolor=blue,urlcolor=blue}
+\hypersetup{
+        hypertexnames=false,
+        breaklinks=true,
+        colorlinks=true,
+        linkcolor=blue,
+        filecolor=blue,
+        citecolor=blue,
+        urlcolor=blue,
+}
+
+% make hyperref point to figure, not caption:
+\usepackage[all]{hypcap}
+
+% more robust and maintained replacement for cleveref
+\RequirePackage{zref-clever}
+\zcsetup{
+        cap=true, % capitalize types
+        nameinlink,
+}
+
+% for migration from cleveref
+\newcommand{\cref}[1]{\zcref{#1}}
+\newcommand{\Cref}[1]{\zcref[S]{#1}}
 
 % make references point back to the pages on which they appear
+\makeatletter
+\@ifpackageloaded{backref}{%
 \renewcommand*{\backref}[1]{}
 \renewcommand*{\backrefalt}[4]{{%
     \ifcase #1 Not cited.%
     \or Page~#2.%
     \else Pages #2.%
     \fi%
-  }}
+  }}}{}
+\makeatother
