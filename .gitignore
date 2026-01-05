@@ -15,4 +15,5 @@
 **/*.tar
 **/*.fls
 **/*.brf
+**/*.xsim
 **/*.fdb_latexmk

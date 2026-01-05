@@ -1,0 +1,69 @@
+\usepackage{import}
+\import{common/}{head.tex}
+\import{common/slides/}{tikzhead.tex}
+\definecolor{structure.fg}{rgb}{0.2,0.2,0.7} % from favorite beamer theme
+
+%%% COMMANDS FOR LECTURES/HOMEWORKS
+
+\RequirePackage{fancyhdr}
+
+\newcommand{\lecheader}{%
+  \chead{\large \textbf{Lecture \lecturenum\\\lecturetopic}}
+
+  \lhead{\small
+    \textbf{\href{https://github.com/cpeikert/LatticesInCryptography}{Lattices In Cryptography}}\\}
+
+  \rhead{\small \textbf{Instructor:
+      \href{http://www.eecs.umich.edu/~cpeikert/}{Chris Peikert}\\Scribe:
+      \scribename}}
+
+  \setlength{\headheight}{20pt}
+  \setlength{\headsep}{16pt}
+}
+
+%%% xsim settings
+
+\RequirePackage{xsim}
+\RequirePackage{needspace}
+
+\DeclareExerciseEnvironmentTemplate{QRef}{%
+    \par\addvspace{\baselineskip}
+    \Needspace*{2\baselineskip}
+    \noindent
+    \hyperref[ans:\GetExerciseProperty{ID}]{\textbf{\XSIMmixedcase{\GetExerciseName}~\GetExerciseProperty{counter}.}}
+    \label{ques:\GetExerciseProperty{ID}}
+}{\par\addvspace{\baselineskip}}
+
+\DeclareExerciseEnvironmentTemplate{ARef}{%
+        \Needspace*{2\baselineskip}
+        \noindent
+        \hyperref[ques:\GetExerciseProperty{ID}]{\textbf{\XSIMmixedcase{\GetExerciseParameter{exercise-name}}~\GetExerciseProperty{counter}.}}
+        \label{ans:\GetExerciseProperty{ID}}
+        \GetExerciseBody{exercise}
+        \par \medskip \noindent
+        \textbf{\XSIMmixedcase{\GetExerciseName}.}
+}{\par\addvspace{\baselineskip}}
+
+\DeclareExerciseHeadingTemplate{simple}{%
+    \section*{\XSIMmixedcase{\GetExerciseParameter{solution-name}s}}
+}
+
+\DeclareExerciseType{question}{%
+    exercise-env = question,
+    solution-env = answer,
+    exercise-name = Question,
+    solution-name = Answer,
+    exercise-template = QRef,
+    solution-template = ARef,
+}
+
+\xsimsetup{%
+  path = {questions},
+  file-extension = {aux},
+  print-solutions/headings-template=simple,
+  exercise/template=runin
+}
+
+\loadxsimstyle{layouts}
+
+\AtEndDocument{\pagebreak\printsolutions}
