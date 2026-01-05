@@ -1,5 +1,18 @@
+\usepackage{fullpage}
+\usepackage{newtxtext}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{breakcites}
+\usepackage{booktabs}
+
+\usepackage[multiuser,inline,nomargin]{fixme}
+
+\newcommand{\etal}{\textit{et al.}}
+
 % bring in the individual header files
 
+\input{mathhead}
 \input{bbhead}
 \input{lrhead}
 \input{refhead}
@@ -8,26 +21,4 @@
 \input{comphead}
 \input{latthead}
 \input{crypthead}
-
-\newcommand{\etal}{\textit{et al.}}
-
-\renewcommand{\cal}[1]{\mathcal{#1}}
-
-% show equation numbers only for referenced equations
-% \mathtoolsset{showonlyrefs}
-
-% fix weird spacing of \pmod, and introduce \pmod* command; see
-% http://tex.stackexchange.com/questions/39221/removing-extra-space-with-pmod-command
-\makeatletter
-\renewcommand{\pod}[1]{\mathchoice
-  {\allowbreak \if@display \mkern 18mu\else \mkern 8mu\fi (#1)}
-  {\allowbreak \if@display \mkern 18mu\else \mkern 8mu\fi (#1)}
-  {\mkern4mu(#1)}
-  {\mkern4mu(#1)}
-}
-\makeatletter
-\let\@@pmod\pmod
-\DeclareRobustCommand{\pmod}{\@ifstar\@pmods\@@pmod}
-\def\@pmods#1{\mkern4mu({\operator@font mod}\mkern 6mu#1)}
-\makeatother
-%%%% 
+\input{rephead}

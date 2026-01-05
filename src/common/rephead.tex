@@ -1,0 +1,25 @@
+% macros to remember text and recall it somewhere else
+% https://tex.stackexchange.com/questions/73637/how-to-display-the-same-text-in-various-parts-of-the-document
+% (``Indirect \newcommand'')
+
+\makeatletter
+\newcommand*{\newreptext}[1]{%
+  \begingroup % babel shorthand support
+  \csname @safe@actives@true\endcsname
+  \expandafter\endgroup
+  \expandafter\newcommand\csname reptext@#1\endcsname
+}
+
+\newcommand*{\reptext}[1]{%
+  \begingroup
+  \csname @safe@actives@true\endcsname % babel shorthand support
+  \@ifundefined{reptext@#1}{%
+    \@latex@error{\string\reptext{#1} is undefined}\@ehc
+    \endgroup
+    \textbf{??}%
+  }{%
+    \endgroup
+    \@nameuse{reptext@#1}%
+  }%
+}
+\makeatother

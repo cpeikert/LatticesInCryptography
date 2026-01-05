@@ -1,0 +1,27 @@
+\RequirePackage{mathtools}
+% show equation numbers only for referenced equations
+\mathtoolsset{showonlyrefs}
+
+\usepackage{amsfonts,amssymb}
+
+\renewcommand{\cal}[1]{\mathcal{#1}}
+
+% fix weird spacing of \pmod, and introduce \pmod* command; see
+% http://tex.stackexchange.com/questions/39221/removing-extra-space-with-pmod-command
+\makeatletter
+\renewcommand{\pod}[1]{\mathchoice
+  {\allowbreak \if@display \mkern 18mu\else \mkern 8mu\fi (#1)}
+  {\allowbreak \if@display \mkern 18mu\else \mkern 8mu\fi (#1)}
+  {\mkern4mu(#1)}
+  {\mkern4mu(#1)}
+}
+\makeatletter
+\ifcsname NewCommandCopy\endcsname
+\NewCommandCopy\@@pmod\pmod
+\else%
+\let\@@pmod\pmod
+\fi%
+\DeclareRobustCommand{\pmod}{\@ifstar\@pmods\@@pmod}
+\def\@pmods#1{\mkern4mu({\operator@font mod}\mkern 6mu#1)}
+\makeatother
+%%%% 
