@@ -1,24 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage{fullpage}
-\usepackage{newtxtext}
-\usepackage{microtype}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
-\usepackage[pagebackref=true]{hyperref} % must set backref at load time
-\usepackage{fancyhdr}
-\usepackage{mathtools}
-\usepackage{enumitem}
-\usepackage[svgnames]{xcolor}
-\usepackage{tikz}
-\usepackage{import}
-
-% load after hyperref, algpseudocode to get proper behavior
-\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
-
-\import{common/}{head.tex}
-\import{common/slides/}{tikzhead.tex}
-\definecolor{structure.fg}{rgb}{0.2,0.2,0.7} % from favorite beamer theme
+\input{header}
 
 % VARIABLES
 
@@ -28,8 +10,7 @@
 
 % END OF VARIABLES
 
-\import{common/}{lechead.tex}
-\lecheader                      % execute lecture commands
+\lecheader
 
 \pagestyle{plain}               % default: no special header
 
@@ -39,126 +20,67 @@
 
 % LECTURE MATERIAL STARTS HERE
 
-\section{A Brief History of Lattices in Cryptography}
+\section{A Brief History of Lattices in Cryptography}%
 \label{sec:brief-hist}
 
-Lattices have been used in mathematics going back at least to the 18th
-century. However, computational aspects of lattices were not
-investigated much until the early 1980s, when they were successfully
-employed for breaking several proposed cryptosystems (among many other
-applications). In the mid-1990s, lattices were first used in the
-\emph{design} of cryptographic schemes, and the last roughly 15 years
-has seen an explosion of new systems and applications. Here is a
-timeline of some of the more significant developments in the use of
-lattices in cryptography.
+Lattices have been used in mathematics going back at least to the 18th century.
+However, computational aspects of lattices were not investigated much until the early 1980s, when they were successfully employed for breaking several proposed cryptosystems (among many other applications).
+In the mid-1990s, lattices were first used in the \emph{design} of cryptographic schemes, and the last roughly 15 years has seen an explosion of new systems and applications.
+Here is a timeline of some of the more significant developments in the use of lattices in cryptography.
 
 \begin{itemize}[itemsep=0pt]
-\item 18th century through early 20th century: mathematicians such as
-  Gauss and Lagrange use lattices in number theory (e.g., to give
-  proofs of the quadratic reciprocity and four-square theorems);
-  Minkowski greatly advances the study of lattices in his ``geometry
-  of numbers.''
+\item 18th century through early 20th century: mathematicians such as Gauss and Lagrange use lattices in number theory (e.g., to give proofs of the quadratic reciprocity and four-square theorems); Minkowski greatly advances the study of lattices in his ``geometry of numbers.''
 
-\item Early 1980s: Lenstra, Lenstra and Lov{\'a}sz discover their
-  famous ``LLL'' basis-reduction algorithm, whose applications include
-  factoring integer polynomials and breaking several cryptosystems.
+\item Early 1980s: Lenstra, Lenstra and Lov{\'a}sz discover their famous ``LLL'' basis-reduction algorithm, whose applications include factoring integer polynomials and breaking several cryptosystems.
 
-\item Mid-1990s: Ajtai shows a remarkable ``worst-case to average-case
-  reduction'' for lattice problems, yielding a cryptographic one-way
-  function based on \emph{worst-case} hardness conjectures; his
-  follow-up work with Dwork gives a public-key encryption scheme
-  supported by similar security theorems. However, due to their
-  inefficiency and complexity, at the time these schemes are mainly of
-  theoretical interest.
+\item Mid-1990s: Ajtai shows a remarkable ``worst-case to average-case reduction'' for lattice problems, yielding a cryptographic one-way function based on \emph{worst-case} hardness conjectures; his follow-up work with Dwork gives a public-key encryption scheme supported by similar security theorems.
+  However, due to their inefficiency and complexity, at the time these schemes are mainly of theoretical interest.
 
-  Concurrently, Hoffstein, Pipher and Silverman introduce the NTRU
-  public-key encryption scheme (and somewhat later, a related digital
-  signature scheme), which is practically quite efficient, but lacks
-  any theoretical evidence of security. After extensive cryptanalysis,
-  some of the most efficient parameter sets are broken (and various
-  iterations of the signature schemes are completely broken), though
-  NTRU encryption appears to remain secure in an asymptotic sense.
+  Concurrently, Hoffstein, Pipher and Silverman introduce the NTRU public-key encryption scheme (and somewhat later, a related digital signature scheme), which is practically quite efficient, but lacks any theoretical evidence of security.
+  After extensive cryptanalysis, some of the most efficient parameter sets are broken (and various iterations of the signature schemes are completely broken), though NTRU encryption appears to remain secure in an asymptotic sense.
 
-\item Early 2000s: researchers such as Regev and Micciancio
-  dramatically simplify and improve the early theoretical works,
-  obtaining much stronger security theorems and greatly improved
-  efficiency.
+\item Early 2000s: researchers such as Regev and Micciancio dramatically simplify and improve the early theoretical works, obtaining much stronger security theorems and greatly improved efficiency.
 
-\item 2007--present: several researchers (e.g., Gentry, Brakerski,
-  Vaikuntanathan, Lyubashevsky, your instructor) build a surprisingly
-  rich toolbox of lattice-based cryptographic constructions, including
-  powerful objects like trapdoor functions, signature schemes,
-  identity- and attribute-based encryption, fully homomorphic
-  encryption, and much more.
+\item 2007--present: several researchers (e.g., Gentry, Brakerski, Vaikuntanathan, Lyubashevsky, your instructor) build a surprisingly rich toolbox of lattice-based cryptographic constructions, including powerful objects like trapdoor functions, signature schemes, identity- and attribute-based encryption, fully homomorphic encryption, and much more.
 
-\item 2016--present: organizations like the US National Institute of
-  Standard and Technology (NIST), Google, Cloudflare, etc.\ solicit,
-  test, and ultimately select lattice-based cryptosystems for
-  the standardization and deployment of `post-quantum' cryptography.
+\item 2016--present: organizations like the US National Institute of Standard and Technology (NIST), Google, Cloudflare, etc.\ solicit, test, and ultimately select lattice-based cryptosystems for the standardization and deployment of `post-quantum' cryptography.
 \end{itemize}
-In this course we will cover a great deal of this history, especially
-the more modern developments.
+In this course we will cover a great deal of this history, especially the more modern developments.
 
-\section{Mathematical Background}
+\section{Mathematical Background}%
 \label{sec:math-background}
 
 We start with the definition of a lattice.
 
-\begin{definition}
+\begin{definition}%
   \label{def:lattice}
-  An $n$-dimensional \emph{lattice} $\lat$ is a discrete additive
-  subgroup of $\R^{n}$.
+  An $n$-dimensional \emph{lattice} $\lat$ is a discrete additive subgroup of $\R^{n}$.
 \end{definition}
 
-Let's unpack this definition.  First, a lattice $\lat$ is a
-\emph{subgroup} of $\R^{n}$, under standard component-wise addition.
-Recall that $\lat$ is a subgroup if it contains the identity element
-$\veczero \in \R^{n}$ (the all-zeros vector), and if for any $\vecx,
-\vecy \in \lat$, we have $-\vecx \in \lat$ and $\vecx + \vecy \in
-\lat$.
+Let's unpack this definition.
+First, a lattice $\lat$ is a \emph{subgroup} of $\R^{n}$, under standard component-wise addition.
+Recall that $\lat$ is a subgroup if it contains the identity element $\veczero \in \R^{n}$ (the all-zeros vector), and if for any $\vecx, \vecy \in \lat$, we have $-\vecx \in \lat$ and $\vecx + \vecy \in \lat$.
 
-Second, a lattice is \emph{discrete}: this means that every $\vecx \in
-\lat$ has some ``neighborhood'' in which $\vecx$ is the only lattice
-point.  Formally, for every $\vecx \in \lat$ there exists some
-$\epsilon > 0$ such that $(\vecx + \epsilon \ball) \cap \lat =
-\set{\vecx}$, where $(\vecx + \epsilon \ball)$ denotes the (open) ball
-of radius $\epsilon$ centered at $\vecx$. Note that when $\lat$ is a
-group, this condition is equivalent to one in which the quantifiers
-are reversed, i.e., there exists a single $\epsilon > 0$ that works
-for all $\vecx \in \lat$.  Moreover, this is equivalent to the
-existence of some $\epsilon > 0$ that works for the origin $\veczero
-\in \lat$.
+Second, a lattice is \emph{discrete}: this means that every $\vecx \in \lat$ has some ``neighborhood'' in which $\vecx$ is the only lattice point.
+Formally, for every $\vecx \in \lat$ there exists some $\epsilon > 0$ such that $(\vecx + \epsilon \ball) \cap \lat = \set{\vecx}$, where $(\vecx + \epsilon \ball)$ denotes the (open) ball of radius $\epsilon$ centered at $\vecx$.
+Note that when $\lat$ is a group, this condition is equivalent to one in which the quantifiers are reversed, i.e., there exists a single $\epsilon > 0$ that works for all $\vecx \in \lat$.
+Moreover, this is equivalent to the existence of some $\epsilon > 0$ that works for the origin $\veczero \in \lat$.
 
-\begin{example}
+\begin{example}%
   \label{ex:lattices}
-  Let us consider several examples of lattices and non-lattices.
+  Let us consider several examples and non-examples of lattices.
   \begin{enumerate}[itemsep=0pt]
-  \item The singleton set $\set{\veczero} \subset \R^{n}$ is a lattice
-    (for any positive integer $n$).
-  \item The integers $\Z \subset \R$ form a $1$-dimensional lattice,
-    and the integer grid $\Z^{n} \subset \R^{n}$ is an $n$-dimensional
-    lattice.  The set $\Z \times \set{0} = \set{(z,0) : z \in \Z}
-    \subseteq \R^{2}$ is a two-dimensional lattice, though its rank is
-    only one (see \cref{def:rank} below).
-  \item For any lattice $\lat$, its scaling $c \lat = \set{c \vecx :
-      \vecx \in \lat}$ by any real $c$ is also a lattice, e.g., the
-    even integers~$2\Z$. More generally, any linear transformation
-    applied to a lattice is also a lattice.
-  \item The set $\set{\vecx \in \Z^{n} : \sum_{i=1}^{n} x_{i} \in
-      2\Z}$ is a lattice; it is often called the ``checkerboard'' or
-    ``chessboard'' lattice, especially in two dimensions.  (See
-    \cref{fig:lattices}.)
-  \item The rationals $\Q \subset \R$ do \emph{not} form a lattice,
-    because although they form a subgroup, it is not discrete: there
-    exist rational numbers that are arbitrarily close to zero.
-  \item The odd integers $2\Z+1$ do \emph{not} form a lattice, because
-    although they are discrete, they do not form a subgroup of $\R$.
-    (However, they do comprise a \emph{coset} of the lattice $2\Z$;
-    more on this point later.)
-  \item The group $G=\Z + \sqrt{2}\Z$ is \emph{not} a lattice, because
-    it is not discrete: since $\sqrt{2}$ admits arbitrarily good
-    rational approximations $a/b$, there are values $a-b\sqrt{2} \in
-    G$ that are arbitrarily close to zero.
+  \item The singleton set $\set{\veczero} \subset \R^{n}$ is a lattice (for any positive integer $n$).
+  \item The integers $\Z \subset \R$ form a $1$-dimensional lattice, and the integer grid $\Z^{n} \subset \R^{n}$ is an $n$-dimensional lattice.
+    The set $\Z \times \set{0} = \set{(z,0) : z \in \Z} \subseteq \R^{2}$ is a two-dimensional lattice, though its rank is only one (see \cref{def:rank} below).
+  \item For any lattice $\lat$, its scaling $c \lat = \set{c \vecx : \vecx \in \lat}$ by any real $c$ is also a lattice, e.g., the even integers~$2\Z$.
+    More generally, any linear transformation applied to a lattice is also a lattice.
+  \item The set $\set{\vecx \in \Z^{n} : \sum_{i=1}^{n} x_{i} \in 2\Z}$ is a lattice; it is often called the ``checkerboard'' or ``chessboard'' lattice, especially in two dimensions.
+    (See \cref{fig:lattices}.)
+  \item The rationals $\Q \subset \R$ do \emph{not} form a lattice, because although they form a subgroup, it is not discrete: there exist rational numbers that are arbitrarily close to zero.
+  \item The odd integers $2\Z+1$ do \emph{not} form a lattice, because although they are discrete, they do not form a subgroup of $\R$.
+    (However, they do comprise a \emph{coset} of the lattice $2\Z$; more on this point later.)
+  \item The group $G=\Z + \sqrt{2}\Z$ is \emph{not} a lattice, because it is not discrete: since $\sqrt{2}$ admits arbitrarily good rational approximations $a/b$, there are values $a-b\sqrt{2} \in G$ that are arbitrarily close to zero.
   \end{enumerate}
 \end{example}
 
@@ -186,144 +108,95 @@ existence of some $\epsilon > 0$ that works for the origin $\veczero
     }
   \end{tikzpicture}
 
-  \caption{The integer and checkerboard lattices.}
+  \caption{The integer and checkerboard lattices.}%
   \label{fig:lattices}
 \end{figure}
 
-\begin{definition}
+\begin{definition}%
   \label{def:rank}
-  The \emph{rank} $k$ of a lattice $\lat \subset \R^{n}$ is the
-  dimension of its linear span, i.e., $k=\dim(\spn(\lat))$.  When
-  $k=n$, the lattice is said to be \emph{full rank}.
+  The \emph{rank} $k$ of a lattice $\lat \subset \R^{n}$ is the dimension of its linear span, i.e., $k=\dim(\spn(\lat))$.
+  When $k=n$, the lattice is said to be \emph{full rank}.
 \end{definition}
 
-In this course, all lattices are implicitly full rank unless stated
-otherwise. This assumption is usually (but not always!) without loss
-of generality, since we can restrict our attention to the subspace
-$\spn(\lat)$, which can be mapped bijectively to~$\R^{k}$ under a
-linear transformation that preserves inner products (and thus
-Euclidean norms, volumes, etc.).
+In this course, all lattices are implicitly full rank unless stated otherwise.
+This assumption is usually (but not always!)
+without loss of generality, since we can restrict our attention to the subspace $\spn(\lat)$, which can be mapped bijectively to~$\R^{k}$ under a linear transformation that preserves inner products (and thus Euclidean norms, volumes, etc.).
 
-Of particular interest are \emph{rational} and \emph{integer}
-lattices, which are subsets of $\Q^n$ and $\Z^n$, respectively.  (Note
-that not all lattices are rational, e.g., $\sqrt{2} \Z$.)  Up to
-scale, rational and integer lattices are equivalent: the discreteness
-of a rational lattice $\lat$ guarantees a finite ``common
-denominator''~$d$ such that the scaled lattice~$d \lat$ is integral.
-Rationality is important for computational purposes, because we need
-to be able to represent the lattice in an algorithm. However, most of
-the mathematical results in this course will apply to arbitrary
-(potentially non-rational) lattices, so we will explicitly identify
-when we are restricting to integral lattices.
+Of particular interest are \emph{rational} and \emph{integer} lattices, which are subsets of $\Q^n$ and $\Z^n$, respectively.
+(Note that not all lattices are rational, e.g., $\sqrt{2} \Z$.)
+Up to scale, rational and integer lattices are equivalent: the discreteness of a rational lattice $\lat$ guarantees a finite ``common denominator''~$d$ such that the scaled lattice~$d \lat$ is integral.
+Rationality is important for computational purposes, because we need to be able to represent the lattice in an algorithm.
+However, most of the mathematical results in this course will apply to arbitrary (potentially non-rational) lattices, so we will explicitly identify when we are restricting to integral lattices.
 
-\subsection{Lattice Bases}
+\subsection{Lattice Bases}%
 \label{sec:bases}
 
-Except for the degenerate case $\set{\veczero}$, a lattice is always
-an infinite set.  However, a basic fact (which we will not prove) is
-that a lattice can always be finitely represented by a \emph{basis}.
+Except for the degenerate case $\set{\veczero}$, a lattice is always an infinite set.
+However, a basic fact (which we will not prove) is that a lattice can always be finitely represented by a \emph{basis}.
 
-\begin{definition}
+\begin{definition}%
   \label{def:basis}
-  A \emph{basis} $\matB=\set{\vecb_1,\dots, \vecb_n} \subset \R^n$ of
-  a lattice $\lat$ is a set of linearly independent vectors whose
-  integer linear combinations generate the lattice:
+  A \emph{basis} $\matB=\set{\vecb_1,\dots, \vecb_n} \subset \R^n$ of a lattice $\lat$ is a set of linearly independent vectors whose integer linear combinations generate the lattice:
   \begin{equation}
     \label{eq:lattice-basis}
     \lat = \lat(\matB) := \set[\bigg]{\sum_{i=1}^n z_i \vecb_i : z_i\in\Z}.
   \end{equation}
-  Equivalently, if we interpret $\matB \in \R^{n \times n}$ as a
-  nonsingular matrix whose (ordered) columns are $\vecb_1, \ldots,
-  \vecb_n$, then $\lat = \matB \cdot \Z^n = \set{\matB \vecz : \vecz
-    \in \Z^{n}}$.
+  Equivalently, if we interpret $\matB \in \R^{n \times n}$ as a nonsingular matrix whose (ordered) columns are $\vecb_1, \ldots, \vecb_n$, then $\lat = \matB \cdot \Z^n = \set{\matB \vecz : \vecz \in \Z^{n}}$.
 \end{definition}
 
-Another way of reading the above definition is that any lattice can be
-obtained by applying some nonsingular linear transformation to the
-integer lattice $\Z^{n}$.
+Another way of reading the above definition is that any lattice can be obtained by applying some nonsingular linear transformation to the integer lattice $\Z^{n}$.
 
 While a lattice always has a basis, such a basis is not unique.
-Essentially, the existence of multiple lattice bases is what makes
-lattice-based cryptography possible!  (More on this later.)  Recall
-that an integer matrix is said to be \emph{unimodular} if it
-determinant is $\pm 1$, i.e., if $\matU^{-1}$ exists and is also an
-integer matrix.
+Essentially, the existence of multiple lattice bases is what makes lattice-based cryptography possible!
+(More on this later.)
+Recall that an integer matrix is said to be \emph{unimodular} if it determinant is $\pm 1$, i.e., if $\matU^{-1}$ exists and is also an integer matrix.
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:basis-unimod}
-  Bases $\matB_1,\matB_2$ generate the same lattice $\lat$ if and only
-  if there exists a unimodular $\matU \in \Z^{n \times n}$ such that
-  $\matB_1 = \matB_2 \matU$.
+  Bases $\matB_1,\matB_2$ generate the same lattice $\lat$ if and only if there exists a unimodular $\matU \in \Z^{n \times n}$ such that $\matB_1 = \matB_2 \matU$.
 \end{lemma}
 
 \begin{proof}
-  Suppose $\lat(\matB_1)=\lat(\matB_2)$, or equivalently, $\matB_1
-  \cdot \Z^n=\matB_2 \cdot \Z^n$.  Then each column of $\matB_{1}$ is
-  an integer combination of the columns of $\matB_{2}$, and
-  vice-versa.  That is, there exist $\matU,\matV \in \Z^{n\times n}$
-  such that $\matB_1=\matB_2 \matU$ and $\matB_2=\matB_1 \matV =
-  \matB_{2} \matU \matV$.  Because $\matB_{2}$ is invertible, we have
-  $\matU \matV=\matI$ and therefore $\det(\matU) \det(\matV) = 1$, so
-  $\det(\matU) = \det(\matV)=\pm 1$ because both matrices are integral.
+  Suppose $\lat(\matB_1)=\lat(\matB_2)$, or equivalently, $\matB_1 \cdot \Z^n=\matB_2 \cdot \Z^n$.
+  Then each column of $\matB_{1}$ is an integer combination of the columns of $\matB_{2}$, and vice-versa.
+  That is, there exist $\matU,\matV \in \Z^{n\times n}$ such that $\matB_1=\matB_2 \matU$ and $\matB_2=\matB_1 \matV = \matB_{2} \matU \matV$.
+  Because $\matB_{2}$ is invertible, we have $\matU \matV=\matI$ and therefore $\det(\matU) \det(\matV) = 1$, so $\det(\matU) = \det(\matV)=\pm 1$ because both matrices are integral.
 
-  For the other direction, suppose $\matB_1=\matB_2 \matU$ for some
-  unimodular $\matU$. Then we have \[ \lat(\matB_1)=\matB_1 \cdot \Z^n
-  = \matB_2 \cdot (\matU \cdot \Z^n) = \matB_2 \cdot \Z^n =
-  \lat(\matB_{2}), \] where the equality $\matU \cdot \Z^{n} = \Z^{n}$
-  follows from the fact that $\matU \vecx = \vecy \iff \vecx =
-  \matU^{-1} \vecy$, and that $\matU, \matU^{-1}$ are both integral.
+  For the other direction, suppose $\matB_1=\matB_2 \matU$ for some unimodular $\matU$.
+  Then we have \[ \lat(\matB_1)=\matB_1 \cdot \Z^n = \matB_2 \cdot (\matU \cdot \Z^n) = \matB_2 \cdot \Z^n = \lat(\matB_{2}), \] where the equality $\matU \cdot \Z^{n} = \Z^{n}$ follows from the fact that $\matU \vecx = \vecy \iff \vecx = \matU^{-1} \vecy$, and that $\matU, \matU^{-1}$ are both integral.
 \end{proof}
 
-\begin{corollary}
+\begin{corollary}%
   \label{cor:bases-Zn}
-  The bases of $\Z^{n}$ are exactly the unimodular matrices $\matU \in
-  \Z^{n \times n}$.
+  The bases of $\Z^{n}$ are exactly the unimodular matrices $\matU \in \Z^{n \times n}$.
 \end{corollary}
 
-\begin{corollary}
+\begin{corollary}%
   \label{cor:check-same-lattice}
-  We can efficiently test whether two given matrices
-  $\matB_{1}, \matB_{2} \in \Z^{n \times n}$ generate the same
-  lattice, by checking whether $\matB_1^{-1} \cdot \matB_2$ is
-  unimodular.
+  We can efficiently test whether two given matrices $\matB_{1}, \matB_{2} \in \Z^{n \times n}$ generate the same lattice, by checking whether $\matB_1^{-1} \cdot \matB_2$ is unimodular.
 \end{corollary}
 
-\subsection{Fundamental Regions}
+\subsection{Fundamental Regions}%
 \label{sec:fundamental-regions}
 
-Since a lattice is an infinite periodic ``grid'' in $\R^{n}$, it is
-often useful to consider a corresponding periodic ``tiling'' of
-$\R^{n}$ by copies of some body. For example, consider the typical
-tiling of bricks in a wall (which corresponds to the checkerboard
-lattice), or a tiling of the plane by regular hexagons (with lattice
-points at their centers). The notion of a fundamental region
-formalizes this concept.
+Since a lattice is an infinite periodic ``grid'' in $\R^{n}$, it is often useful to consider a corresponding periodic ``tiling'' of $\R^{n}$ by copies of some body.
+For example, consider the typical tiling of bricks in a wall (which corresponds to the checkerboard lattice), or a tiling of the plane by regular hexagons (with lattice points at their centers).
+The notion of a fundamental region formalizes this concept.
 
-\begin{definition}
+\begin{definition}%
   \label{def:fund-region}
-  A set $\calF \subseteq \R^{n}$ is a \emph{fundamental region} of a
-  lattice $\lat$ if its translates
-  $\vecx+\calF := \set{\vecx + \vecy : \vecy \in \calF}$, taken over
-  all $\vecx \in \lat$, form a partition of $\R^n$.
+  A set $\calF \subseteq \R^{n}$ is a \emph{fundamental region} of a lattice $\lat$ if its translates $\vecx+\calF := \set{\vecx + \vecy : \vecy \in \calF}$, taken over all $\vecx \in \lat$, form a partition of $\R^n$.
 \end{definition}
 
-For example, the half-open unit intervals $[0,1)$ and $\hohalf$ are
-fundamental regions of the integer lattice~$\Z$: any $x \in \R$ is in
-the unique translate $\floor{x} + [0,1)$ or $\round{x} + \hohalf$,
-respectively (where $\round{x} := \floor{x + \tfrac12}$ denotes
-rounding to the nearest integer, with ties broken upward).  Similarly,
-the half-open cubes $[0,1)^{n}$ and $\hohalf^{n}$ are fundamental
-regions of $\Z^{n}$.  Note that in general, a fundamental region need
-not be convex or even consist of a single connected component (though
-all the fundamental regions we consider in this course will satisfy
-both of those properties).
+For example, the half-open unit intervals $[0,1)$ and $\hohalf$ are fundamental regions of the integer lattice~$\Z$: any $x \in \R$ is in the unique translate $\floor{x} + [0,1)$ or $\round{x} + \hohalf$, respectively (where $\round{x} := \floor{x + \tfrac12}$ denotes rounding to the nearest integer, with ties broken upward).
+Similarly, the half-open cubes $[0,1)^{n}$ and $\hohalf^{n}$ are fundamental regions of $\Z^{n}$.
+Note that in general, a fundamental region need not be convex or even consist of a single connected component (though all the fundamental regions we consider in this course will satisfy both of those properties).
 
 A lattice basis naturally yields a fundamental region:
 
-\begin{definition}
+\begin{definition}%
   \label{def:fund-piped}
-  The \emph{fundamental parallelepiped} of a lattice basis~$\matB$ is
-  defined as
+  The \emph{fundamental parallelepiped} of a lattice basis~$\matB$ is defined as
   \begin{equation}
     \label{eq:fund-piped}
     \piped(\matB) := \matB \cdot \hohalf^n =
@@ -331,31 +204,20 @@ A lattice basis naturally yields a fundamental region:
   \end{equation}
 \end{definition}
     
-Alternatively, the fundamental parallelepiped is sometimes defined as
-$\piped(\matB) = \matB \cdot [0,1)^n$.  However, in this course we
-will typically use the formulation from
-\cref{eq:fund-piped}, since it has the convenient property
-of being essentially symmetric about the origin (ignoring its
-boundary).
+Alternatively, the fundamental parallelepiped is sometimes defined as $\piped(\matB) = \matB \cdot [0,1)^n$.
+However, in this course we will typically use the formulation from \cref{eq:fund-piped}, since it has the convenient property of being essentially symmetric about the origin (ignoring its boundary).
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:fund-piped-region}
-  Let $\calF$ be a fundamental region of $\Z^{n}$ and $\matB$ be a
-  lattice basis.  Then $\matB \cdot \calF = \set{\matB \vecx : \vecx
-    \in \calF}$ is a fundamental region of $\lat = \lat(\matB)$.  In
-  particular, $\piped(\matB)$ is a fundamental region of $\lat$.
+  Let $\calF$ be a fundamental region of $\Z^{n}$ and $\matB$ be a lattice basis.
+  Then $\matB \cdot \calF = \set{\matB \vecx : \vecx \in \calF}$ is a fundamental region of $\lat = \lat(\matB)$.
+  In particular, $\piped(\matB)$ is a fundamental region of $\lat$.
 \end{lemma}
 
 \begin{proof}
-  We need to show that each $\vecx \in \R^n$ is in exactly one
-  translate $\vecv + \matB \cdot \calF$, where
-  $\vecv = \matB \vecz \in \lat$ for some $\vecz \in \Z^{n}$. Because
-  $\matB$ is nonsingular, we have
-  $\vecx \in \matB \vecz + \matB \cdot \calF$ if and only if
-  $\matB^{-1} \vecx \in \vecz + \calF$. Since
-  $\matB^{-1} \vecx \in \R^{n}$ and $\calF$ is a fundamental region of
-  $\Z^{n}$, there is exactly one $\vecz \in \Z^{n}$ for which the
-  latter inclusion holds, which proves the claim.
+  We need to show that each $\vecx \in \R^n$ is in exactly one translate $\vecv + \matB \cdot \calF$, where $\vecv = \matB \vecz \in \lat$ for some $\vecz \in \Z^{n}$.
+  Because $\matB$ is nonsingular, we have $\vecx \in \matB \vecz + \matB \cdot \calF$ if and only if $\matB^{-1} \vecx \in \vecz + \calF$.
+  Since $\matB^{-1} \vecx \in \R^{n}$ and $\calF$ is a fundamental region of $\Z^{n}$, there is exactly one $\vecz \in \Z^{n}$ for which the latter inclusion holds, which proves the claim.
 \end{proof}
 
 \begin{figure}[h!]
@@ -396,153 +258,94 @@ boundary).
     \end{scope}
   \end{tikzpicture}
 
-  \caption{A lattice basis with a (partial) tiling by its fundamental
-    parallelepiped.}
+  \caption{A lattice basis with a (partial) tiling by its fundamental parallelepiped.}%
   \label{fig:bases-fund-pipeds}
 \end{figure}
 
-Another useful fundamental region is given by the \emph{Voronoi cell}
-of a lattice, which is the set of all points in~$\R^{n}$ that are
-closer to the origin than to any other lattice point:
+Another useful fundamental region is given by the \emph{Voronoi cell} of a lattice, which is the set of all points in~$\R^{n}$ that are closer to the origin than to any other lattice point:
 \begin{equation}
   \label{eq:voronoi}
   \mathcal{V}(\lat) := \set{\vecx \in \R^n : \length{\vecx} <
     \length{\vecx-\vecv}\ \forall\ \vecv \in \lat \setminus \set{\veczero} }.
 \end{equation}
-Actually, the open set $\mathcal{V}(\lat)$ itself is not quite a
-fundamental region: its translates by lattice points are pairwise
-disjoint and cover all of $\R^{n}$, \emph{except} for those points on
-the boundaries of the translates (which form a set of measure zero).
-The Voronoi cell can be made into a true fundamental region by making
-it ``half-open'' in some appropriate sense, but this involves some
-technical subtleties.
+Actually, the open set $\mathcal{V}(\lat)$ itself is not quite a fundamental region: its translates by lattice points are pairwise disjoint and cover all of $\R^{n}$, \emph{except} for those points on the boundaries of the translates (which form a set of measure zero).
+The Voronoi cell can be made into a true fundamental region by making it ``half-open'' in some appropriate sense, but this involves some technical subtleties.
 
-A basic fact is that all fundamental regions of a lattice have the
-\emph{same} volume; this volume is an essential lattice invariant.
+A basic fact is that all fundamental regions of a lattice have the \emph{same} volume; this volume is an essential lattice invariant.
 
-\begin{definition}
+\begin{definition}%
   \label{def:volume}
-  The \emph{volume} (or \emph{determinant}) of a lattice $\lat$,
-  denoted $\det(\lat)$, is defined as $\vol(\calF)$ where $\calF$ is
-  any fundamental region of $\lat$.
+  The \emph{volume} (or \emph{determinant}) of a lattice $\lat$, denoted $\det(\lat)$, is defined as $\vol(\calF)$ where $\calF$ is any fundamental region of $\lat$.
 \end{definition}
 
-\begin{claim}
+\begin{claim}%
   \label{clm:vol-fund-piped}
-  The volume of a lattice $\lat$ is $\det(\lat) = \abs{\det(\matB)}$,
-  where $\matB$ is any basis of $\lat$.
+  The volume of a lattice $\lat$ is $\det(\lat) = \abs{\det(\matB)}$, where $\matB$ is any basis of $\lat$.
 \end{claim}
 
 \begin{proof}
-  By \cref{lem:fund-piped-region}, $\piped(\matB)$ is a
-  fundamental region of $\lat$, and by basic linear algebra,
-  $\vol(\piped(\matB)) = \abs{\det(\matB)}$.
+  By \cref{lem:fund-piped-region}, $\piped(\matB)$ is a fundamental region of $\lat$, and by basic linear algebra, $\vol(\piped(\matB)) = \abs{\det(\matB)}$.
 \end{proof}
 
-Note that $\abs{\det(\matB)}$ is invariant under choice of lattice
-basis $\matB$, because by \cref{lem:basis-unimod}, any other
-basis is of the form $\matB' = \matB \matU$ for some unimodular
-$\matU$, and $\abs{\det(\matB')} = \abs{\det(\matB)} \cdot
-\abs{\det(\matU)} = \abs{\det(\matB)}$.
+Note that $\abs{\det(\matB)}$ is invariant under choice of lattice basis $\matB$, because by \cref{lem:basis-unimod}, any other basis is of the form $\matB' = \matB \matU$ for some unimodular $\matU$, and $\abs{\det(\matB')} = \abs{\det(\matB)} \cdot \abs{\det(\matU)} = \abs{\det(\matB)}$.
 
-\subsection{Minimum Distance}
+\subsection{Minimum Distance}%
 \label{sec:minimum-distance}
 
-Because a lattice $\lat$ is discrete, it has a nonzero element
-$\vecv \in \lat$ of minimum length under some specified norm, e.g.,
-the Euclidean norm. This element is not unique, because also
-$-\vecv \in \lat$.
+Because a lattice $\lat$ is discrete, it has a nonzero element $\vecv \in \lat$ of minimum length under some specified norm, e.g., the Euclidean norm.
+This element is not unique, because also $-\vecv \in \lat$.
 
-\begin{definition}
+\begin{definition}%
   \label{def:min-dist}
   The \emph{minimum distance} of a lattice $\lat$ is defined as
   \begin{equation}
     \label{eq:min-dist}
     \lambda_1(\lat) := \min_{\vecv \in \lat \setminus \set{\veczero}}
-    \length{\vecv}=\min_{\text{distinct } \vecx,\vecy\in\lat} \length{\vecx-\vecy}.
+    \length{\vecv} = \min_{\text{distinct } \vecx,\vecy\in\lat} \length{\vecx-\vecy}.
   \end{equation}
-  (The second equality follows from the fact that $\vecx-\vecy$ is
-  itself a nonzero lattice vector.)
+  (The second equality follows from the fact that $\vecx-\vecy$ is itself a nonzero lattice vector.)
 \end{definition}
 
-A central result of Minkowski relates the minimum distance of a
-lattice to its determinant.  Recall that a \emph{centrally symmetric}
-body $S$ is one for which $\vecx \in S \iff -\vecx \in S$, and a
-\emph{convex} body $S$ is one for which $\vecx, \vecy \in S
-\Rightarrow \alpha \vecx + (1-\alpha) \vecy \in S$ for any $\alpha \in
-[0,1]$, i.e., the line segment connecting $\vecx$ and $\vecy$ is
-entirely contained in $S$.
+A central result of Minkowski relates the minimum distance of a lattice to its determinant.
+Recall that a \emph{centrally symmetric} body $S$ is one for which $\vecx \in S \iff -\vecx \in S$, and a \emph{convex} body $S$ is one for which $\vecx, \vecy \in S \Rightarrow \alpha \vecx + (1-\alpha) \vecy \in S$ for any $\alpha \in [0,1]$, i.e., the line segment connecting $\vecx$ and $\vecy$ is entirely contained in $S$.
 
-\begin{theorem}[Minkowski]
+\begin{theorem}[Minkowski]%
   \label{thm:minkowski-body}
-  Let $\lat \subset \R^{n}$ be a lattice. Any convex, centrally
-  symmetric body $S \subset \R^{n}$ of volume
-  $\vol(S) > 2^n \cdot \det(\lat)$ contains a nonzero lattice point,
-  i.e., $S \cap \lat \neq \set{\veczero}$.
+  Let $\lat \subset \R^{n}$ be a lattice.
+  Any convex, centrally symmetric body $S \subset \R^{n}$ of volume $\vol(S) > 2^n \cdot \det(\lat)$ contains a nonzero lattice point, i.e., $S \cap \lat \neq \set{\veczero}$.
 \end{theorem}
 
 \begin{proof}
-  Let $S'=S/2$, so $\vol(S') > \det(\lat)$. (Recall that in~$\R^{n}$,
-  volumes scale by the $n$th power of the scaling factor.) By a
-  ``volumetric pigeonhole argument,'' we claim that there exist
-  distinct $\vecx, \vecy \in S'$ such that $\vecx-\vecy \in \lat$. To
-  see this, consider any fundamental region $\calF$ of $\lat$, and
-  partition $S'$ into sets $S'_{\vecv} := S' \cap (\vecv + \calF)$ for
-  each $\vecv \in \lat$. Then the translates
-  $S'_{\vecv} - \vecv \subseteq \calF$ have total volume
-  $\vol(S') > \vol(\calF)$, so they must overlap somewhere, i.e.,
-  there exists some
-  $\vecz \in (S'_{\vecu} - \vecu) \cap (S'_{\vecv} - \vecv)$ for
-  distinct lattice points $\vecu,\vecv \in \lat$. It follows that
-  $\vecx = \vecz + \vecu, \vecy = \vecz + \vecv \in S'$ are two
-  distinct points in $S'$ whose difference
-  $\vecx-\vecy = \vecu-\vecv \in \lat$ is a lattice point.
+  Let $S'=S/2$, so $\vol(S') > \det(\lat)$.
+  (Recall that in~$\R^{n}$, volumes scale by the $n$th power of the scaling factor.)
+  By a ``volumetric pigeonhole argument,'' we claim that there exist distinct $\vecx, \vecy \in S'$ such that $\vecx-\vecy \in \lat$.
+  To see this, consider any fundamental region $\calF$ of $\lat$, and partition $S'$ into sets $S'_{\vecv} := S' \cap (\vecv + \calF)$ for each $\vecv \in \lat$.
+  Then the translates $S'_{\vecv} - \vecv \subseteq \calF$ have total volume $\vol(S') > \vol(\calF)$, so they must overlap somewhere, i.e., there exists some $\vecz \in (S'_{\vecu} - \vecu) \cap (S'_{\vecv} - \vecv)$ for distinct lattice points $\vecu,\vecv \in \lat$.
+  It follows that $\vecx = \vecz + \vecu, \vecy = \vecz + \vecv \in S'$ are two distinct points in $S'$ whose difference $\vecx-\vecy = \vecu-\vecv \in \lat$ is a lattice point.
 
-  Finally, we have $2\vecx, -2\vecy\in S$ by definition of $S'$ and
-  central symmetry of~$S$, and their midpoint $(2\vecx-2\vecy)/2 =
-  \vecx-\vecy\in S$ by convexity.
+  Finally, we have $2\vecx, -2\vecy\in S$ by definition of $S'$ and central symmetry of~$S$, and their midpoint $(2\vecx-2\vecy)/2 = \vecx-\vecy\in S$ by convexity.
 \end{proof}
 
-\begin{corollary}[Minkowski's First Theorem]
+\begin{corollary}[Minkowski's First Theorem]%
   \label{cor:minkowski-first}
-  For any lattice $\lat$, we have $\lambda_1(\lat) \leq \sqrt{n} \cdot
-  \det(\lat)^{1/n}$.
+  For any lattice $\lat$, we have $\lambda_1(\lat) \leq \sqrt{n} \cdot \det\parens{\lat}^{1/n}$.
 \end{corollary}
 
-Notice that this bound ``scales properly'': if we scale the lattice
-(and hence its minimum distance) by a~$c$ factor, the determinant
-scales by a~$c^{n}$ factor, hence the bound also scales by a~$c$
-factor.
+Notice that this bound ``scales properly'': if we scale the lattice (and hence its minimum distance) by a~$c$ factor, the determinant scales by a~$c^{n}$ factor, hence the bound also scales by a~$c$ factor.
 
 \begin{proof}
-  Without loss of generality, assume that $\det(\lat) = 1$ by scaling
-  the lattice by a $\det(\lat)^{-1/n}$ factor, which
-  scales~$\lambda_{1}$ by the same factor. Now take
-  $S = \sqrt{n} \cdot \bar{\ball}$ to be the (closed) Euclidean ball
-  of radius~$\sqrt{n}$. The cube $[-1,1]^{n}$, which has side
-  length~$2$ and therefore volume $2^{n}$, is strictly contained
-  in~$S$ (when $n > 1$; for $n=1$ the corollary holds trivially),
-  hence $\vol(S) > 2^n$. Therefore, $S$ contains a nonzero lattice
-  point by \cref{thm:minkowski-body}, and the bound on $\lambda_{1}$
-  immediately follows.
+  Without loss of generality, assume that $\det(\lat) = 1$ by scaling the lattice by a $\det\parens{\lat}^{-1/n}$ factor, which scales~$\lambda_{1}$ by the same factor.
+  Now take $S = \sqrt{n} \cdot \bar{\ball}$ to be the (closed) Euclidean ball of radius~$\sqrt{n}$.
+  The cube $\bracks{-1,1}^{n}$, which has side length~$2$ and therefore volume $2^{n}$, is strictly contained in~$S$ (when $n > 1$; for $n=1$ the corollary holds trivially), hence $\vol(S) > 2^n$.
+  Therefore, $S$ contains a nonzero lattice point by \cref{thm:minkowski-body}, and the bound on $\lambda_{1}$ immediately follows.
 \end{proof}
 
-Note that the bound we used on the volume of a ball was somewhat
-loose. Using a more precise formula for the volume of an
-$n$-dimensional ball, we can obtain a slightly tighter bound
-$\lambda_{1}(\lat) \leq \sqrt{n/(2 \pi e)} \cdot \det(\lat)^{1/n}$,
-which is better than the one given in \cref{cor:minkowski-first} by
-only a constant factor.
+Note that the bound we used on the volume of a ball was somewhat loose.
+Using a more precise formula for the volume of an $n$-dimensional ball, we can obtain a slightly tighter bound $\lambda_{1}(\lat) \leq \sqrt{n/(2 \pi e)} \cdot \det\parens{\lat}^{1/n}$, which is better than the one given in \cref{cor:minkowski-first} by only a constant factor.
 
-Also notice that Minkowski's bound can be arbitrarily loose: for
-example, consider the lattice $\lat \subset \R^{2}$ of unit
-determinant generated by the basis vectors $(2^{100}, 0)$,
-$(0,2^{-100})$.  Then $\lambda_{1}(\lat) = 2^{-100} \ll \sqrt{2}$.
-However, it is known that in general, Minkowski's bound cannot be
-improved beyond small constant factors: there exist infinite families
-of $n$-dimensional, unit-determinant lattices $\lat$ for which
-$\lambda_{1}(\lat) \geq C \sqrt{n}$, where $C \approx \sqrt{1/(\pi
-  e)}$ is some universal positive constant.
+Also notice that Minkowski's bound can be arbitrarily loose: for example, consider the lattice $\lat \subset \R^{2}$ of unit determinant generated by the basis vectors $(2^{100}, 0)$, $(0,2^{-100})$.
+Then $\lambda_{1}(\lat) = 2^{-100} \ll \sqrt{2}$.
+However, it is known that in general, Minkowski's bound cannot be improved beyond small constant factors: there exist infinite families of $n$-dimensional, unit-determinant lattices $\lat$ for which $\lambda_{1}(\lat) \geq C \sqrt{n}$, where $C \approx \sqrt{1/(\pi e)}$ is some universal positive constant.
 
 \end{document}
 
