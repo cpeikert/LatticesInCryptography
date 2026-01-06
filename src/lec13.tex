@@ -1,22 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage{fullpage}
-\usepackage{newtxtext}
-\usepackage{microtype}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
-\usepackage[pagebackref=true]{hyperref} % must set backref at load time
-\usepackage{fancyhdr}
-\usepackage{mathtools}
-\usepackage{enumitem}
-\usepackage[svgnames]{xcolor}
-\usepackage{tikz}
-\usepackage{import}
-
-% load after hyperref, algpseudocode to get proper behavior
-\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
-
-\import{common/}{head.tex}
+\input{header}
 
 % VARIABLES
 
@@ -26,7 +10,6 @@
 
 % END OF VARIABLES
 
-\import{common/}{lechead.tex}
 \lecheader                      % execute lecture commands
 
 \pagestyle{plain}               % default: no special header
@@ -39,61 +22,31 @@
 
 \newcommand{\Dist}{\calD}
 
-In this lecture, we introduce the (average-case) \emph{learning with
-  errors}~(LWE) problem of Regev~\cite{DBLP:journals/jacm/Regev09},
-recall its hardness based on worst-case lattice problems, and describe
-a simple public-key cryptosystem whose security can be proved based on
-the hardness of LWE.\@ Since its introduction in 2005, LWE has served
-as the foundation for a huge variety of rich cryptographic
-constructions---several of which we still only know how to obtain from
-LWE-like problems.
+In this lecture, we introduce the (average-case) \emph{learning with errors}~(LWE) problem of Regev~\cite{DBLP:journals/jacm/Regev09}, recall its hardness based on worst-case lattice problems, and describe a simple public-key cryptosystem whose security can be proved based on the hardness of LWE\@.
+Since its introduction in 2005, LWE has served as the foundation for a huge variety of rich cryptographic constructions---several of which we still only know how to obtain from LWE-like problems.
 
-\section{History}
+\section{History}%
 \label{sec:history}
 
-The first public-key encryption scheme with a security proof based on
-a worst-case hardness assumption was given by Ajtai and Dwork in
-1997~\cite{DBLP:conf/stoc/AjtaiD97}. The security of their scheme is
-based on the conjectured (worst-case) hardness of the
-\emph{unique-SVP} problem, which is defined roughly as follows: given
-a lattice whose shortest vector is ``unique'' by a significant
-factor---i.e., the minimum distance $\lambda_{1}$ is significantly
-smaller than the second successive minimum~$\lambda_{2}$---find a
-shortest nonzero lattice vector. One way to construct such a lattice
-is to start with a lattice that has a large minimum
-distance~$\lambda_1$, then augment it with a much shorter vector.
-While the Ajtai--Dwork encryption scheme is conceptually quite
-natural, it is very inefficient, and its full security proof is quite
-complex.
+The first public-key encryption scheme with a security proof based on a worst-case hardness assumption was given by Ajtai and Dwork in 1997~\cite{DBLP:conf/stoc/AjtaiD97}.
+The security of their scheme is based on the conjectured (worst-case) hardness of the \emph{unique-SVP} problem, which is defined roughly as follows: given a lattice whose shortest vector is ``unique'' by a significant factor---i.e., the minimum distance $\lambda_{1}$ is significantly smaller than the second successive minimum~$\lambda_{2}$---find a shortest nonzero lattice vector.
+One way to construct such a lattice is to start with a lattice that has a large minimum distance~$\lambda_1$, then augment it with a much shorter vector.
+While the Ajtai--Dwork encryption scheme is conceptually quite natural, it is very inefficient, and its full security proof is quite complex.
 
-The next major encryption scheme with a worst-case hardness proof was
-developed by Regev in 2005~\cite{DBLP:journals/jacm/Regev09}. This
-work introduced a clean and simple average-case problem called
-\emph{learning with errors}~(LWE), and proved that LWE is hard if
-certain lattice problems are hard in the worst case for \emph{quantum}
-algorithms. (The quantum hypothesis was relaxed to a classical one
-in~\cite{DBLP:conf/stoc/Peikert09}, at the expense of worse parameters
-or a non-standard worst-case hardness assumption.) Moreover, Regev
-gave an encryption scheme whose security can be proved based on the
-assumption that LWE is hard. Regev's encryption scheme is more
-efficient than Ajtai--Dwork, and LWE itself is also substantially
-simpler and more versatile (as evidenced by the great number of other
-applications it has enabled). Interestingly, though, the average-case
-problems underlying the Ajtai--Dwork and Regev cryptosystems actually
-turn out to be \emph{equivalent} (though with a significant loss in
-parameters)~\cite{DBLP:conf/coco/Regev10}.
+The next major encryption scheme with a worst-case hardness proof was developed by Regev in 2005~\cite{DBLP:journals/jacm/Regev09}.
+This work introduced a clean and simple average-case problem called \emph{learning with errors}~(LWE), and proved that LWE is hard if certain lattice problems are hard in the worst case for \emph{quantum} algorithms.
+(The quantum hypothesis was relaxed to a classical one in~\cite{DBLP:conf/stoc/Peikert09}, at the expense of worse parameters or a non-standard worst-case hardness assumption.)
+Moreover, Regev gave an encryption scheme whose security can be proved based on the assumption that LWE is hard.
+Regev's encryption scheme is more efficient than Ajtai--Dwork, and LWE itself is also substantially simpler and more versatile (as evidenced by the great number of other applications it has enabled).
+Interestingly, though, the average-case problems underlying the Ajtai--Dwork and Regev cryptosystems actually turn out to be \emph{equivalent} (though with a significant loss in parameters)~\cite{DBLP:conf/coco/Regev10}.
 
-In the past 15 years or so, many rich cryptographic constructions,
-such as identity-based encryption, attribute-based encryption, fully
-homomorphic encryption, and secure computation protocols, have been
-built on LWE.
+In the past 15 years or so, many rich cryptographic constructions, such as identity-based encryption, attribute-based encryption, fully homomorphic encryption, and secure computation protocols, have been built on LWE\@.
 
-\section{Learning With Errors Problem}
+\section{Learning With Errors Problem}%
 \label{sec:learning-with-errors}
 
-Learning With Errors is closely related to the SIS problem, which we
-have seen in previous lectures. Recall that the SIS problem is: given
-uniformly random vectors
+Learning With Errors is closely related to the SIS problem, which we have seen in previous lectures.
+Recall that the SIS problem is: given uniformly random vectors
 \begin{align*}
   \begin{pmatrix}
     \vdots \\
@@ -111,108 +64,63 @@ uniformly random vectors
     \vdots
   \end{pmatrix} \in \Zq^{n}
 \end{align*}
-defining the matrix
-$\matA = (\veca_{1}, \ldots, \veca_{m}) \in \Zq^{n \times m}$, find a
-``short'' nonzero vector $\vecz \in \Z^m$ such that
-$\matA \vecz = \veczero$.
+defining the matrix $\matA = (\veca_{1}, \ldots, \veca_{m}) \in \Zq^{n \times m}$, find a ``short'' nonzero vector $\vecz \in \Z^m$ such that $\matA \vecz = \veczero$.
 
-LWE is a kind of ``dual'' to the SIS problem, involving a ``noisy''
-random linear system defined by~$\matA$. It comes in two versions:
-\emph{search}, where the goal is to solve the system, and
-\emph{decision}, where the goal is to distinguish such a system from a
-completely random one (that likely has no solution). We consider each
-one in turn.
+LWE is a kind of ``dual'' to the SIS problem, involving a ``noisy'' random linear system defined by~$\matA$.
+It comes in two versions: \emph{search}, where the goal is to solve the system, and \emph{decision}, where the goal is to distinguish such a system from a completely random one (that likely has no solution).
+We consider each one in turn.
 
-\subsection{Search Version}
+\subsection{Search Version}%
 \label{sec:search}
 
-In the search version of LWE, a secret vector $\vecs \in \Zq^{n}$ is
-first chosen (either uniformly at random, or from some other specified
-distribution). The goal is then to find this vector~$\vecs$, given
-uniformly random $\veca_{1}, \ldots, \veca_{m} \in \Zq^{n}$ as above,
-along with ``noisy'' (mod-$q$) inner products
+In the search version of LWE, a secret vector $\vecs \in \Zq^{n}$ is first chosen (either uniformly at random, or from some other specified distribution).
+The goal is then to find this vector~$\vecs$, given uniformly random $\veca_{1}, \ldots, \veca_{m} \in \Zq^{n}$ as above, along with ``noisy'' (mod-$q$) inner products
 \begin{align*}
   b_1 &= \inner{\vecs,\veca_1} + e_1 \in \Zq , \\
   b_2 &= \inner{\vecs,\veca_2} + e_2 \in \Zq , \\
   &\vdots \\
   b_m &= \inner{\vecs,\veca_m} + e_m \in \Zq ,
 \end{align*}
-where the error terms~$e_{i}$ are chosen independently from some
-specified error distribution. Stated more compactly using matrix
-notation, the goal is to find~$\vecs$ given
+where the error terms~$e_{i}$ are chosen independently from some specified error distribution.
+Stated more compactly using matrix notation, the goal is to find~$\vecs$ given
 \begin{align*}
   \matA &= (\veca_1, \ldots, \veca_m) \in \Zq^{n \times m}, \\
   \vecb^t &= \vecs^t\matA + \vece^t .
 \end{align*}
 
-\begin{definition}[Learning With Errors, Search]
+\begin{definition}[Learning With Errors, Search]%
   \label{def:lwe-search}
-  For a positive integer modulus~$q$, dimensions~$n,m$, and an error
-  distribution~$\chi$ over~$\Z$ (or, equivalently~$\Zq$), the
-  $\lwe_{n,q,\chi,m}$ problem is defined as follows: given uniformly
-  random $\matA \in \Zq^{n \times m}$ and
-  $\vecb^{t} = \vecs^{t} \matA + \vece^{t} \in \Zq^{1 \times m}$ where
-  $\vecs \gets \Zq^{n}$ is uniformly random and
-  $\vece \gets \chi^{m}$, find~$\vecs$.
+  For a positive integer modulus~$q$, dimensions~$n,m$, and an error distribution~$\chi$ over~$\Z$ (or, equivalently~$\Zq$), the $\lwe_{n,q,\chi,m}$ problem is defined as follows: given uniformly random $\matA \in \Zq^{n \times m}$ and $\vecb^{t} = \vecs^{t} \matA + \vece^{t} \in \Zq^{1 \times m}$ where $\vecs \gets \Zq^{n}$ is uniformly random and $\vece \gets \chi^{m}$, find~$\vecs$.
 
-  We sometimes drop the~$m$ subscript when the number of noisy inner
-  products is effectively unlimited, i.e., when~$m$ can be chosen by
-  the adversary (subject to the adversary's own running time).
+  We sometimes drop the~$m$ subscript when the number of noisy inner products is effectively unlimited, i.e., when~$m$ can be chosen by the adversary (subject to the adversary's own running time).
 \end{definition}
 
-Notice that without the error, LWE is easy: if the columns of~$\matA$
-generate all of~$\Zq^{n}$ (which is highly likely for large
-enough~$m$), we can simply use Gaussian elimination to find a
-right-inverse $\matA^{-} \in \Zq^{m \times n}$ of~$\matA$, then
-compute $\vecs^{t} = \vecb^{t} \matA^{-}$. But with the error in
-place, this strategy does not work, because the $\vece^{t} \matA^{-}$
-term conceals~$\vecs$.
+Notice that without the error, LWE is easy: if the columns of~$\matA$ generate all of~$\Zq^{n}$ (which is highly likely for large enough~$m$), we can simply use Gaussian elimination to find a right-inverse $\matA^{-} \in \Zq^{m \times n}$ of~$\matA$, then compute $\vecs^{t} = \vecb^{t} \matA^{-}$.
+But with the error in place, this strategy does not work, because the $\vece^{t} \matA^{-}$ term conceals~$\vecs$.
 
 \paragraph{Error distribution.}
 
-A typical choice of the error distribution~$\chi$, and one for which
-the worst-case-hardness theorems apply (see \cref{thm:lwe-hard}
-below), is a \emph{discrete Gaussian} $D_{\Z, r}$ where
-$r = \alpha q \geq \sqrt{n}$ for some $\alpha < 1$. Recall that
-$D_{\Z,r}$ is a Gaussian of width~$r$ restricted to the integers,
-which assigns probability proportional to $\exp(-\pi z^{2}/r^{2})$ to
-each $z \in \Z$. We can think of $D_{\Z,r}$ as being concentrated on
-an interval of width about~$r$ (centered at zero), which covers about
-an $\alpha$-fraction of~$\Zq$, so~$\alpha$ can be thought of as the
-\emph{error rate} relative to~$q$. Applications frequently take a
-sufficiently small $\alpha = 1/\poly(n)$, although smaller error rates
-are sometimes used as well.
+A typical choice of the error distribution~$\chi$, and one for which the worst-case-hardness theorems apply (see \cref{thm:lwe-hard} below), is a \emph{discrete Gaussian} $D_{\Z, r}$ where $r = \alpha q \geq \sqrt{n}$ for some $\alpha < 1$.
+Recall that $D_{\Z,r}$ is a Gaussian of width~$r$ restricted to the integers, which assigns probability proportional to $\exp(-\pi z^{2}/r^{2})$ to each $z \in \Z$.
+We can think of $D_{\Z,r}$ as being concentrated on an interval of width about~$r$ (centered at zero), which covers about an $\alpha$-fraction of~$\Zq$, so~$\alpha$ can be thought of as the \emph{error rate} relative to~$q$.
+Applications frequently take a sufficiently small $\alpha = 1/\poly(n)$, although smaller error rates are sometimes used as well.
 
-The following is a central result
-from~\cite{DBLP:journals/jacm/Regev09}. Notice that the approximation
-factor for the worst-case lattice problem varies inversely
-with~$\alpha$, i.e., the smaller the error rate, the weaker the
-hardness guarantee.
+The following is a central result from~\cite{DBLP:journals/jacm/Regev09}.
+Notice that the approximation factor for the worst-case lattice problem varies inversely with~$\alpha$, i.e., the smaller the error rate, the weaker the hardness guarantee.
 
-\begin{theorem}
+\begin{theorem}%
   \label{thm:lwe-hard}
-  For $\chi = D_{\Z,\alpha q}$ where $\alpha q \geq \sqrt{n}$ and any
-  $m=\poly(n)$, the search-$\lwe_{n,q,\chi,m}$ problem is hard on the
-  average (even for quantum algorithms) if $\sivp_{\Otil(n/\alpha)}$
-  (among others) on $n$-dimensional lattices is hard in the worst case
-  for \emph{quantum} algorithms.
+  For $\chi = D_{\Z,\alpha q}$ where $\alpha q \geq \sqrt{n}$ and any $m=\poly(n)$, the search-$\lwe_{n,q,\chi,m}$ problem is hard on the average (even for quantum algorithms) if $\sivp_{\Otil(n/\alpha)}$ (among others) on $n$-dimensional lattices is hard in the worst case for \emph{quantum} algorithms.
 \end{theorem}
 
-Real-world practical constructions sometimes use an error distribution
-that is narrower and/or simpler to sample from, e.g., a (narrow)
-binomial distribution or a uniform distribution over an interval.
-While LWE still appears to be hard for such error distributions (and
-sensibly chosen other parameters), what we have been able to prove is
-much more limited.
+Real-world practical constructions sometimes use an error distribution that is narrower and/or simpler to sample from, e.g., a (narrow) binomial distribution or a uniform distribution over an interval.
+While LWE still appears to be hard for such error distributions (and sensibly chosen other parameters), what we have been able to prove is much more limited.
 
-\subsection{Decision Version}
+\subsection{Decision Version}%
 \label{sec:decision}
 
-In the decision version of LWE, the goal is more modest: to
-\emph{distinguish} an LWE instance from a uniformly random one. That
-is, given $(\matA, \vecb)$ that is sampled either according to
-\cref{def:lwe-search} or uniformly at random (with no secret~$\vecs$
-or error~$\vece$), determine which is the case.
+In the decision version of LWE, the goal is more modest: to \emph{distinguish} an LWE instance from a uniformly random one.
+That is, given $(\matA, \vecb)$ that is sampled either according to \cref{def:lwe-search} or uniformly at random (with no secret~$\vecs$ or error~$\vece$), determine which is the case.
 
 More formally, a distinguisher~$\Dist$ solves the decision version if
 \begin{align*}
@@ -220,289 +128,175 @@ More formally, a distinguisher~$\Dist$ solves the decision version if
   \Pr_{\text{uniform } \matA,\vecb}[\Dist(\matA, \vecb^t) \text{ accepts}] \geq
   \frac{1}{\poly(n)} .
 \end{align*}
-Later, we will see that, perhaps surprisingly, the decision version is
-actually \emph{no easier than} the search version (under mild
-conditions on the parameters).
+Later, we will see that, perhaps surprisingly, the decision version is actually \emph{no easier than} the search version (under mild conditions on the parameters).
 
-\subsection{LWE as a Lattice Problem}
+\subsection{LWE as a Lattice Problem}%
 \label{sec:lwe-as-lattice}
 
-Analogously to how SIS can be seen as an approximate shortest vector
-problem on a certain class of random lattices, LWE can also be seen as
-a certain lattice problem, called \emph{bounded-distance decoding}, on
-the \emph{duals} of these SIS lattices.
+Analogously to how SIS can be seen as an approximate shortest vector problem on a certain class of random lattices, LWE can also be seen as a certain lattice problem, called \emph{bounded-distance decoding}, on the \emph{duals} of these SIS lattices.
 
-Recall that we previously defined the $q$-ary SIS lattices
-$\latperp(\matA) = \set{\vecz \in \Z^{m}: \matA\vecz = \veczero}$. We
-can similarly define the $q$-ary LWE lattices as follows:
+Recall that we previously defined the $q$-ary SIS lattices $\latperp(\matA) = \set{\vecz \in \Z^{m}: \matA\vecz = \veczero}$.
+We can similarly define the $q$-ary LWE lattices as follows:
 \[\lat(\matA) = \set{\vecw \in \Z^m : \vecw^t = \vecs^t\matA \pmod*{q}
-    \text{ for some $\vecs \in \Zq^{n}$} } = \matA^{t} \cdot \Zq^{n} +
-  q\Z^{m}. \] Essentially, this lattice contains any~$\vecw$
-corresponding to an LWE vector \emph{without} any error. We can then
-see LWE as a ``noisy decoding'' problem on such a lattice.
+    \text{ for some $\vecs \in \Zq^{n}$} } = \matA^{t} \cdot \Zq^{n} + q\Z^{m}.
+\] Essentially, this lattice contains any~$\vecw$ corresponding to an LWE vector \emph{without} any error.
+We can then see LWE as a ``noisy decoding'' problem on such a lattice.
 
-In the search version, we are given a random lattice $\lat(\matA)$ and
-a point $\vecb \in \Zq^{m}$ that is generated by adding some
-relatively small noise to a lattice point, and the goal is to find
-that lattice point. This is similar to the Closest Vector
-Problem~(CVP), except that here the target~$\vecb$ is guaranteed to be
-close to the lattice, whereas in CVP it can be arbitrary. In the
-decision version, the target~$\vecb$ is either a noisy lattice point
-or uniformly random and independent of~$\matA$, and the goal is to
-determine which is the case.
+In the search version, we are given a random lattice $\lat(\matA)$ and a point $\vecb \in \Zq^{m}$ that is generated by adding some relatively small noise to a lattice point, and the goal is to find that lattice point.
+This is similar to the Closest Vector Problem~(CVP), except that here the target~$\vecb$ is guaranteed to be close to the lattice, whereas in CVP it can be arbitrary.
+In the decision version, the target~$\vecb$ is either a noisy lattice point or uniformly random and independent of~$\matA$, and the goal is to determine which is the case.
 
-Finally, observe that $\lat(\matA)$ and $\latperp(\matA)$ are dual
-lattices up to scaling by~$q$, i.e.,
-$\latperp(\matA)^{*} = q^{-1} \lat(\matA)$. This can be seen by
-showing containment in both directions:
+Finally, observe that $\lat(\matA)$ and $\latperp(\matA)$ are dual lattices up to scaling by~$q$, i.e., $\latperp(\matA)^{*} = q^{-1} \lat(\matA)$.
+This can be seen by showing containment in both directions:
 \begin{itemize}
-\item First, for any $\vecw \in \lat(\matA)$ we have
-  $\vecw^{t} = \vecs^{t} \matA \pmod*{q}$ for some
-  $\vecs \in \Zq^{n}$, so for all $\vecz \in \latperp(\matA)$ we have
-  $\inner{\vecw, \vecz} = \vecs^{t} \matA \vecz = \vecs^{t} \cdot
-  \veczero = 0 \pmod*{q}$, hence
-  $q^{-1} \lat(\matA) \subseteq \latperp(\matA)^{*}$.
-\item Second, for any
-  $\vecz \in (q^{-1} \lat(\matA))^{*} = q \lat(\matA)^{*}$, the inner
-  product of~$\vecz$ with each row vector of~$\matA$ is in~$q\Z$ by
-  definition, so $\matA \vecz = \veczero \in \Zq^{n}$. Hence,
-  $(q^{-1} \lat(\matA))^{*} \subseteq \latperp(\matA)$, so
-  $\latperp(\matA)^{*} \subseteq q^{-1} \lat(\matA)$.
+\item First, for any $\vecw \in \lat(\matA)$ we have $\vecw^{t} = \vecs^{t} \matA \pmod*{q}$ for some $\vecs \in \Zq^{n}$, so for all $\vecz \in \latperp(\matA)$ we have $\inner{\vecw, \vecz} = \vecs^{t} \matA \vecz = \vecs^{t} \cdot \veczero = 0 \pmod*{q}$, hence $q^{-1} \lat(\matA) \subseteq \latperp(\matA)^{*}$.
+\item Second, for any $\vecz \in (q^{-1} \lat(\matA))^{*} = q \lat(\matA)^{*}$, the inner product of~$\vecz$ with each row vector of~$\matA$ is in~$q\Z$ by definition, so $\matA \vecz = \veczero \in \Zq^{n}$.
+  Hence, $(q^{-1} \lat(\matA))^{*} \subseteq \latperp(\matA)$, so $\latperp(\matA)^{*} \subseteq q^{-1} \lat(\matA)$.
 \end{itemize}
 
-\subsection{LWE as a Knapsack Problem}
+\subsection{LWE as a Knapsack Problem}%
 \label{sec:lwe-as-knapsack}
 
-We consider one final interpretation of LWE, as a knapsack-type
-problem. For secret $\vecs \in \Z^n$ and error vector $\vece \in \Z^m$
-(both chosen from the error distribution; see ``normal form'' below),
-an LWE instance $(\matA, \vecb)$ can be seen as the following
-knapsack:
+We consider one final interpretation of LWE, as a knapsack-type problem.
+For secret $\vecs \in \Z^n$ and error vector $\vece \in \Z^m$ (both chosen from the error distribution; see ``normal form'' below), an LWE instance $(\matA, \vecb)$ can be seen as the following knapsack:
 \begin{align*}
   \vecb^{t} = (\vecs^t,  \vece^t) \cdot
   \begin{pmatrix}
     \matA \\ \matI_m
   \end{pmatrix} .
 \end{align*}
-We view the rows of the matrix as the knapsack weights, and the vector
-$(\vecs^t, \vece^t)$ as the selections (which are small integers, not
-necessarily binary). Recall that the hardness of a knapsack problem is
-largely controlled by its density, which we can quantify here as
-$\frac{\text{input length}}{\text{output length}} =
-\frac{(n+m)\log(\alpha q)}{m \log(q)}$. Typically,~$m$ is
-significantly larger than~$n$, so the density is
-$\approx \frac{m\log(\alpha q)}{m\log(q)} = \frac{\log(\alpha
-  q)}{\log(q)} < 1$. Note that since the density is less than one, the
-output length is larger than the input length, i.e., LWE ``expands''
-the secret $\vecs,\vece$ into a larger pseudorandom output. (By
-contrast, recall that for typical parameters SIS ``compresses'' the
-input~$\vecx$ to $\matA \vecx$, like a hash function).
+We view the rows of the matrix as the knapsack weights, and the vector $(\vecs^t, \vece^t)$ as the selections (which are small integers, not necessarily binary).
+Recall that the hardness of a knapsack problem is largely controlled by its density, which we can quantify here as $\frac{\text{input length}}{\text{output length}} = \frac{(n+m)\log(\alpha q)}{m \log(q)}$.
+Typically,~$m$ is significantly larger than~$n$, so the density is $\approx \frac{m\log(\alpha q)}{m\log(q)} = \frac{\log(\alpha q)}{\log(q)} < 1$.
+Note that since the density is less than one, the output length is larger than the input length, i.e., LWE ``expands'' the secret $\vecs,\vece$ into a larger pseudorandom output.
+(By contrast, recall that for typical parameters SIS ``compresses'' the input~$\vecx$ to $\matA \vecx$, like a hash function).
 
-Let us consider some examples of how the LWE parameters affect the
-density and hardness. For the typical choice of $q = \poly(n)$ and
-$\alpha q \geq \sqrt{n}$, the density is some constant in $(0,1)$,
-which is believed to be hard. But for the extreme case
-$q = 2^n, \alpha q = \poly(n)$, the density is $\Theta((\log n)/n)$,
-and the problem can be solved efficiently by the previously covered
-Lagarias--Odlyzko/Frieze attack (with somewhat tighter analysis).
-Interestingly, for these parameters the worst-case hardness result in
-\cref{thm:lwe-hard} becomes vacuous, because it relies on lattice
-problems with approximation factors $\approx 1/\alpha \approx 2^{n}$,
-which are easy.
+Let us consider some examples of how the LWE parameters affect the density and hardness.
+For the typical choice of $q = \poly(n)$ and $\alpha q \geq \sqrt{n}$, the density is some constant in $(0,1)$, which is believed to be hard.
+But for the extreme case $q = 2^n, \alpha q = \poly(n)$, the density is $\Theta((\log n)/n)$, and the problem can be solved efficiently by the previously covered Lagarias--Odlyzko/Frieze attack (with somewhat tighter analysis).
+Interestingly, for these parameters the worst-case hardness result in \cref{thm:lwe-hard} becomes vacuous, because it relies on lattice problems with approximation factors $\approx 1/\alpha \approx 2^{n}$, which are easy.
 
-\section{Properties of LWE}
+\section{Properties of LWE}%
 \label{sec:properties}
 
-We now recall some simple, yet very powerful, properties of LWE that
-are especially relevant to cryptographic applications.
+We now recall some simple, yet very powerful, properties of LWE that are especially relevant to cryptographic applications.
 
 \paragraph{Confirming a candidate solution.}
 
-It is possible to efficiently confirm a candidate solution~$\vecs'$ to
-an LWE instance: simply test if the values
-$b_{i} - \inner{\vecs',\veca_i}$ are sufficiently small, i.e., if
-$\vecb^{t} - (\vecs')^{t} \matA$ is sufficiently short. When
-$\vecs' = \vecs$, this value will be small. When $\vecs \neq \vecs'$,
-then the value $\inner{\vecs - \vecs',\veca}$ is ``well-spread''
-enough to distinguish it from an LWE error vector.
+It is possible to efficiently confirm a candidate solution~$\vecs'$ to an LWE instance: simply test if the values $b_{i} - \inner{\vecs',\veca_i}$ are sufficiently small, i.e., if $\vecb^{t} - (\vecs')^{t} \matA$ is sufficiently short.
+When $\vecs' = \vecs$, this value will be small.
+When $\vecs \neq \vecs'$, then the value $\inner{\vecs - \vecs',\veca}$ is ``well-spread'' enough to distinguish it from an LWE error vector.
 
 \paragraph{Shifting the secret.}
 
-We can ``shift'' the underlying secret~$\vecs$ by any known vector
-$\vect \in \Zq^n$, using the following transformation on LWE samples:
+We can ``shift'' the underlying secret~$\vecs$ by any known vector $\vect \in \Zq^n$, using the following transformation on LWE samples:
 \[ (\veca_i, b_i = \inner{\vecs,\veca_i}+e_i) \mapsto (\veca_i, b'_i =
   b_i + \inner{\vect,\veca_i} = \inner{\vecs+\vect,\veca_i} + e_i)
   . \]
 
-We can use this property to ``amplify'' the success probability in
-attacking (search or decision) LWE.\@ For example, given some
-distinguisher~$\Dist$ that has $1/\poly(n)$ advantage, we can
-construct a distinguisher that is essentially perfect. It
-calls~$\Dist$ many times on additional groups of LWE samples, each
-with a re-randomized secret, so that each call to~$\Dist$ is on a
-completely fresh, independent LWE instance. The distinguisher then
-outputs the majority decision of all the calls to~$\Dist$. By
-independence and standard Chernoff bounds, this majority decision is
-correct with high probability.
+We can use this property to ``amplify'' the success probability in attacking (search or decision) LWE.\@ For example, given some distinguisher~$\Dist$ that has $1/\poly(n)$ advantage, we can construct a distinguisher that is essentially perfect.
+It calls~$\Dist$ many times on additional groups of LWE samples, each with a re-randomized secret, so that each call to~$\Dist$ is on a completely fresh, independent LWE instance.
+The distinguisher then outputs the majority decision of all the calls to~$\Dist$.
+By independence and standard Chernoff bounds, this majority decision is correct with high probability.
 
 \paragraph{(Hermite) normal form.}
 
-LWE becomes no easier if we use a ``short'' secret whose entries are
-drawn from the error distribution~$\chi$, rather than uniformly at
-random (or any other distribution). The proof is an extension of the
-transformation from the previous lecture that put SIS in (Hermite)
-normal form, and also keeps track of the effect on the LWE secret.
+LWE becomes no easier if we use a ``short'' secret whose entries are drawn from the error distribution~$\chi$, rather than uniformly at random (or any other distribution).
+The proof is an extension of the transformation from the previous lecture that put SIS in (Hermite) normal form, and also keeps track of the effect on the LWE secret.
 
 \begin{theorem}
-  LWE is no easier when~$\vecs$ is drawn from the error distribution
-  $\chi^n$, versus any other distribution.
+  LWE is no easier when~$\vecs$ is drawn from the error distribution $\chi^n$, versus any other distribution.
 \end{theorem}
 
 \begin{proof}
-  We prove this theorem by reduction. For concreteness we consider the
-  search-LWE problem; essentially the same argument works for the
-  decision version. Suppose we have some inverter~$\Inv$ that solves
-  search-LWE when the secret is drawn from~$\chi^n$. We need to show
-  that we can use~$\Inv$ to efficiently solve search-LWE for any
-  distribution of secret~$\vecs$. The reduction is as follows:
+  We prove this theorem by reduction.
+  For concreteness we consider the search-LWE problem; essentially the same argument works for the decision version.
+  Suppose we have some inverter~$\Inv$ that solves search-LWE when the secret is drawn from~$\chi^n$.
+  We need to show that we can use~$\Inv$ to efficiently solve search-LWE for any distribution of secret~$\vecs$.
+  The reduction is as follows:
   \begin{enumerate}
-  \item Take LWE samples to get
-    $(\bar{\matA}, \bar{\vecb}^t = \vecs^t\bar{\matA} +
-    \bar{\vece}^t)$ where $\bar{\matA} \in \Zq^{n\times n}$ is square
-    and invertible. With enough attempts this will happen with high
-    probability.
+  \item Take LWE samples to get $(\bar{\matA}, \bar{\vecb}^t = \vecs^t\bar{\matA} + \bar{\vece}^t)$ where $\bar{\matA} \in \Zq^{n\times n}$ is square and invertible.
+    With enough attempts this will happen with high probability.
 
   \item Transform all subsequent samples as:
     \[ (\veca, b = \inner{\vecs,\veca}+e) \mapsto (\veca' =
       -\bar{\matA}^{-1} \veca, b' = \inner{\bar{\vecb},\veca'} + b) . \]
     Observe that
     \[ 
-      b' = (\vecs^t \bar{\matA} + \bar{\vece}^{t}) \cdot
-      (-\bar{\matA}^{-1} \cdot \veca) + \inner{\vecs,\veca} + e =
-      \inner{\bar{\vece},\veca'} + e ,
+      b' = (\vecs^t \bar{\matA} + \bar{\vece}^{t}) \cdot (-\bar{\matA}^{-1} \cdot \veca) + \inner{\vecs,\veca} + e = \inner{\bar{\vece},\veca'} + e ,
     \]
-    so the transform produces properly distributed LWE samples with
-    secret~$\bar{\vece}$, which is distributed according
-    to~$\chi^{n}$. (Note that~$\veca'$ is uniformly random, as needed,
-    because~$\veca$ is uniformly random and $\bar{\matA}$ is
-    invertible.)
+    so the transform produces properly distributed LWE samples with secret~$\bar{\vece}$, which is distributed according to~$\chi^{n}$.
+    (Note that~$\veca'$ is uniformly random, as needed, because~$\veca$ is uniformly random and $\bar{\matA}$ is invertible.)
 
-  \item Give the transformed samples to~$\Inv$, which will
-    output~$\bar{\vece}$ by hypothesis. Then solve for~$\vecs$ as
-    $\vecs^{t} = (\bar{\vecb}^{t} - \bar{\vece}^{t}) \cdot
-    \bar{\matA}^{-1}$.
+  \item Give the transformed samples to~$\Inv$, which will output~$\bar{\vece}$ by hypothesis.
+    Then solve for~$\vecs$ as $\vecs^{t} = (\bar{\vecb}^{t} - \bar{\vece}^{t}) \cdot \bar{\matA}^{-1}$.
   \end{enumerate}
 \end{proof}
  
-\section{Search Versus Decision}
+\section{Search Versus Decision}%
 \label{sec:search-decision}
 
-It is easy to see that for any sensible parameters, the decision
-version of LWE reduces to the search version. Specifically, given an
-oracle that solves search-LWE, we can easily solve decision as
-follows: given $(\matA, \vecb^{t})$, query the oracle to get a
-candidate solution $\vecs \in \Zq^{n}$. Test whether
-$\vecb^{t} - \vecs^{t} \matA$ is ``short enough'' (relative to the
-error distribution), accepting if so and rejecting otherwise.
+It is easy to see that for any sensible parameters, the decision version of LWE reduces to the search version.
+Specifically, given an oracle that solves search-LWE, we can easily solve decision as follows: given $(\matA, \vecb^{t})$, query the oracle to get a candidate solution $\vecs \in \Zq^{n}$.
+Test whether $\vecb^{t} - \vecs^{t} \matA$ is ``short enough'' (relative to the error distribution), accepting if so and rejecting otherwise.
 
-This distinguisher has good advantage, because when the input is an
-LWE instance, the oracle returns the underlying secret, so
-$\vecb^{t} - \vecs^{t} \matA$ is distributed according to the error
-distribution. On the other hand, when the input is uniformly random,
-it can be shown that with high probability there \emph{does not exist}
-any~$\vecs$ for which $\vecb^{t} - \vecs^{t} \matA$ is sufficiently
-short, so the distinguisher must reject (no matter what the oracle
-returns to it).
+This distinguisher has good advantage, because when the input is an LWE instance, the oracle returns the underlying secret, so $\vecb^{t} - \vecs^{t} \matA$ is distributed according to the error distribution.
+On the other hand, when the input is uniformly random, it can be shown that with high probability there \emph{does not exist} any~$\vecs$ for which $\vecb^{t} - \vecs^{t} \matA$ is sufficiently short, so the distinguisher must reject (no matter what the oracle returns to it).
 
-We will now show that the converse reduction also holds: given an
-oracle that solves decision-LWE, it is possible to efficiently solve
-search-LWE.
+We will now show that the converse reduction also holds: given an oracle that solves decision-LWE, it is possible to efficiently solve search-LWE.
 
 \begin{theorem}
   For any prime $q = \poly(n)$, search-LWE reduce to decision-LWE.
 \end{theorem}
 
-We note that the two hypotheses on~$q$ (primality, and being
-polynomially bounded) have been significantly relaxed using additional
-ideas, e.g., in~\cite{DBLP:conf/stoc/Peikert09}.
+We note that the two hypotheses on~$q$ (primality, and being polynomially bounded) have been significantly relaxed using additional ideas, e.g., in~\cite{DBLP:conf/stoc/Peikert09}.
 
 \begin{proof}
-  Let~$\Dist$ be an oracle that solves decision-LWE.\@ By the
-  amplification property, we can assume that~$\Dist$ is essentially
-  perfect, i.e., it returns the correct answer with advantage
-  $1 - 2^{-n}$.
+  Let~$\Dist$ be an oracle that solves decision-LWE.\@ By the amplification property, we can assume that~$\Dist$ is essentially perfect, i.e., it returns the correct answer with advantage $1 - 2^{-n}$.
 
-  We use~$\Dist$ to solve search-LWE via a reduction. Without loss of
-  generality, it is enough to show how to find the first entry
-  $s_1 \in \Z_q$ of the secret. In turn, to do this it is enough to
-  show how to reliably test whether or not $s_1 = 0$. This is because
-  we can shift~$s_1$ by $0,1,2,\ldots,q-1 = \poly(n)$ and zero-test
-  until we find the correct value.
+  We use~$\Dist$ to solve search-LWE via a reduction.
+  Without loss of generality, it is enough to show how to find the first entry $s_1 \in \Z_q$ of the secret.
+  In turn, to do this it is enough to show how to reliably test whether or not $s_1 = 0$.
+  This is because we can shift~$s_1$ by $0,1,2,\ldots,q-1 = \poly(n)$ and zero-test until we find the correct value.
 
-  To perform the test, the reduction takes input samples
-  $(\veca_{i},b_{i})$, and for each one chooses a fresh uniformly
-  random $r_{i} \gets \Z_q$, producing a transformed sample
-  $(\veca'_{i} = \veca_{i} - (r,0,\ldots,0), b_{i})$. It calls~$\Dist$
-  on these modified samples; if~$\Dist$ accepts, the reduction
-  concludes that $\vecs_1 = 0$; otherwise it concludes that
-  $\vecs_1 \neq 0$.
+  To perform the test, the reduction takes input samples $(\veca_{i},b_{i})$, and for each one chooses a fresh uniformly random $r_{i} \gets \Z_q$, producing a transformed sample $(\veca'_{i} = \veca_{i} - (r,0,\ldots,0), b_{i})$.
+  It calls~$\Dist$ on these modified samples; if~$\Dist$ accepts, the reduction concludes that $\vecs_1 = 0$; otherwise it concludes that $\vecs_1 \neq 0$.
 
-  The above strategy works because when $s_1 = 0$, we have
-  \[ b_{i} = \inner{\vecs,\veca_{i}}+e_{i} =
-    \inner{\vecs,\veca'_{i}}+e_{i} , \] so $(\veca'_{i}, b_{i})$ is a
-  properly distributed LWE sample (with secret~$\vecs$), hence~$\Dist$
-  accepts with high probability. On the other hand, when $s_1 \neq 0$,
-  we have
-  \[ b_{i} = \inner{\vecs,\veca_{i}}+e_{i} = \inner{\vecs,\veca'} +
-    s_1 \cdot r_{i} + e_{i} . \] Since $s_1 \cdot r_{i} \in \Zq$ is
-  uniformly random (and fresh for each sample) because~$q$ is prime,
-  the transformed samples $(\veca'_{i},b_{i})$ are uniformly random,
-  so~$\Dist$ rejects with high probability.
+  The above strategy works because when $s_1 = 0$,
+  \[ b_{i} = \inner{\vecs,\veca_{i}}+e_{i} = \inner{\vecs,\veca'_{i}}+e_{i} , \] so $(\veca'_{i}, b_{i})$ is a properly distributed LWE sample (with secret~$\vecs$), hence~$\Dist$ accepts with high probability.
+  On the other hand, when $s_1 \neq 0$, we have
+  \[ b_{i} = \inner{\vecs,\veca_{i}}+e_{i} = \inner{\vecs,\veca'} + s_1 \cdot r_{i} + e_{i} .
+  \] Since $s_1 \cdot r_{i} \in \Zq$ is uniformly random (and fresh for each sample) because~$q$ is prime, the transformed samples $(\veca'_{i},b_{i})$ are uniformly random, so~$\Dist$ rejects with high probability.
 \end{proof}
 
-\section{LWE-Based Public-Key Encryption}
+\section{LWE-Based Public-Key Encryption}%
 \label{sec:lwe-pke}
 
 A public-key encryption scheme consists of three algorithms:
 \begin{itemize}
-\item $\pkcgen()$ outputs a public encryption key~$\pk$ and a private
-  decryption key~$sk$.
-\item $\pkcenc(pk,\mu)$, given a public key and a message
-  $\mu \in \bit$, outputs a ciphertext~$c$.
-\item $\pkcdec(sk,c)$, given a secret key and a ciphertext~$c$,
-  outputs a message $\mu \in \bit$.
+\item $\pkcgen()$ outputs a public encryption key~$\pk$ and a private decryption key~$sk$.
+\item $\pkcenc(pk,\mu)$, given a public key and a message $\mu \in \bit$, outputs a ciphertext~$c$.
+\item $\pkcdec(sk,c)$, given a secret key and a ciphertext~$c$, outputs a message $\mu \in \bit$.
 \end{itemize}
 
-For correctness, we require that for any $\mu \in \bit$, if
-$(pk,sk) \gets \pkcgen()$ and $c \gets \pkcenc(pk,\mu)$, then
-$\pkcdec(sk,c)$ outputs~$\mu$ (either with certainty, or with high
-probability if such is acceptable).
+For correctness, we require that for any $\mu \in \bit$, if $(pk,sk) \gets \pkcgen()$ and $c \gets \pkcenc(pk,\mu)$, then $\pkcdec(sk,c)$ outputs~$\mu$ (either with certainty, or with high probability if such is acceptable).
 
-For security, we desire ``semantic security,'' which informally says
-that no efficient adversary, given a public key, can distinguish an
-encryption of zero from an encryption of one. More precisely,
-$(pk,\pkcenc(pk,0))$ and $(pk,\pkcenc(pk,1))$ should be
-indistinguishable, where in both cases $(pk,sk) \gets \pkcgen()$.
+For security, we desire ``semantic security,'' which informally says that no efficient adversary, given a public key, can distinguish an encryption of zero from an encryption of one.
+More precisely, $(pk,\pkcenc(pk,0))$ and $(pk,\pkcenc(pk,1))$ should be indistinguishable, where in both cases $(pk,sk) \gets \pkcgen()$.
 
-\subsection{Cryptosystem}
+\subsection{Cryptosystem}%
 \label{sec:cryptosystem}
 
 Here we define the three algorithms of an LWE-based encryption scheme.
-(This scheme is a variant of the one originally given
-in~\cite{DBLP:journals/jacm/Regev09}, and is essentially ``dual'' to
-it in its key properties.) It is parameterized by LWE parameters
-$n,q,\chi,m$, which we instantiate below in the analysis.
+(This scheme is a variant of the one originally given in~\cite{DBLP:journals/jacm/Regev09}, and is essentially ``dual'' to it in its key properties.)
+It is parameterized by LWE parameters $n,q,\chi,m$, which we instantiate below in the analysis.
 \begin{itemize}
-\item $\pkcgen()$: choose $\matA \in \Z_q^{n\times m}$ and
-  $\vecx \leftarrow \bit^m$ uniformly at random, and let
-  $\vecy = \matA \vecx \in \Zq^{n}$. Output secret key $sk = \vecx$
-  and public key $pk = (\matA, \vecy) \in \Zq^{n \times (m+1)}$.
+\item $\pkcgen()$: choose $\matA \in \Z_q^{n\times m}$ and $\vecx \leftarrow \bit^m$ uniformly at random, and let $\vecy = \matA \vecx \in \Zq^{n}$.
+  Output secret key $sk = \vecx$ and public key $pk = (\matA, \vecy) \in \Zq^{n \times (m+1)}$.
 
-  (Note that this creates an SIS instance with a known short solution,
-  as described in the previous lecture.)
+  (Note that this creates an SIS instance with a known short solution, as described in the previous lecture.)
 
-\item $\pkcenc((\matA,\vecy),\mu)$: choose $\vecs \leftarrow \chi^n$
-  and $\vece \leftarrow \chi^{m+1}$, and output the ciphertext
+\item $\pkcenc((\matA,\vecy),\mu)$: choose $\vecs \leftarrow \chi^n$ and $\vece \leftarrow \chi^{m+1}$, and output the ciphertext
   \[ \vecc^t = \vecs^t (\matA, \vecy) + \vece^t + (0,\ldots,0,\mu
     \cdot \floor{q/2}) \in \Zq^{1 \times (m+1)}. \]
 
@@ -512,89 +306,60 @@ $n,q,\chi,m$, which we instantiate below in the analysis.
       -\vecx \\ 1
     \end{pmatrix} \in \Zq
   \]
-  and output~$0$ if~$d \in [-q/4, q/4] \pmod*{q}$, otherwise
-  output~$1$. (In other words, output~$0$ if~$d$ is closer modulo~$q$
-  to~$0$ than to $q/2$.)
+  and output~$0$ if~$d \in [-q/4, q/4] \pmod*{q}$, otherwise output~$1$.
+  (In other words, output~$0$ if~$d$ is closer modulo~$q$ to~$0$ than to $q/2$.)
 \end{itemize}
 
-Observe that, in encryption, the (scaled) message is included in, and
-concealed by, the last entry of an LWE vector relative to the public
-key $(\matA, \vecy)$. In decryption, the private key~$\vecx$ is used
-to nearly annihilate this LWE vector, leaving behind just the (scaled)
-message plus some residual error. (This error is why we scale the
-message upon encryption, so that it can be recovered during
-decryption.)
+Observe that, in encryption, the (scaled) message is included in, and concealed by, the last entry of an LWE vector relative to the public key $(\matA, \vecy)$.
+In decryption, the private key~$\vecx$ is used to nearly annihilate this LWE vector, leaving behind just the (scaled) message plus some residual error.
+(This error is why we scale the message upon encryption, so that it can be recovered during decryption.)
 
-\subsection{Correctness}
+\subsection{Correctness}%
 \label{sec:correctness}
 
 \begin{lemma}
   \label{lem:correct}
-  Letting $\chi = D_{\Z,r}$ for some $r > 0$ and
-  $q \geq r \sqrt{m+1} \cdot \log n$, the cryptosystem is correct with
-  high probability $1-n^{-\Omega(\log n)}$.
+  Letting $\chi = D_{\Z,r}$ for some $r > 0$ and $q \geq r \sqrt{m+1} \cdot \log n$, the cryptosystem is correct with high probability $1-n^{-\Omega(\log n)}$.
 \end{lemma}
-Notice that the error rate
-$\alpha = r/q \lesssim 1/\sqrt{m} \lesssim 1/\sqrt{n}$, ignoring log
-factors. And recall that in order to get a worst-case hardness
-guarantee, we need to take $r \geq \sqrt{n}$, which requires that
-$q \gtrsim n$.
+Notice that the error rate $\alpha = r/q \lesssim 1/\sqrt{m} \lesssim 1/\sqrt{n}$, ignoring log factors.
+And recall that in order to get a worst-case hardness guarantee, we need to take $r \geq \sqrt{n}$, which requires that $q \gtrsim n$.
 
 \begin{proof}
-  By construction, the secret key $\vecx \in \Z^{m}$ and public key
-  $(\matA,\vecy) \in \Zq^{n \times (m+1)}$ satisfy the relation
+  By construction, the secret key $\vecx \in \Z^{m}$ and public key $(\matA,\vecy) \in \Zq^{n \times (m+1)}$ satisfy the relation
   \[ (\matA, \vecy) \cdot \vecx' = \veczero \in \Zq^{n} ,
   \]
-  where $\vecx = \smlmat{-\vecx \\ 1} \in \Z^{m+1}$. Now, consider
-  decryption of a ciphertext
-  $\vecc^{t} \gets \pkcenc((\matA, \vecy), \mu)$. It computes
+  where $\vecx = \smlmat{-\vecx \\ 1} \in \Z^{m+1}$.
+  Now, consider decryption of a ciphertext $\vecc^{t} \gets \pkcenc((\matA, \vecy), \mu)$.
+  It computes
   \[ d = \parens*{\vecs^{t} (\matA, \vecy) + \vece^{t} + (\veczero,\mu
       \cdot \floor{q/2})} \cdot \vecx' = \vecs^{t} \cdot \veczero +
     \vece^{t} \cdot \vecx' + \mu \cdot \floor{q/2} ,
   \]
-  so it suffices to show that $\inner{\vece,\vecx'} \in \Z$ has
-  magnitude less than $\floor{q/4}$ with high probability. By
-  construction, $\length{\vecx'} \leq \sqrt{m+1}$, and~$\vece$ is
-  drawn from $\chi^{m+1} = D_{\Z^{m+1},r}$.
+  so it suffices to show that $\inner{\vece,\vecx'} \in \Z$ has magnitude less than $\floor{q/4}$ with high probability.
+  By construction, $\length{\vecx'} \leq \sqrt{m+1}$, and~$\vece$ is drawn from $\chi^{m+1} = D_{\Z^{m+1},r}$.
 
-  By previously shown tail inequalities, we have
-  $\abs{\inner{\vece,\vecx'}} \leq t r \sqrt{m+1}$ except with
-  probability at most $2\exp(-\pi t^{2})$, for any $t > 0$. The claim
-  follows by taking a suitable $t = \Theta(\log n)$.
+  By previously shown tail inequalities, we have $\abs{\inner{\vece,\vecx'}} \leq t r \sqrt{m+1}$ except with probability at most $2\exp(-\pi t^{2})$, for any $t > 0$.
+  The claim follows by taking a suitable $t = \Theta(\log n)$.
 \end{proof}
 
-\subsection{Security}
+\subsection{Security}%
 \label{sec:security}
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:security}
-  For any $m \geq (1+\delta) n \log_{2} q$ (where $\delta > 0$ is any
-  constant), the cryptosystem is semantically secure if
-  decision-$\lwe_{n,q,\chi,m+1}$ is hard.
+  For any $m \geq (1+\delta) n \log_{2} q$ (where $\delta > 0$ is any constant), the cryptosystem is semantically secure if decision-$\lwe_{n,q,\chi,m+1}$ is hard.
 \end{lemma}
 
 \begin{proof}
-  We need to show that a public key together with an encryption of
-  zero is indistinguishable from a public key together with an
-  encryption of one. First, consider the public key
-  $pk = \matA' = (\matA, \vecy) \in \Zq^{n \times (m+1)}$. By
-  regularity (see the previous lecture), its distribution is
-  exponentially close to uniform. So we can treat~$\matA'$ as if it
-  were exactly uniform, up to a negligible difference in distinguisher
-  advantage.
+  We need to show that a public key together with an encryption of zero is indistinguishable from a public key together with an encryption of one.
+  First, consider the public key $pk = \matA' = (\matA, \vecy) \in \Zq^{n \times (m+1)}$.
+  By regularity (see the previous lecture), its distribution is exponentially close to uniform.
+  So we can treat~$\matA'$ as if it were exactly uniform, up to a negligible difference in distinguisher advantage.
 
-  Now, consider the ciphertext
-  $\vecc^{t} = \vecs^t\matA' + \vece^t + \mu \cdot \floor{q/2}$.
-  Ignoring the $\mu \cdot \floor{q/2}$ term, the remainder
-  $\vecb^{t} = \vecs^t\matA' + \vece^t$ is distributed exactly as an
-  LWE vector relative to~$\matA'$. So, by the assumed hardness of
-  decision-LWE, $(\matA', \vecb)$ is computationally indistinguishable
-  from uniformly random. Thus, for any fixed message bit~$\mu$, the
-  public key-ciphertext pair
-  $(pk = \matA', \vecc \gets \pkcenc(pk,\mu))$ is computationally
-  indistinguishable from uniformly random, hence the two distributions
-  for $\mu=0,1$ are computationally indistinguishable from each other,
-  as needed.
+  Now, consider the ciphertext $\vecc^{t} = \vecs^t\matA' + \vece^t + \mu \cdot \floor{q/2}$.
+  Ignoring the $\mu \cdot \floor{q/2}$ term, the remainder $\vecb^{t} = \vecs^t\matA' + \vece^t$ is distributed exactly as an LWE vector relative to~$\matA'$.
+  So, by the assumed hardness of decision-LWE, $(\matA', \vecb)$ is computationally indistinguishable from uniformly random.
+  Thus, for any fixed message bit~$\mu$, the public key-ciphertext pair $(pk = \matA', \vecc \gets \pkcenc(pk,\mu))$ is computationally indistinguishable from uniformly random, hence the two distributions for $\mu=0,1$ are computationally indistinguishable from each other, as needed.
 \end{proof}
 
 \bibliography{common/lattices,common/crypto}
