@@ -1,29 +1,11 @@
 \documentclass[11pt]{article}
 
-\usepackage{fullpage}
-\usepackage{newtxtext}
-\usepackage{microtype}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
-\usepackage[pagebackref=true]{hyperref} % must set backref at load time
-\usepackage{fancyhdr}
-\usepackage{mathtools}
-\usepackage{enumitem}
-\usepackage[svgnames]{xcolor}
-\usepackage{tikz}
-\usepackage{import}
+\input{header}
 
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
-
-% load after hyperref, algpseudocode to get proper behavior
-\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
-
-\import{common/}{head.tex}
-\import{common/slides/}{tikzhead.tex}
-\definecolor{structure.fg}{rgb}{0.2,0.2,0.7} % from favorite beamer theme
 
 % VARIABLES
 
@@ -33,7 +15,6 @@
 
 % END OF VARIABLES
 
-\import{common/}{lechead.tex}
 \lecheader                      % execute lecture commands
 
 \pagestyle{plain}               % default: no special header
@@ -44,79 +25,65 @@
 
 % LECTURE MATERIAL STARTS HERE
 
-\section{The LLL Algorithm}
+\section{The LLL Algorithm}%
 \label{sec:lll-algorithm}
 
-Recall the definition of an LLL-reduced lattice basis, as defined by
-Lenstra, Lenstra, and Lov{\'a}sz~\cite{lenstra82:_factor}, and how it
-approximates a short nonzero lattice vector. (In all that follows,
-recall that $\matB = \gs{\matB} \cdot \matU$ is the Gram-Schmidt
-decomposition of a lattice basis~$\matB$, where the columns
-of~$\gs{\matB}$ are orthogonal and $\matU \in \R^{n \times n}$ is
-upper unitriangular, with entries~$\mu_{i,j}$.)
+Recall the definition of an LLL-reduced lattice basis, as defined by Lenstra, Lenstra, and Lov{\'a}sz~\cite{lenstra82:_factor}, and how it approximates a short nonzero lattice vector.
+(In all that follows, recall that $\matB = \gs{\matB} \cdot \matU$ is the Gram--Schmidt decomposition of a lattice basis~$\matB$, where the columns of~$\gs{\matB}$ are orthogonal and $\matU \in \R^{n \times n}$ is upper unitriangular, with entries~$\mu_{i,j}$.)
 
-\begin{definition}
+\begin{definition}%
   \label{def:lll}
-  A lattice basis~$\matB$ is \emph{LLL-reduced} if the following hold:
+  A lattice basis $\matB$ is \emph{LLL-reduced} if the following two conditions are met:
   \begin{enumerate}
-  \item For all $i < j$, we have
-    $\abs{\mu_{i,j}} \leq \frac{1}{2}$.\label{item:size}
-    % 
-    \hfill (Such a basis is said to be ``sized reduced.'')
+  \item $\abs{\mu_{i,j}} \leq \frac{1}{2}$ for all $i < j$.\label{item:size}
+    %
+    \hfill (Such a basis is said to be ``size reduced.'')
     
-  \item For all $i < n$, we have
-    $\frac{3}{4}\length{ \gs{\vecb}_i}^2 \leq
-    \length{\mu_{i,i+1}\gs{\vecb}_i +
-      \gs{\vecb}_{i+1}}^2$.\label{item:lovasz}
+  \item $\frac{3}{4}\length{ \gs{\vecb}_i}^2 \leq \length{\mu_{i,i+1}\gs{\vecb}_i + \gs{\vecb}_{i+1}}^2$ for all $i < n$.\label{item:lovasz}
     %
     \hfill (This is the ``Lov{\'a}sz condition.'')
   \end{enumerate}
 \end{definition}
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:lll-gs}
-  In an LLL-reduced lattice basis $\matB \in \Z^{n \times n}$, we have
-  $\length{\gs{\vecb}_{i+1}}^{2} \geq \frac12
-  \length{\gs{\vecb}_{i}}^{2}$ for all $i < n$, and hence
-  $\length{\vecb_1} \leq 2^{(n-1)/2} \min_{i} \length{\gs{\vecb}_{i}}
-  \leq 2^{(n-1)/2} \cdot \lambda_{1}(\lat(\matB))$.
+  In an LLL-reduced lattice basis $\matB \in \Z^{n \times n}$, we have that $\length{\gs{\vecb}_{i+1}}^{2} \geq \frac12 \length{\gs{\vecb}_{i}}^{2}$ for all $i < n$, and hence $\length{\vecb_1} \leq 2^{(n-1)/2} \min_{i} \length{\gs{\vecb}_{i}} \leq 2^{(n-1)/2} \cdot \lambda_{1}(\lat(\matB))$.
 \end{lemma}
 
-\cref{alg:lll} defines the LLL algorithm, which transforms any lattice
-basis into an LLL-reduced one of the same lattice. The algorithm
-simply alternates between two steps: \emph{size-reducing} the current
-basis (i.e., making \cref{item:size} hold), and checking whether the
-Lov{\'a}sz condition (\cref{item:lovasz}) holds; if not, it simply
-swaps a pair of offending basis vectors. From this description, we can
-immediately see that the output is indeed LLL-reduced, so the
-algorithm is correct---if it ever terminates. The key challenge is in
-showing that it does indeed terminate, and in time polynomial in the
-input size.
+\Cref{alg:lll} defines the LLL algorithm, which transforms any lattice basis into an LLL-reduced one of the same lattice.
+The algorithm simply alternates between two steps: \emph{size-reducing} the current basis (i.e., making \cref{item:size} hold), and checking whether the Lov{\'a}sz condition (\cref{item:lovasz}) holds; if not, it simply swaps a pair of offending basis vectors.
+From this description, we can immediately see that the output is indeed LLL-reduced, so the algorithm is correct---if it ever terminates.
+The key challenge is in showing that it does indeed terminate, and in time polynomial in the input size.
 
 \begin{algorithm}
-  \caption{The LLL algorithm.}
+  \caption{The LLL algorithm.}%
   \label{alg:lll}
 
   \begin{algorithmic}[1]
+    \zcsetup{reftype=line}
+    
     \Function{\algo{LLL}}{$\matB \in \Z^{n \times n}$}
     \Comment{Outputs an LLL-reduced basis of the lattice
       $\lat(\matB)$}
 
-    \State Let
+    \State let
     $\matB \gets \algo{SizeReduce}(\matB)$\label{step:size-reduce}
 
-    \If{there exists an $i < n$ for which the Lov{\'a}sz condition is
-      violated} \State swap~$\vecb_{i}$ and~$\vecb_{i+1}$ and go to
-    \cref{step:size-reduce} \Else\ output $\matB$\label{step:swap}
+    \If{there exists an $i < n$ for which the Lov{\'a}sz condition is violated}
+
+    \State swap~$\vecb_{i}$ and~$\vecb_{i+1}$ and go to \cref{step:size-reduce}\label{step:swap}
+
     \EndIf
 
+    \State \Return $\matB$
+    
     \EndFunction
 
     \Function{\algo{SizeReduce}}{$\matB \in \Z^{n \times n}$}
     \Comment{Outputs a size-reduced basis of $\lat(\matB)$, preserving
       $\gs{\matB}$}
 
-    \State Compute (or update) the Gram-Schmidt
+    \State compute (or update) the Gram--Schmidt
     orthogonalization~$\gs{\matB}$ of~$\matB$\label{step:compute-gs}
 
     \For{$j = 2, \ldots, n$ (in any order)}
@@ -133,77 +100,40 @@ input size.
 \end{algorithm}
 
 The $\algo{SizeReduce}(\matB)$ subroutine deserves some elaboration.
-Its purpose is, in the Gram-Schmidt decomposition
-$\matB = \gs{\matB} \cdot \matU$, to shift the entries in the upper
-triangle of~$\matU$ by integers, so that they lie in $\hohalf$.
-Because we must preserve the lattice, this is done by subtracting
-appropriate integer multiples of the basis vectors~$\vecb_{i}$
-(\emph{not} the Gram-Schmidt vectors~$\gs{\vecb}_{i}$!) from
-the~$\vecb_{j}$, for $i < j$. In matrix form, the $(i,j)$th iteration
-lets $\matB \gets \matB \cdot \matW = \gs{\matB} \cdot (\matU \matW)$,
-where $\matW$ is the upper unitriangular matrix with just one possibly
-nonzero off-diagonal entry $-\round{u_{i,j}}$, at position $(i,j)$.
-This implicitly updates the (upper unitriangular) matrix
-$\matU \gets \matU \matW \in \R^{n \times n}$. This matrix is
-identical to~$\matU$, except possibly at position $(i,j)$ \emph{and
-  the entries above it, but not below it} in the same column. This is
-why we need to make the changes going \emph{upward} in each column
-(see \cref{step:i-downto}).
+Its purpose is, in the Gram--Schmidt decomposition $\matB = \gs{\matB} \cdot \matU$, to shift the entries in the upper triangle of~$\matU$ by integers, so that they lie in $\hohalf$.
+Because we must preserve the lattice, this is done by subtracting appropriate integer multiples of the basis vectors~$\vecb_{i}$ (\emph{not} the Gram--Schmidt vectors~$\gs{\vecb}_{i}$!)
+from the~$\vecb_{j}$, for $i < j$.
+In matrix form, the $(i,j)$th iteration lets $\matB \gets \matB \cdot \matW = \gs{\matB} \cdot (\matU \matW)$, where $\matW$ is the upper unitriangular matrix with just one possibly nonzero off-diagonal entry $-\round{u_{i,j}}$, at position $(i,j)$.
+This implicitly updates the (upper unitriangular) matrix $\matU \gets \matU \matW \in \R^{n \times n}$.
+This matrix is identical to~$\matU$, except possibly at position $(i,j)$ \emph{and the entries above it, but not below it} in the same column.
+This is why we need to make the changes going \emph{upward} in each column (see \cref{step:i-downto}).
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:size-reduce-correct}
-  Given an integral lattice basis $\matB \in \Z^{n \times n}$ with
-  Gram-Schmidt orthogonalization $\gs{\matB}$, the $\algo{SizeReduce}$
-  algorithm outputs a basis~$\matB'$ of $\lat = \lat(\matB)$ having
-  Gram-Schmidt decomposition $\matB' = \gs{\matB} \cdot \matU'$, where
-  $u'_{i,j} \in \hohalf$ for all $i<j$.
+  Given an integral lattice basis $\matB \in \Z^{n \times n}$ with Gram--Schmidt orthogonalization $\gs{\matB}$, the $\algo{SizeReduce}$ algorithm outputs a basis~$\matB'$ of $\lat = \lat(\matB)$ having Gram--Schmidt decomposition $\matB' = \gs{\matB} \cdot \matU'$, where $u'_{i,j} \in \hohalf$ for all $i<j$.
 \end{lemma}
 
 \begin{proof}
-  First, even though $\algo{SizeReduce}$ may change~$\matB$, the
-  Gram-Schmidt vectors~$\gs{\matB}$ are preserved throughout, because
-  the only changes to~$\matB$ are via multiplication by
-  upper-unitriangular matrices, i.e., if
-  $\matB = \gs{\matB} \cdot \matU$ is the Gram-Schmidt decomposition
-  prior to some iteration, then
-  $\matB = \gs{\matB} \cdot (\matU \matW)$ is the decomposition
-  afterward, since $\matU \matW$ is upper unitriangular. Second, the
-  $(i,j)$th iteration ensures that the value
-  $\inner{\vecb_{j}, \gs{\vecb}_{i}}/\inner{\gs{\vecb}_{i},
-    \gs{\vecb}_{i}} \in \hohalf$, and that value never changes in
-  later iterations, because for all $h < i$, the basis
-  vector~$\vecb_{h}$ (a multiple of which may later be subtracted
-  from~$\vecb_{j}$) is orthogonal to~$\gs{\vecb}_{i}$.
+  First, even though $\algo{SizeReduce}$ may change~$\matB$, the Gram--Schmidt vectors~$\gs{\matB}$ are preserved throughout, because the only changes to~$\matB$ are via multiplication by upper-unitriangular matrices, i.e., if $\matB = \gs{\matB} \cdot \matU$ is the Gram--Schmidt decomposition prior to some iteration, then $\matB = \gs{\matB} \cdot (\matU \matW)$ is the decomposition afterward, since $\matU \matW$ is upper unitriangular.
+  Second, the $(i,j)$th iteration ensures that the value $\inner{\vecb_{j}, \gs{\vecb}_{i}}/\inner{\gs{\vecb}_{i}, \gs{\vecb}_{i}} \in \hohalf$, and that value never changes in later iterations, because for all $h < i$, the basis vector~$\vecb_{h}$ (a multiple of which may later be subtracted from~$\vecb_{j}$) is orthogonal to~$\gs{\vecb}_{i}$.
 \end{proof}
 
 \noindent We now state the main theorem about the LLL algorithm.
 
-\begin{theorem}
+\begin{theorem}%
   \label{thm:lll}
-  Given an integral lattice basis $\matB \in \Z^{n \times n}$, the LLL
-  algorithm outputs an LLL-reduced basis of $\lat = \lat(\matB)$ in
-  time $\poly(n, \len{\matB})$, where $\len{\matB}$ denotes the bit
-  length of the input basis.
+  Given an integral lattice basis $\matB \in \Z^{n \times n}$, the LLL algorithm outputs an LLL-reduced basis of $\lat = \lat(\matB)$ in time $\poly(n, \len{\matB})$, where $\len{\matB}$ denotes the bit length of the input basis.
 \end{theorem}
 
-The remainder of this section is dedicated to an (almost complete)
-proof of this theorem. First, it is clear that the LLL algorithm, if
-it ever terminates, is correct: all the operations on the input basis
-preserve the lattice it generates, and the algorithm can only output
-an LLL-reduced basis.
+The remainder of this section is dedicated to an (almost complete) proof of this theorem.
+First, it is clear that the LLL algorithm, if it ever terminates, is correct: all the operations on the input basis preserve the lattice it generates, and the algorithm can only output an LLL-reduced basis.
 
-We next prove that the number of iterations is $O(N)$ for some
-$N=\poly(n, \len{\matB})$. This uses a ``potential argument,'' which
-assigns a value to all the intermediate bases produced by the
-algorithm. We show three facts: that the potential starts out no
-larger than~$2^{N}$, that it never drops below~$1$, and that each
-iteration of the algorithm decreases the potential by a factor of at
-least $\sqrt{4/3} > 1$. All this implies that the number of iterations
-is at most $\log_{\sqrt{4/3}} 2^{N} = O(N)$.
+We next prove that the number of iterations is $O(N)$ for some $N=\poly(n, \len{\matB})$.
+This uses a ``potential argument,'' which assigns a value to all the intermediate bases produced by the algorithm.
+We show three facts: that the potential starts out no larger than~$2^{N}$, that it never drops below~$1$, and that each iteration of the algorithm decreases the potential by a factor of at least $\sqrt{4/3} > 1$.
+All this implies that the number of iterations is at most $\log_{\sqrt{4/3}} 2^{N} = O(N)$.
 
-The potential function is defined as follows: for a basis
-$\matB = (\vecb_{1}, \ldots, \vecb_{n})$, let
-$\lat_{i} = \lat(\vecb_{1}, \ldots, \vecb_{i})$ for each $i \leq n$.
+The potential function is defined as follows: for a basis $\matB = (\vecb_{1}, \ldots, \vecb_{n})$, let $\lat_{i} = \lat(\vecb_{1}, \ldots, \vecb_{i})$ for each $i \leq n$.
 The potential is the product of the determinants of these lattices:
 \begin{equation}
   \label{eq:potential}
@@ -212,77 +142,44 @@ The potential is the product of the determinants of these lattices:
   \prod_{i=1}^{n} \length{\gs{\vecb}_{i}}^{n-i+1}.
 \end{equation}
 
-\begin{claim}
+\begin{claim}%
   \label{clm:potential}
-  The potential of the input basis~$\matB$ is at most~$2^{N}$, and
-  every intermediate basis the algorithm produces has potential at
-  least~$1$.
+  The potential of the input basis~$\matB$ is at most~$2^{N}$, and every intermediate basis the algorithm produces has potential at least~$1$.
 \end{claim}
 
 \begin{proof}
-  Because $\length{\gs{\vecb}_{i}} \leq \length{\vecb_{i}}$  and
-  $\length{\vecb_{i}} \geq 1$ for
-  all~$i$, the potential of the input basis~$\matB$ is bounded by
-  \[ \Phi(\matB) \leq \prod_{i=1}^{n} \length{\vecb_{i}}^{n-i+1} \leq
-    \prod_{i=1}^{n} \length{\vecb_{i}}^{n} \leq \max_{i}
-    \length{\vecb_{i}}^{n^{2}} = 2^{\poly(n,\len{\matB})}. \] Every
-  intermediate basis is integral, hence the lattices~$\lat_{i}$
-  associated with that basis have determinant at
-  least~$1$.\footnote{This requires some care to verify, because the
-    lattices~$\lat_{i}$ are \emph{not full rank} for $i < n$. Letting
-    $\matB_{i} = (\vecb_{1}, \ldots, \vecb_{i}) \in \Z^{n \times i}$
-    be a basis for~$\lat_{i}$, we have
-    $\det(\lat_{i}) = \sqrt{\det(\matB_{i}^{t} \matB_{i})} \geq 1$,
-    because the Gram matrix
-    $\matB_{i}^{t} \matB_{i} \in \Z^{i \times i}$ is integral and
-    nonsingular.} Therefore, the potential of that basis is at
-  least~$1$.
+  Because $\length{\gs{\vecb}_{i}} \leq \length{\vecb_{i}}$ and $\length{\vecb_{i}} \geq 1$ for all~$i$, the potential of the input basis~$\matB$ is bounded by
+  \[ \Phi(\matB) \leq \prod_{i=1}^{n} \length{\vecb_{i}}^{n-i+1} \leq \prod_{i=1}^{n} \length{\vecb_{i}}^{n} \leq \max_{i} \length{\vecb_{i}}^{n^{2}} = 2^{\poly(n,\len{\matB})}.
+  \] Every intermediate basis is integral, hence the lattices~$\lat_{i}$ associated with that basis have determinant at least~$1$.\footnote{This requires some care to verify, because the lattices~$\lat_{i}$ are \emph{not full rank} for $i < n$.
+    Letting $\matB_{i} = (\vecb_{1}, \ldots, \vecb_{i}) \in \Z^{n \times i}$ be a basis for~$\lat_{i}$, we have $\det(\lat_{i}) = \sqrt{\det(\matB_{i}^{t} \matB_{i})} \geq 1$, because the Gram matrix $\matB_{i}^{t} \matB_{i} \in \Z^{i \times i}$ is integral and nonsingular.}
+  Therefore, the potential of that basis is at least~$1$.
 \end{proof}
 
-\noindent We next analyze how the potential changes when we perform a
-swap in \cref{step:swap}.
+\noindent We next analyze how the potential changes when we perform a swap in \cref{step:swap}.
 
-\begin{claim}
+\begin{claim}%
   \label{clm:swap-gs}
-  Suppose that~$\vecb_{i}$ and~$\vecb_{i+1}$ are swapped in
-  \cref{step:swap}, and let the resulting basis be denoted~$\matB'$.
-  Then $\gs{\vecb}'_{j} = \gs{\vecb}_{j}$ for all
-  $j \not\in \set{i,i+1}$, and
-  $\gs{\vecb}'_{i} = \mu_{i,i+1} \gs{\vecb}_{i} + \gs{\vecb}_{i+1}$.
+  Suppose that~$\vecb_{i}$ and~$\vecb_{i+1}$ are swapped in \cref{step:swap}, and let the resulting basis be denoted~$\matB'$.
+  Then $\gs{\vecb}'_{j} = \gs{\vecb}_{j}$ for all $j \not\in \set{i,i+1}$, and $\gs{\vecb}'_{i} = \mu_{i,i+1} \gs{\vecb}_{i} + \gs{\vecb}_{i+1}$.
 \end{claim}
 
-Note that this claim lets us optimize \cref{step:compute-gs}:
-following a swap, we need not orthogonalize~$\matB'$ from scratch, but
-only need to update two of the vectors from~$\gs{\matB}$.
+Note that this claim lets us optimize \cref{step:compute-gs}: following a swap, we need not orthogonalize~$\matB'$ from scratch, but only need to update two of the vectors from~$\gs{\matB}$.
 
 \begin{proof}
-  For all $j < i$, we have $\gs{\vecb}'_{j} = \gs{\vecb}_{j}$, because
-  it is the component of $\vecb'_{j} = \vecb_{j}$ orthogonal to
-  $\spn(\vecb'_{1}, \ldots, \vecb'_{j-1}) = \spn(\vecb_{1}, \ldots,
-  \vecb_{j-1})$. Similarly, for any $j > i+1$, we have
-  $\gs{\vecb}'_{j} = \gs{\vecb}_{j}$, because it is the component of
-  $\vecb'_{j} = \vecb_{j}$ orthogonal to
-  $\spn(\vecb'_{1}, \ldots, \vecb'_{j-1}) = \spn(\vecb_{1}, \ldots,
-  \vecb_{j-1})$, where here the equality holds because
-  both~$\vecb_{i}$ and~$\vecb_{i+1}$ are in the lists of arguments (in
-  reversed order). Finally, $\gs{\vecb}'_{i}$ is the component of
-  $\vecb'_{i} = \vecb_{i+1}$ orthogonal to
-  $\spn(\vecb'_{1}, \ldots, \vecb'_{i-1}) = \spn(\vecb_{1}, \ldots,
-  \vecb_{i-1})$, which is
-  $\mu_{i,i+1} \gs{\vecb}_{i} + \gs{\vecb}_{i+1}$ by construction.
+  For all $j < i$, we have $\gs{\vecb}'_{j} = \gs{\vecb}_{j}$, because it is the component of $\vecb'_{j} = \vecb_{j}$ orthogonal to $\spn(\vecb'_{1}, \ldots, \vecb'_{j-1}) = \spn(\vecb_{1}, \ldots, \vecb_{j-1})$.
+  Similarly, for any $j > i+1$, we have $\gs{\vecb}'_{j} = \gs{\vecb}_{j}$, because it is the component of $\vecb'_{j} = \vecb_{j}$ orthogonal to $\spn(\vecb'_{1}, \ldots, \vecb'_{j-1}) = \spn(\vecb_{1}, \ldots, \vecb_{j-1})$, where here the equality holds because both~$\vecb_{i}$ and~$\vecb_{i+1}$ are in the lists of arguments (in reversed order).
+  Finally, $\gs{\vecb}'_{i}$ is the component of $\vecb'_{i} = \vecb_{i+1}$ orthogonal to $\spn(\vecb'_{1}, \ldots, \vecb'_{i-1}) = \spn(\vecb_{1}, \ldots, \vecb_{i-1})$, which is $\mu_{i,i+1} \gs{\vecb}_{i} + \gs{\vecb}_{i+1}$ by construction.
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:lll-potential}
-  Suppose that~$\vecb_{i}$ and~$\vecb_{i+1}$ are swapped in
-  \cref{step:swap}, and let the resulting basis be denoted~$\matB'$.
+  Suppose that~$\vecb_{i}$ and~$\vecb_{i+1}$ are swapped in \cref{step:swap}, and let the resulting basis be denoted~$\matB'$.
   Then $\Phi(\matB')/\Phi(\matB) < \sqrt{3/4}$.
 \end{lemma}
 
 \begin{proof}
-  Let $\lat_i = \lat( \vecb_1, \ldots , \vecb_{i-1}, \vecb_i ) $ and
-  $\lat_i' = \lat( \vecb_1, \ldots , \vecb_{i-1}, \vecb_{i+1} ) $. By
-  \cref{clm:swap-gs}, we have
+  Let $\lat_i = \lat( \vecb_1, \ldots , \vecb_{i-1}, \vecb_i ) $ and $\lat_i' = \lat( \vecb_1, \ldots , \vecb_{i-1}, \vecb_{i+1} ) $.
+  By \cref{clm:swap-gs},
   \begin{equation}
     \begin{split}
       \frac{\Phi(\matB')}{\Phi(\matB)} =
@@ -295,123 +192,67 @@ only need to update two of the vectors from~$\gs{\matB}$.
       < \sqrt{3/4},
     \end{split}
   \end{equation}
-  where the last inequality follows from the fact that the swap occurs
-  because the Lov{\'a}sz condition (\cref{item:lovasz}) is \emph{not}
-  satisfied.
+  where the last inequality follows from the fact that the swap occurs because the Lov{\'a}sz condition (\cref{item:lovasz}) is \emph{not} satisfied.
 \end{proof}
 
-This completes the proof that the number of iterations is
-$O(N) = \poly(n, \len{\matB})$. Moreover, we can see by inspection
-that each iteration of the algorithm is polynomial time in the bit
-length of the current basis. However, this does \emph{not} necessarily
-guarantee that the LLL algorithm is polynomial time overall, since the
-bit length of the intermediate bases could possibly \emph{increase}
-with each iteration. (For example, if the bit length doubled in each
-iteration, then by the end, the bit length would be exponential
-in~$n$.)
+This completes the proof that the number of iterations is $O(N) = \poly(n, \len{\matB})$.
+Moreover, we can see by inspection that each iteration of the algorithm is polynomial time in the bit length of the current basis.
+However, this does \emph{not} necessarily guarantee that the LLL algorithm is polynomial time overall, since the bit length of the intermediate bases could possibly \emph{increase} with each iteration.
+(For example, if the bit length doubled in each iteration, then by the end, the bit length would be exponential in~$n$.)
 
-To complete the full proof that LLL is polynomial time, it suffices to
-show that the sizes of \emph{all} intermediate bases are some fixed
-polynomial in the size of the original basis. This turns out to be the
-case, specifically due to the size-reduction step (which we have not
-used up to this point!). The proof of this fact is somewhat grungy,
-though, so we won't cover it.
+To complete the full proof that LLL is polynomial time, it suffices to show that the sizes of \emph{all} intermediate bases are some fixed polynomial in the size of the original basis.
+This turns out to be the case, specifically due to the size-reduction step (which we have not used up to this point!).
+The proof of this fact is somewhat grungy, though, so we won't cover it.
 
-We conclude with some final remarks about the LLL algorithm. The
-factor $3/4$ in the Lov{\'a}sz condition is just for convenience of
-analysis. We can use any constant between $1/4$ and $1$, which yields
-a tradeoff between the final approximation factor and the number of
-iterations, but these will still remain exponential and polynomial
-(in~$n$), respectively. By choosing a value very close to~$1$, we can
-obtain an approximation factor of $(2/\sqrt{3})^{n}$ in polynomial
-time, but we cannot do any better using LLL.\@ We can get slightly
-better approximation factors of $2^{O(n(\log\log n)^2/\log n)}$,
-still in polynomial time, using Schnorr's
-generalization~\cite{DBLP:journals/tcs/Schnorr87} of LLL, where the
-analogue of the Lov{\'a}sz condition deals with blocks of $k \geq 2$
-consecutive vectors.
+We conclude with some final remarks about the LLL algorithm.
+The factor $3/4$ in the Lov{\'a}sz condition is just for convenience of analysis.
+We can use any constant between $1/4$ and $1$, which yields a tradeoff between the final approximation factor and the number of iterations, but these will still remain exponential and polynomial (in~$n$), respectively.
+By choosing a value very close to~$1$, we can obtain an approximation factor of $(2/\sqrt{3})^{n}$ in polynomial time, but we cannot do any better using LLL.\@ We can get slightly better approximation factors of $2^{O(n(\log\log n)^2/\log n)}$, still in polynomial time, using Schnorr's generalization~\cite{DBLP:journals/tcs/Schnorr87} of LLL, where the analogue of the Lov{\'a}sz condition deals with blocks of $k \geq 2$ consecutive vectors.
 
-\section{Coppersmith's Method}
+\section{Coppersmith's Method}%
 \label{sec:coppersmiths-method}
 
-One nice application of LLL is a technique of
-Coppersmith~\cite{DBLP:conf/eurocrypt/Coppersmith96} that finds all
-\emph{small} roots of a polynomial modulo a given number~$N$, even
-when the factorization of $N$ is unknown. This technique has been a
-very powerful tool in cryptanalysis, as we will see next time.
+One nice application of LLL is a technique of Coppersmith~\cite{DBLP:conf/eurocrypt/Coppersmith96} that finds all \emph{small} roots of a polynomial modulo a given number~$N$, even when the factorization of~$N$ is unknown.
+This technique has been a very powerful tool in cryptanalysis, as we will see next time.
 
-\begin{theorem}
+\begin{theorem}%
   \label{thm:coppersmith}
-  There is a polynomial-time algorithm that, given any monic,
-  degree-$d$ integer polynomial $f(x) \in \Z[x]$ and an integer $N$,
-  outputs all integers $x_{0}$ such that
-  $\abs{x_{0}} \leq B = N^{1/d}$ and $f(x_{0}) = 0 \bmod N$.
+  There is a polynomial-time algorithm that, given any monic, degree-$d$ integer polynomial $f(x) \in \Z[x]$ and an integer $N$, outputs all integers $x_{0}$ such that $\abs{x_{0}} \leq B = N^{1/d}$ and $f(x_{0}) = 0 \bmod N$.
 \end{theorem}
 
-\noindent We make a few important remarks about the various components
-of this theorem:
+\noindent We make a few important remarks about the various components of this theorem:
 \begin{enumerate}[itemsep=0pt]
-\item When $N$ is prime, i.e., $\Z_{N}$ is a finite field, there are
-  efficient algorithms that output \emph{all} roots of a given
-  degree-$d$ polynomial $f(x)$ modulo $N$, of which there are at most
-  $d$. Similarly, there are efficient algorithm that factor
-  polynomials over the rationals (or integers). Therefore, the fact
-  that the theorem handles a composite modulus $N$ is a distinguishing
-  feature.
-\item For composite $N$, the number of roots of $f(x)$ modulo~$N$ can
-  be nearly exponential in the bit length of~$N$, even for quadratic
-  $f(x)$. For example, if~$N$ is the product of~$k$ distinct primes,
-  then any square modulo~$N$ has exactly~$2^{k}$ distinct square
-  roots. (This follows from the Chinese Remainder Theorem, since there
-  are two square roots modulo each prime divisor of $N$.) Since~$k$
-  can be as large as $\approx \log N / \log \log N$, the number of
-  roots can be nearly exponential in $\log N$. Therefore, in general
-  no efficient algorithm can output \emph{all} roots of $f(x)$
-  modulo~$N$; the restriction to \emph{small} roots in the theorem
-  statement circumvents this problem.\footnote{Indeed, the theorem
-    implies that the number of small roots is always polynomially
-    bounded. This fact did not appear to be known before Coppersmith's
-    result!}
-\item The size restriction appears necessary for another reason:
-  knowing two square roots $r_{1} \neq \pm r_{2}$ of a square modulo a
-  composite~$N$ reveals a nontrivial factor of~$N$, as
-  $\gcd(r_{1}-r_{2}, N)$. So even if the number of roots is small,
-  finding all of them is still at least as hard as factoring. However,
-  it is easy to show that a square cannot have more than one ``small''
-  square root, of magnitude at most $N^{1/2}$. Therefore, the theorem
-  does not appear to yield an efficient factoring algorithm. (However,
-  it can be used to factor when some partial information about a
-  factor is known, as shown in the related
-  work~\cite{DBLP:conf/eurocrypt/Coppersmith96a}.)
+\item When $N$ is prime, i.e., $\Z_{N}$ is a finite field, there are efficient algorithms that output \emph{all} roots of a given degree-$d$ polynomial $f(x)$ modulo $N$, of which there are at most $d$.
+  Similarly, there are efficient algorithm that factor polynomials over the rationals (or integers).
+  Therefore, the fact that the theorem handles a composite modulus $N$ is a distinguishing feature.
+\item For composite $N$, the number of roots of $f(x)$ modulo~$N$ can be nearly exponential in the bit length of~$N$, even for quadratic $f(x)$.
+  For example, if~$N$ is the product of~$k$ distinct primes, then any square modulo~$N$ has exactly~$2^{k}$ distinct square roots.
+  (This follows from the Chinese Remainder Theorem, since there are two square roots modulo each prime divisor of $N$.)
+  Since~$k$ can be as large as $\approx \log N / \log \log N$, the number of roots can be nearly exponential in $\log N$.
+  Therefore, in general no efficient algorithm can output \emph{all} roots of $f(x)$ modulo~$N$; the restriction to \emph{small} roots in the theorem statement circumvents this problem.\footnote{Indeed, the theorem implies that the number of small roots is always polynomially bounded.
+    This fact did not appear to be known before Coppersmith's result!}
+\item The size restriction appears necessary for another reason: knowing two square roots $r_{1} \neq \pm r_{2}$ of a square modulo a composite~$N$ reveals a nontrivial factor of~$N$, as $\gcd(r_{1}-r_{2}, N)$.
+  So even if the number of roots is small, finding all of them is still at least as hard as factoring.
+  However, it is easy to show that a square cannot have more than one ``small'' square root, of magnitude at most $N^{1/2}$.
+  Therefore, the theorem does not appear to yield an efficient factoring algorithm.
+  (However, it can be used to factor when some partial information about a factor is known, as shown in the related work~\cite{DBLP:conf/eurocrypt/Coppersmith96a}.)
 \end{enumerate}
 
-To highlight the heart of the method, in the remainder of this section
-we prove the theorem for a weaker bound of $B \approx N^{2/(d(d+1))}$,
-where the approximation hides a small constant factor. (We will prove
-the theorem for $B \approx N^{1/d}$ next time.) The strategy is to
-find another nonzero polynomial $h(x) = \sum h_{i} x^{i} \in \Z[x]$
-such that:
+To highlight the heart of the method, in the remainder of this section we prove the theorem for a weaker bound of $B \approx N^{2/(d(d+1))}$, where the approximation hides a small constant factor.
+(We will prove the theorem for $B \approx N^{1/d}$ next time.)
+The strategy is to find another nonzero polynomial $h(x) = \sum h_{i} x^{i} \in \Z[x]$ such that:
 \begin{enumerate}[itemsep=0pt]
 \item every root of $f(x)$ modulo $N$ is also a root of $h(x)$, and
-\item the polynomial $h(Bx)$ is ``short,'' i.e.,
-  $\abs{h_{i} B^{i}} < N/(\deg(h)+1)$ for all $i$.
+\item the polynomial $h(Bx)$ is ``short,'' i.e., $\abs{h_{i} B^{i}} < N/(\deg(h)+1)$ for all $i$.
 \end{enumerate}
-For any such $h(x)$, and for any $x_{0}$ such that $|x_0| \leq B$, we
-have $\abs{h_i x_0^i} \leq \abs{h_{i} B^{i}} < N/(\deg(h)+1)$, which
-implies that $\abs{h(x_0)} < N$. Hence, for every \emph{small}
-root~$x_0$ (such that $\abs{x_{0}} \leq B$) of $f(x)$ modulo~$N$, we
-have that $h(x_0)=0$ \emph{over the integers} (not modulo anything).
-To find the small roots of $f(x)$ modulo~$N$, we can therefore just
-factor $h(x)$ over the integers, and test whether each of its (small)
-roots is a root of $f(x)$ modulo~$N$.
+For any such $h(x)$, and for any $x_{0}$ such that $|x_0| \leq B$, we have $\abs{h_i x_0^i} \leq \abs{h_{i} B^{i}} < N/(\deg(h)+1)$, which implies that $\abs{h(x_0)} < N$.
+Hence, for every \emph{small} root~$x_0$ (such that $\abs{x_{0}} \leq B$) of $f(x)$ modulo~$N$, we have that $h(x_0)=0$ \emph{over the integers} (not modulo anything).
+To find the small roots of $f(x)$ modulo~$N$, we can therefore just factor $h(x)$ over the integers, and test whether each of its (small) roots is a root of $f(x)$ modulo~$N$.
 
-We now give an efficient algorithm to find such an $h(x)$. The basic
-idea is that adding integer multiples of the polynomials
-$g_{i}(x) = N x^i \in \Z[x]$ to $f(x)$ certainly preserves the roots
-of~$f$ modulo~$N$. So we construct a lattice whose basis corresponds
-to the coefficient vectors of the polynomials $g_{i}(Bx)$ and $f(Bx)$,
-find a short nonzero vector in this lattice, and interpret it as the
-polynomial $h(Bx)$. The lattice basis is
+We now give an efficient algorithm to find such an $h(x)$.
+The basic idea is that adding integer multiples of the polynomials $g_{i}(x) = N x^i \in \Z[x]$ to $f(x)$ certainly preserves the roots of~$f$ modulo~$N$.
+So we construct a lattice whose basis corresponds to the coefficient vectors of the polynomials $g_{i}(Bx)$ and $f(Bx)$, find a short nonzero vector in this lattice, and interpret it as the polynomial $h(Bx)$.
+The lattice basis is
 \[ \matB =
   \begin{pmatrix}
     N & & & & f_0 \\
@@ -422,23 +263,19 @@ polynomial $h(Bx)$. The lattice basis is
       & & & & B^d
   \end{pmatrix}. \]
 Note that the lattice dimension is $d+1$, and that
-$\det(\matB) = B^{d(d+1)/2} \cdot N^d$. By running the LLL algorithm
+$\det(\matB) = B^{d(d+1)/2} \cdot N^d$.
+By running the LLL algorithm
 on this basis, we obtain a nonzero lattice vector~$\vecv \in
 \lat(\matB)$ for which
 \[ \length{\vecv} \leq 2^{d/2} \cdot B^{d/2} \cdot N^{d/(d+1)} =
   (2B)^{d/2} \cdot N^{1-1/(d+1)}.
 \]
 
-Define $h(Bx)$ to be the polynomial whose coefficients are given by
-$\vecv$, i.e., $h(x) = v_0 + (v_{1}/B)x + \cdots + (v_{d}/B^{d}) x^d$.
-Notice that $h(x) \in \Z[X]$, because $B^i$ divides $v_i$ for each $i$
-by construction of the lattice basis, and that every root of $f(x)$
-modulo $N$ is also a root of $h(x)$ by construction. Finally, we see
-that
-\[ \abs{ h_{i} B^{i} } = \abs{v_{i}} \leq \length{v} <
-  \frac{N}{d+1}, \] if we take $(2B)^{d/2} < N^{1/(d+1)}/(d+1)$, which
-is equivalent to $B < N^{2/(d(d+1))}/(2 (d+1)^{2/d})$; note that the
-denominator is upper bounded by a constant. This concludes the proof.
+Define $h(Bx)$ to be the polynomial whose coefficients are given by $\vecv$, i.e., $h(x) = v_0 + (v_{1}/B)x + \cdots + (v_{d}/B^{d}) x^d$.
+Notice that $h(x) \in \Z[X]$, because $B^i$ divides $v_i$ for each $i$ by construction of the lattice basis, and that every root of $f(x)$ modulo $N$ is also a root of $h(x)$ by construction.
+Finally, we see that
+\[ \abs{ h_{i} B^{i} } = \abs{v_{i}} \leq \length{v} < \frac{N}{d+1}, \] if we take $(2B)^{d/2} < N^{1/(d+1)}/(d+1)$, which is equivalent to $B < N^{2/(d(d+1))}/(2 (d+1)^{2/d})$; note that the denominator is upper bounded by a constant.
+This concludes the proof.
 
 \bibliography{common/lattices}
 \bibliographystyle{common/alphaabbrvprelim}
