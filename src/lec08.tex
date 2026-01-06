@@ -1,22 +1,8 @@
 \documentclass[11pt]{article}
 
-\usepackage{fullpage}
-\usepackage{newtxtext}
-\usepackage{microtype}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
-\usepackage[pagebackref=true]{hyperref} % must set backref at load time
-\usepackage{fancyhdr}
-\usepackage{mathtools}
-\usepackage{enumitem}
-\usepackage[svgnames]{xcolor}
-\usepackage{tikz}
-\usepackage{import}
+\input{header}
 
-% load after hyperref, algpseudocode to get proper behavior
-\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
-
-\import{common/}{head.tex}
+\usepackage{derivative}
 
 % VARIABLES
 
@@ -26,7 +12,6 @@
 
 % END OF VARIABLES
 
-\import{common/}{lechead.tex}
 \lecheader                      % execute lecture commands
 
 \pagestyle{plain}               % default: no special header
@@ -37,43 +22,37 @@
 
 % LECTURE MATERIAL STARTS HERE
 
-\section{Fourier Transform}
+\section{Fourier Transform}%
 \label{sec:ftrans}
 
 We begin with some basic definitions.
 
-\begin{definition}[$L^1$ function]
+\begin{definition}[$L^1$ function]%
   \label{def:L1}
-  The function class $L^1(\R)$ is the set of all functions
-  $f \colon \R \to \C$ for which
-  \[ \int_{\R} \abs{f(x)} dx < \infty . \]
+  The function class $L^1(\R)$ is the set of all functions $f \colon \R \to \C$ for which
+  \[ \int_{\R} \abs{f(x)} \odif{x} < \infty . \]
 \end{definition}
 
-\begin{definition}[Fourier transform]
+\begin{definition}[Fourier transform]%
   \label{def:fourier-transform}
-  Given $f \in L^1(\R)$, its Fourier Transform
-  $\hat{f} \colon \R \to \C$ is defined as
-  \[\hat{f}(w) := \int_{\R} f(x) e^{-2\pi i x w} dx . \]
+  Given $f \in L^1(\R)$, its Fourier Transform $\hat{f} \colon \R \to \C$ is defined as
+  \[ \hat{f}(w) := \int_{\R} f(x) e^{-2\pi i x w} \odif{x} .
+  \]
 \end{definition}
 
 \noindent
-Note that
-\[\abs{\hat{f}(w)} \leq \int_{\R} \abs{f(x)e^{-2\pi ixw}} dx
-  \leq \int_{\R} \abs{f(x)} \cdot \abs{e^{-2\pi i x w}} dx = \int_{\R}
-  \abs{f(x)}dx < \infty\] for all $w \in \R$, thus $\hat{f}(w)$ is
-finite for all $w$. (The second to last step uses the fact that
-$\abs{e^{-2\pi ixw}} = 1$.)
+Note that \[ \abs{\hat{f}(w)} \leq \int_{\R} \abs{f(x)e^{-2\pi ixw}} \odif{x} \leq \int_{\R} \abs{f(x)} \cdot \abs{e^{-2\pi i x w}} \odif{x} = \int_{\R} \abs{f(x)}\odif{x} < \infty \] for all $w \in \R$, thus $\hat{f}(w)$ is finite for all $w$.
+(The second to last step uses the fact that $\abs{e^{-2\pi ixw}} = 1$.)
 
-\begin{example}
+\begin{example}%
   \label{ex:fourier-gaussian}
-  The Fourier transform of the Gaussian function $f(x) = e^{-\pi x^2}$
-  is
+  The Fourier transform of the Gaussian function $f(x) = e^{-\pi x^2}$ is
   \begin{align*}
     \hat{f}(w) 
-    &= \int_{\R} e^{-\pi x^2} \cdot e^{-2\pi ixw} dx \\
-    &= \int_{\R} e^{-\pi ((x + i w)^2 + w^2)} dx \\
-    &= e^{-\pi w^2}\int_{\R} e^{-\pi (x + i w)^2} dx \\
-    &= e^{-\pi w^2} \int_{\R} e^{-\pi x^2} dx
+    &= \int_{\R} e^{-\pi x^2} \cdot e^{-2\pi ixw} \odif{x} \\
+    &= \int_{\R} e^{-\pi ((x + i w)^2 + w^2)} \odif{x} \\
+    &= e^{-\pi w^2}\int_{\R} e^{-\pi (x + i w)^2} \odif{x} \\
+    &= e^{-\pi w^2} \int_{\R} e^{-\pi x^2} \odif{x}
       {\footnotemark}\\
     &= e^{-\pi w^2} {\footnotemark} \\
     &= f(w),
@@ -81,153 +60,122 @@ $\abs{e^{-2\pi ixw}} = 1$.)
   i.e., the Gaussian is its own Fourier transform.
 \end{example}
  
-\addtocounter{footnote}{-1} \footnotetext{This step follows from
-  applying Cauchy's integral formula to the contour integral around
-  the closed path $R \to R - i w \to -R - i w \to -R \to R$, as
-  $R \to \infty$. Since $e^{-\pi x^2}$ is ``nice enough''
-  (holomorphic), this integral must be 0. As $R \to \infty$, the
-  integrals from $[R \to R - i w]$ and $[-R - i w \to -R]$ are each
-  bounded in absolute value by $e^{-\pi w R^2}$, hence they both
-  approach~$0$. Therefore,
-  \[0 = \lim_{R \to \infty} \int_{-R}^{R} e^{-\pi x^2}dx + \int_{R - i
-      w}^{-R - i w} e^{-\pi x^2}dx = \lim_{R \to \infty} \int_{-R}^{R}
-    e^{-\pi x^2} dx + \int_{R}^{-R} e^{-\pi (u + i w)^2} du.\] The
-  result follows by swapping the bounds of integration in the second
-  integral, and taking $R \to \infty$. }
+\addtocounter{footnote}{-1} \footnotetext{This step follows from applying Cauchy's integral formula to the contour integral around the closed path $R \to R - i w \to -R - i w \to -R \to R$, as $R \to \infty$.
+  Since $e^{-\pi x^2}$ is ``nice enough'' (holomorphic), this integral must be 0.
+  As $R \to \infty$, the integrals from $[R \to R - i w]$ and $[-R - i w \to -R]$ are each bounded in absolute value by $e^{-\pi w R^2}$, hence they both approach~$0$.
+  Therefore,
+  \[0 = \lim_{R \to \infty} \int_{-R}^{R} e^{-\pi x^2}\odif{x} + \int_{R - i w}^{-R - i w} e^{-\pi x^2}\odif{x} = \lim_{R \to \infty} \int_{-R}^{R} e^{-\pi x^2} \odif{x} + \int_{R}^{-R} e^{-\pi (u + i w)^2} \odif{u}.\] The result follows by swapping the bounds of integration in the second integral, and taking $R \to \infty$.
+}
 
-\stepcounter{footnote} \footnotetext{This follows from integrating
-  the square in polar coordinates:
-  \[ \int_{\R} e^{-\pi x^2} dx = \sqrt{\int_{\R^2} e^{-\pi x^2}e^{-\pi
-        y^2}dx } = \sqrt{\int_{\theta=0}^{2\pi} \int_{r=0}^{\infty}
-      e^{-\pi r^2} \cdot rdr d\theta} = \sqrt{\int_{\theta=0}^{2\pi}
-      \frac{-1}{2\pi}(0-1)} = 1 . \]}
+\stepcounter{footnote} \footnotetext{This follows from integrating the square in polar coordinates:
+  \[ \int_{\R} e^{-\pi x^2} \odif{x} = \sqrt{\int_{\R^2} e^{-\pi x^2}e^{-\pi y^2} \odif{x} \odif{y}} = \sqrt{\int_{\theta=0}^{2\pi} \int_{r=0}^{\infty} e^{-\pi r^2} \cdot r \odif{r} \odif{\theta}} = \sqrt{\int_{\theta=0}^{2\pi} \frac{-1}{2\pi}(0-1) \odif{\theta}} = 1 .
+  \]}
 
 \paragraph{Basic facts.}
 
 We recall some important facts about the Fourier transform.
 
-\begin{fact}[Linearity]
+\begin{fact}[Linearity]%
   \label{fact:linear}
-  For all $f,g \in L^1(\R)$ and all $a \in \R$,
-  $\widehat{f + g} = \hat{f} + \hat{g}$ and
-  $\widehat{a \cdot f} = a\hat{f}$.
+  For all $f,g \in L^1(\R)$ and all $a \in \R$, $\widehat{f + g} = \hat{f} + \hat{g}$ and $\widehat{a \cdot f} = a\hat{f}$.
 \end{fact}
 
-\begin{fact}[Time shift]
+\begin{fact}[Time shift]%
   \label{fact:shift}
   Let $f \in L^{1}(\R)$ and $h(x) = f(x - c)$ for some $c \in \R$.
   Then $\hat{h}(w) = e^{-2\pi i c w} \cdot \hat{f}(w)$:
-  \[ \hat{h}(w) = \int_{\R} f(x-c)e^{-2\pi i xw}dx = \int_{\R} f(u)
-    e^{-2\pi i(u + c)w} du = e^{-2\pi i c w} \cdot \hat{f}(w) . \]
+  \[ \hat{h}(w) = \int_{\R} f(x-c)e^{-2\pi i xw} \odif{x} = \int_{\R} f(u) e^{-2\pi i(u + c)w} \odif{u} = e^{-2\pi i c w} \cdot \hat{f}(w) .
+  \]
 \end{fact}
 
-\begin{fact}[Time scale]
+\begin{fact}[Time scale]%
   \label{fact:scale}
-  Let $f \in L^{1}(\R)$ and $h(x) = f(x/s)$ for some $s > 0$. Then
-  $\hat{h}(w) = s \hat{f}(s w)$:
-  \[ \hat{h}(w) = \int_{\R} f(x/s) e^{-2\pi i x w} dx = s
-    \int_{\R} f(u) e^{-2\pi i s u w} du = s \int_{\R}
-    f(u) e^{-2\pi i u (s w)} du = s \hat{f}(s w) . \]
+  Let $f \in L^{1}(\R)$ and $h(x) = f(x/s)$ for some $s > 0$.
+  Then $\hat{h}(w) = s \hat{f}(s w)$:
+  \[ \hat{h}(w) = \int_{\R} f(x/s) e^{-2\pi i x w} \odif{x} = s \int_{\R} f(u) e^{-2\pi i s u w} \odif{u} = s \int_{\R} f(u) e^{-2\pi i u (s w)} \odif{u} = s \hat{f}(s w) .
+  \]
 \end{fact}
 
-\begin{fact}[Transform inversion]
+\begin{fact}[Transform inversion]%
   \label{fact:fourier-inversion}
   For any $f \in L^{1}(\R)$,
-  \[ f(x) = \int_{\R} \hat{f}(w) e^{2\pi i x w} dw . \]
+  \[ f(x) = \int_{\R} \hat{f}(w) e^{2\pi i x w} \odif{w} .
+  \]
 \end{fact}
-In words, this says that~$f(x)$ is a linear combination of
-``character'' functions of the form $e^{2\pi i x w}$ for $w \in \R$,
-each weighted by the Fourier coefficient $\hat{f}(w)$. Each component
-$e^{2\pi i x w}$ is periodic with period $1/w$ (for $w \neq 0$), hence
-frequency~$w$. Note that \cref{fact:fourier-inversion} implies that
-$\hat{\hat{f}}(x) = f(-x)$.
+In words, this says that~$f(x)$ is a linear combination of ``character'' functions of the form $e^{2\pi i x w}$ for $w \in \R$, each weighted by the Fourier coefficient $\hat{f}(w)$.
+Each component $e^{2\pi i x w}$ is periodic with period $1/w$ (for $w \neq 0$), hence frequency~$w$.
+Note that \cref{fact:fourier-inversion} implies that $\hat{\hat{f}}(x) = f(-x)$.
 
-\section{Fourier Series for Periodic Functions}
+\section{Fourier Series for Periodic Functions}%
 \label{sec:fseries}
 
-Now consider a function~$g \colon \R \to \C$ (not necessarily
-in~$L^{1}(\R)$) that is periodic with unit period, i.e.,
-$g(x) = g(x + z)$ for any $z \in \Z$. We call such a function
-\emph{$\Z$-periodic}. Equivalently, we can work with the function
-$g \colon (\R / \Z) \to \C$, since the original~$g$ is constant over
-any fixed coset $c + \Z$. Such an~$g$ can be decomposed as a linear
-combination of character functions with \emph{integer} frequencies.
+Now consider a function~$g \colon \R \to \C$ (not necessarily in~$L^{1}(\R)$) that is periodic with unit period, i.e., $g(x) = g(x + z)$ for any $z \in \Z$.
+We call such a function \emph{$\Z$-periodic}.
+Equivalently, we can work with the function $g \colon (\R / \Z) \to \C$, since the original~$g$ is constant over any fixed coset $c + \Z$.
+Such an~$g$ can be decomposed as a linear combination of character functions with \emph{integer} frequencies.
 
-\begin{definition}[Fourier series]
-  For $g \colon (\R / \Z) \to \C$, its Fourier series
-  $\hat{g} \colon \Z \to \C$ is
-  \[ \hat{g}(w) = \int_{\R/\Z} g(x+\Z) e^{-2\pi i x w} dx . \]
+\begin{definition}[Fourier series]%
+  For $g \colon (\R / \Z) \to \C$, its Fourier series $\hat{g} \colon \Z \to \C$ is
+  \[ \hat{g}(w) = \int_{\R/\Z} g(x+\Z) e^{-2\pi i x w} \odif{x} .
+  \]
 \end{definition}
-Equivalently, the integral can be taken over any fundamental region
-of~$\Z$; often it is convenient to use $[0,1)$.
+Equivalently, the integral can be taken over any fundamental region of~$\Z$; often it is convenient to use $[0,1)$.
 
-\Cref{fact:linear,fact:shift,fact:scale} also apply to the Fourier
-series, by essentially the same proofs. But there is a slightly
-different inversion formula.
+\Cref{fact:linear,fact:shift,fact:scale} also apply to the Fourier series, by essentially the same proofs.
+But there is a slightly different inversion formula.
 
-\begin{fact}[Series inversion]
+\begin{fact}[Series inversion]%
   \label{fact:sinversion}
-  \[ g(x+\Z) = \sum_{w \in \Z} \hat{g}(w) e^{2\pi i x w} . \]
+  \[ g(x+\Z) = \sum_{w \in \Z} \hat{g}(w) e^{2\pi i x w} .
+  \]
 \end{fact}
 
 \begin{example}
-  The Fourier series of $g(x) = e^{2\pi i x k}$, where~$k \in \Z$
-  (so~$g$ is $\Z$-periodic), can be derived in two different ways.
+  The Fourier series of $g(x) = e^{2\pi i x k}$, where~$k \in \Z$ (so~$g$ is $\Z$-periodic), can be derived in two different ways.
   First, we calculate the Fourier series directly: for any $w \in \Z$,
   \begin{align*}
-    \hat{g}(w) &= \int_{[0,1)} e^{2\pi i x k} e^{-2\pi i x w} dx \\
-               &= \int_{[0,1)} e^{2\pi i x (k - w)} dx .
+    \hat{g}(w) &= \int_{[0,1)} e^{2\pi i x k} e^{-2\pi i x w} \odif{x} \\
+               &= \int_{[0,1)} e^{2\pi i x (k - w)} \odif{x} .
   \end{align*}
-  When $w \neq k$, $e^{2\pi i x (k - w)} dx$ completes a nonzero
-  integer number of revolutions around the unit circle (as~$x$ goes
-  from~$0$ to~$1$), and thus the above integral is~$0$. When $k=w$,
-  the integral is simply $\int_{[0,1)} e^{0} dx = 1$. Therefore
-  $\hat{g}(w) = \delta_{k,w}$, where $\delta_{k,w}$ is the Kronecker
-  delta function.
+  When $w \neq k$, $e^{2\pi i x (k - w)} \odif{x}$ completes a nonzero integer number of revolutions around the unit circle (as~$x$ goes from~$0$ to~$1$), and thus the above integral is~$0$.
+  When $k=w$, the integral is simply $\int_{[0,1)} e^{0} \odif{x} = 1$.
+  Therefore $\hat{g}(w) = \delta_{k,w}$, where $\delta_{k,w}$ is the Kronecker delta function.
 
-  Alternatively, we can match coefficients for each character function
-  $e^{2\pi i x w}$ in the series inversion formula. We observe that if
-  $e^{2\pi i x k} = \sum_{w \in \Z} \hat{g}(w) e^{2\pi i x w}$, we must
-  have $\hat{g}(w) = \delta_{k,w}$.
+  Alternatively, we can match coefficients for each character function $e^{2\pi i x w}$ in the series inversion formula.
+  We observe that if $e^{2\pi i x k} = \sum_{w \in \Z} \hat{g}(w) e^{2\pi i x w}$, we must have $\hat{g}(w) = \delta_{k,w}$.
 \end{example}
 
 \begin{example}
-  The Fourier series of $g(x) = \cos(2\pi x)$ can be obtained by
-  recalling that
-  $\cos(2 \pi x) = \tfrac12 e^{2\pi i x} + \tfrac12 e^{-2\pi i x}$. So
-  by matching coefficients in the series inversion formula, we have
-  that $\hat{g}(1) = \hat{g}(-1) = \tfrac12$, and $\hat{g}(w)=0$ for
-  $w \notin \pmone$.
+  The Fourier series of $g(x) = \cos(2\pi x)$ can be obtained by recalling that $\cos(2 \pi x) = \tfrac12 e^{2\pi i x} + \tfrac12 e^{-2\pi i x}$.
+  So by matching coefficients in the series inversion formula, we have that $\hat{g}(1) = \hat{g}(-1) = \tfrac12$, and $\hat{g}(w)=0$ for $w \notin \pmone$.
 \end{example}
 
 \paragraph{Periodization.}
 
-Let $f \in L^{1}(\R)$, so it has a Fourier transform. For a countable
-set~$S$, define the notation $f(S) = \sum_{x \in S} f(x)$. Now
-``$\Z$-periodize''~$f$ by summing all its $\Z$-translates, i.e.,
-define $g \colon (\R/\Z) \to \C$ as
+Let $f \in L^{1}(\R)$, so it has a Fourier transform.
+For a countable set~$S$, define the notation $f(S) = \sum_{x \in S} f(x)$.
+Now ``$\Z$-periodize''~$f$ by summing all its $\Z$-translates, i.e., define $g \colon (\R/\Z) \to \C$ as
 \begin{equation}
   \label{eq:periodize}
   g(x + \Z) := f(x + \Z) = \sum_{z \in \Z} f(x+z) .
 \end{equation}
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:periodize}
   The Fourier series of~$g$ is $\hat{g}(w) = \hat{f}(w)$.
 \end{lemma}
 
-Intuitively, this says that periodization by~$\Z$ ``zeroes out'' all
-the non-integer frequencies, and preserves all the integer ones.
+Intuitively, this says that periodization by~$\Z$ ``zeroes out'' all the non-integer frequencies, and preserves all the integer ones.
 
 \begin{proof}
   For any $w \in \Z$, we have
   \begin{align*}
     \hat{g}(w)
-    &= \int_{\R/\Z} g(x+\Z) e^{-2\pi i x w} dx \\
-    &= \int_{[0,1)} \sum_{z \in \Z} f(x+z) e^{-2\pi i x w} dx \\
-    &= \int_{[0,1)} \sum_{z \in \Z} f(x+z) e^{-2\pi i (x+z) w} dx
+    &= \int_{\R/\Z} g(x+\Z) e^{-2\pi i x w} \odif{x} \\
+    &= \int_{[0,1)} \sum_{z \in \Z} f(x+z) e^{-2\pi i x w} \odif{x} \\
+    &= \int_{[0,1)} \sum_{z \in \Z} f(x+z) e^{-2\pi i (x+z) w} \odif{x}
     & \text{($z,w$ are integers)} \\
-    &= \int_{\R} f(u) e^{-2\pi i u w} du
+    &= \int_{\R} f(u) e^{-2\pi i u w} \odif{u}
     & \text{($u=x+z$ runs over~$\R$)} \\
     &= \hat{f}(w) .
   \end{align*}
@@ -235,37 +183,29 @@ the non-integer frequencies, and preserves all the integer ones.
 
 \paragraph{Poisson summation.}
 
-We can use the above to get an interesting formula involving the sum
-of a function evaluated at the integers.
+We can use the above to get an interesting formula involving the sum of a function evaluated at the integers.
 
-\begin{theorem}[Poisson summation formula]
+\begin{theorem}[Poisson summation formula]%
   \label{thm:psf}
   For any $f \in L^{1}(\R)$, we have $f(\Z) = \hat{f}(\Z)$.
 \end{theorem}
 
 \begin{proof}
-  Define $g \colon (\R/\Z) \to \C$ to be the $\Z$-periodization
-  of~$f$, as in \cref{eq:periodize}.
-  By~\cref{fact:sinversion,lem:periodize}, it follows that
-  \[ f(\Z) = g(0+\Z) = \sum_{w \in \Z} \hat{g}(w) e^{2 \pi i 0 w} =
-    \sum_{w \in \Z} \hat{g}(w) = \sum_{w \in \Z} \hat{f}(w) =
-    \hat{f}(\Z) . \]
+  Define $g \colon (\R/\Z) \to \C$ to be the $\Z$-periodization of~$f$, as in \cref{eq:periodize}.
+  By \cref{fact:sinversion,lem:periodize}, it follows that
+  \[ f(\Z) = g(0+\Z) = \sum_{w \in \Z} \hat{g}(w) e^{2 \pi i 0 w} = \sum_{w \in \Z} \hat{g}(w) = \sum_{w \in \Z} \hat{f}(w) = \hat{f}(\Z) .
+  \]
 \end{proof}
 
-More generally, to sum a function over a scaling of the integers
-$s^{-1} \Z$ (i.e., a general one-dimensional lattice) for some real
-$s > 0$, we can use \cref{fact:scale} to rescale: defining
-$h(x) = f(x/s)$, by \cref{thm:psf} (Poisson summation) and
-\cref{fact:scale}, we have
+More generally, to sum a function over a scaling of the integers $s^{-1} \Z$ (i.e., a general one-dimensional lattice) for some real $s > 0$, we can use \cref{fact:scale} to rescale: defining $h(x) = f(x/s)$, by \cref{thm:psf} (Poisson summation) and \cref{fact:scale}, we have
 \begin{equation}
   \label{eq:gen-psf}
   f(s^{-1} \Z) = h(\Z) = \hat{h}(\Z) = s \hat{f}(s \Z) .
 \end{equation}
 
 \begin{example}
-  Define $f(x) = e^{-\pi x^2}$, and
-  $f_s(x) := f(x/s) = e^{-\pi (x/s)^2}$. We approximate
-  $f_s(\Z)$ for somewhat large~$s$:
+  Define $f(x) = e^{-\pi x^2}$, and $f_s(x) := f(x/s) = e^{-\pi (x/s)^2}$.
+  We approximate $f_s(\Z)$ for somewhat large~$s$:
   \begin{align*}
     f_s(\Z) = f(s^{-1} \Z)
     &= s \hat{f}(s\Z)
