@@ -1,22 +1,8 @@
 \documentclass[11pt]{article}
 
-\usepackage{fullpage}
-\usepackage{newtxtext}
-\usepackage{microtype}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
-\usepackage[pagebackref=true]{hyperref} % must set backref at load time
-\usepackage{fancyhdr}
-\usepackage{mathtools}
-\usepackage{enumitem}
-\usepackage[svgnames]{xcolor}
-\usepackage{tikz}
-\usepackage{import}
+\input{header}
 
-% load after hyperref, algpseudocode to get proper behavior
-\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
-
-\import{common/}{head.tex}
+\usepackage{derivative}
 
 % VARIABLES
 
@@ -26,7 +12,6 @@
 
 % END OF VARIABLES
 
-\import{common/}{lechead.tex}
 \lecheader                      % execute lecture commands
 
 \pagestyle{plain}               % default: no special header
@@ -37,66 +22,49 @@
 
 % LECTURE MATERIAL STARTS HERE
 
-\section{Fourier Transform and Series}
+\section{Fourier Transform and Series}%
 
-Recall from last lecture that in the one dimensional case, the Fourier
-transform of a function $f \colon \R \to \C$ is the function
-$\hat{f} \colon \R \to \C$ defined as
-\[ \hat{f}(w) = \int_{x\in \R} f(x) \exp(-2 \pi ixw) \, dx . \] The
-inversion formula is
-\[ f(x) = \int_{w\in \R} \hat{f}(w) \exp(2 \pi ixw) \, dx. \] For a
-$\Z$-periodic function $g \colon (\R / \Z) \to \C$, its Fourier series
-is the function $\hat{g} \colon \Z \to \C$ defined as
-\[ \hat{g}(w) = \int_{x \in \R/\Z} g(x) \exp(-2 \pi ixw) \, dx . \] The
-inversion formula is
+Recall from last lecture that in the one dimensional case, the Fourier transform of a function $f \colon \R \to \C$ is the function $\hat{f} \colon \R \to \C$ defined as
+\[ \hat{f}(w) = \int_{x\in \R} f(x) \exp(-2 \pi ixw) \odif{x} .
+\] The inversion formula is
+\[ f(x) = \int_{w\in \R} \hat{f}(w) \exp(2 \pi ixw) \odif{x}.
+\] For a $\Z$-periodic function $g \colon (\R / \Z) \to \C$, its Fourier series is the function $\hat{g} \colon \Z \to \C$ defined as
+\[ \hat{g}(w) = \int_{x \in \R/\Z} g(x) \exp(-2 \pi ixw) \odif{x} .
+\] The inversion formula is
 \[ g(x+\Z) = \sum_{w \in \Z} \hat{g}(w) \exp(2 \pi ixw). \]
 
-We now extend the Fourier transform and Fourier series to~$n$
-dimensions. Similarly to before, define $L^{1}(\R^n)$ to be the set of
-functions $f \colon \R^n \to \C$ for which
-$\int_{\R^n} \abs{f(\vecx)} \, d\vecx < \infty$.
+We now extend the Fourier transform and Fourier series to~$n$ dimensions.
+Similarly to before, define $L^{1}(\R^n)$ to be the set of functions $f \colon \R^n \to \C$ for which $\int_{\R^n} \abs{f(\vecx)} \odif{\vecx} < \infty$.
 
-\begin{definition}
+\begin{definition}%
   \label{def:fourier-transform}
-  For $f \in L^{1}(\R^n)$, the Fourier transform of~$f$ is the
-  function $\hat{f} \colon \R^{n} \to \C$ defined as
-  \[ \hat{f}(\vecw) = \int_{\vecx\in \R^n} f(\vecx)\exp(-2 \pi i
-    \inner{\vecx,\vecw}) \, d\vecx . \]
+  For $f \in L^{1}(\R^n)$, the \emph{Fourier transform} of~$f$ is the function $\hat{f} \colon \R^{n} \to \C$ defined as
+  \[ \hat{f}(\vecw) = \int_{\vecx\in \R^n} f(\vecx)\exp(-2 \pi i \inner{\vecx,\vecw}) \odif{\vecx} .
+  \]
 \end{definition}
 
 \begin{definition}
-  For a $\Z^{n}$-periodic function $g \colon \R^{n}/\Z^{n} \to \C$,
-  its Fourier series $\hat{g} \colon \Z^{n} \to \C$ is defined as
-  \[ \hat{g}(\vecw) = \int_{\vecx\in \R^n / \Z^n} g(\vecx) \exp(-2 \pi
-    i\inner{\vecx,\vecw}) \, d\vecx . \]
+  For a $\Z^{n}$-periodic function $g \colon \R^{n}/\Z^{n} \to \C$, its \emph{Fourier series} $\hat{g} \colon \Z^{n} \to \C$ is defined as
+  \[ \hat{g}(\vecw) = \int_{\vecx\in \R^n / \Z^n} g(\vecx) \exp(-2 \pi i\inner{\vecx,\vecw}) \odif{\vecx} .
+  \]
 \end{definition}
 
-We now mention some easy properties of the $n$-dimensional Fourier
-transform and Fourier series (where applicable); their proofs
-naturally generalize from the one-dimensional case.
+We now mention some easy properties of the $n$-dimensional Fourier transform and Fourier series (where applicable); their proofs naturally generalize from the one-dimensional case.
 \begin{enumerate}
-\item \emph{Linearity:} $\widehat{f+g} = \hat{f}+\hat{g}$ and
-  $\widehat{c \cdot f} = c \cdot \hat{f}$ for any $c \in \R$.
-\item \emph{Shift property:} if $h(\vecx) = f(\vecx - \vecc)$ for some
-  $\vecc \in \R^{n}$ then
-  $\hat{h}(\vecw) = \exp(-2 \pi i \inner{\vecc,\vecw}) \cdot
-  \hat{f}(\vecw)$.
-\item \emph{Linear transform property:} if
-  $h(\vecx) = f(\matB \vecx)$ for some nonsingular
-  $\matB \in \R^{n \times n}$, then
-  $\hat{h}(\vecw) = \frac{1}{\det(\matB)} \hat{f}(\matB^{-t}\vecw)$.
+\item \emph{Linearity:} $\widehat{f+g} = \hat{f}+\hat{g}$ and $\widehat{c \cdot f} = c \cdot \hat{f}$ for any $c \in \R$.
+\item \emph{Shift property:} if $h(\vecx) = f(\vecx - \vecc)$ for some $\vecc \in \R^{n}$ then $\hat{h}(\vecw) = \exp(-2 \pi i \inner{\vecc,\vecw}) \cdot \hat{f}(\vecw)$.
+\item \emph{Linear transform property:} if $h(\vecx) = f(\matB \vecx)$ for some nonsingular $\matB \in \R^{n \times n}$, then $\hat{h}(\vecw) = \frac{1}{\det(\matB)} \hat{f}(\matB^{-t}\vecw)$.
   Here $\matB^{-t} = (\matB^{-1})^t = (\matB^{t})^{-1}$.
+  
   \begin{proof}
     From the definition of Fourier transform, we have
-    \[ \hat{h}(\vecw) = \int_{\vecx\in \R^n} f(\matB\vecx)\exp(-2 \pi
-      i \inner{\vecx,\vecw}) \, d\vecx.\] Letting
-    $\vecu = \matB \vecx$, we have $d\vecu = \det(\matB) \, d\vecx$,
-    and
-    $\inner{\vecx,\vecw} = \vecx^t \cdot \vecw = (\vecx^t \matB^t)
-    \cdot (\matB^{-t}\vecw) = \inner{\matB \vecx, \matB^{-t}\vecw}$. So
+    \[ \hat{h}(\vecw) = \int_{\vecx\in \R^n} f(\matB\vecx)\exp(-2 \pi i \inner{\vecx,\vecw}) \odif{\vecx}.
+    \] Letting $\vecu = \matB \vecx$, we have $d\vecu = \det(\matB) \, d\vecx$, and $\inner{\vecx,\vecw} = \vecx^t \cdot \vecw = (\vecx^t \matB^t) \cdot (\matB^{-t}\vecw) = \inner{\matB \vecx, \matB^{-t}\vecw}$.
+    So
     \begin{align*}
-      \hat{h}(\vecw) &= \int_{\vecu \in \R^n} f(\vecu)\exp(-2 \pi i \inner{\vecu, \matB^{-t}\vecw} ) \frac{1}{\det(\matB)} \, d\vecu  \\
-                     &= \frac{1}{\det(\matB)} \hat{f}(\matB^{-t}\vecw).
+      \hat{h}(\vecw)
+      &= \int_{\vecu \in \R^n} f(\vecu)\exp(-2 \pi i \inner{\vecu, \matB^{-t}\vecw} ) \frac{1}{\det(\matB)} \odif{\vecu} \\
+      &= \frac{1}{\det(\matB)} \hat{f}(\matB^{-t}\vecw) .
     \end{align*}
   \end{proof}
 
@@ -107,24 +75,19 @@ naturally generalize from the one-dimensional case.
 
 \subsection{Definitions}
 
-So far, the periodic functions we have considered have only been
-$\Z^n$-periodic. We now extend the notion of Fourier series to
-functions that are periodic over a lattice~$\lat$, namely functions
-$g \colon \R^n/ \lat \to \C$. One approach is to transform~$g$ to a
-$\Z^n$-periodic function~$h$. Letting~$\matB$ be a basis of~$\lat$, we
-can write $\lat = \matB \Z^n$. Since~$g$ is $\lat$-periodic,
-$h(\vecx) := g(\matB \vecx)$ is $\Z^n$-periodic. We can find the
-Fourier series for~$h$ and then use the scaling property to obtain the
-Fourier series for~$g$. However, this approach requires switching back
-and forth between a $\lat$-periodic function and a $\Z^n$-periodic
-function, which can be cumbersome. Therefore, we show another
-approach, which is to define the Fourier series for~$g$ directly. For
-this we need the notion of the \emph{dual lattice}.
+So far, the periodic functions we have considered have only been $\Z^n$-periodic.
+We now extend the notion of Fourier series to functions that are periodic over a lattice~$\lat$, namely functions $g \colon \R^n/ \lat \to \C$.
+One approach is to transform~$g$ to a $\Z^n$-periodic function~$h$.
+Letting~$\matB$ be a basis of~$\lat$, we can write $\lat = \matB \Z^n$.
+Since~$g$ is $\lat$-periodic, $h(\vecx) := g(\matB \vecx)$ is $\Z^n$-periodic.
+We can find the Fourier series for~$h$ and then use the scaling property to obtain the Fourier series for~$g$.
+However, this approach requires switching back and forth between a $\lat$-periodic function and a $\Z^n$-periodic function, which can be cumbersome.
+Therefore, we show another approach, which is to define the Fourier series for~$g$ directly.
+For this we need the notion of the \emph{dual lattice}.
 
-\begin{definition}[Dual lattice]
+\begin{definition}[Dual lattice]%
   \label{def:dual-lattice}
-  For a lattice $\lat \subset \R^{n}$, its dual lattice $\lat^{*}
-  \subset \R^{n}$ is defined as
+  For a lattice $\lat \subset \R^{n}$, its dual lattice $\lat^{*} \subset \R^{n}$ is defined as
   \begin{align*}
     \lat^{*}
     &= \set{ \vecw : \inner{\vecv,\vecw} \in \Z \; \forall\;
@@ -134,48 +97,30 @@ this we need the notion of the \emph{dual lattice}.
 \end{definition}
 
 \begin{definition}
-  For a lattice $\lat \subset \R^{n}$ and a function
-  $g \colon \R^n/\lat \to \C$, its Fourier series $g \colon \lat^{*}
-  \to \C$ is defined as
-  \[ \hat{g}(\vecw) = \frac{1}{\det(\lat)} \int_{\vecx \in \R^n /
-      \lat} g(\vecx) \exp(-2 \pi i \inner{\vecx,\vecw} )\ d\vecx .\]
+  For a lattice $\lat \subset \R^{n}$ and a function $g \colon \R^n/\lat \to \C$, its \emph{Fourier series} $g \colon \lat^{*} \to \C$ is defined as
+  \[ \hat{g}(\vecw) = \frac{1}{\det(\lat)} \int_{\vecx \in \R^n / \lat} g(\vecx) \exp(-2 \pi i \inner{\vecx,\vecw} ) \odif{\vecx} .
+  \]
 \end{definition}
-Notice that~$\vecx$ is a \emph{coset} $\vecc+\lat$ for some
-$\vecc \in \R^{n}$; because
-$\inner{\vecx,\vecw} = \inner{\vecc+\lat,\vecw} \subseteq
-\inner{\vecc,\vecw} + \Z$, the phase term
-$\exp(-2 \pi i \inner{\vecx,\vecw}) = \exp(-2 \pi i \inner{\vecc,
-  \vecw})$ is well defined, and invariant under the choice of~$\vecc$
-from the coset. Also notice the $1/\det(\lat)$ normalization factor,
-which is present because we are integrating over a set of volume
-$\det(\lat)$, and to make the definition invariant under nonzero
-scaling (or other invertible linear transform) of~$\lat$ and the input
-to~$g$ (with the dual transform applied to~$\lat^{*}$).
+Notice that~$\vecx$ is a \emph{coset} $\vecc+\lat$ for some $\vecc \in \R^{n}$; because $\inner{\vecx,\vecw} = \inner{\vecc+\lat,\vecw} \subseteq \inner{\vecc,\vecw} + \Z$, the phase term $\exp(-2 \pi i \inner{\vecx,\vecw}) = \exp(-2 \pi i \inner{\vecc, \vecw})$ is well defined, and invariant under the choice of~$\vecc$ from the coset.
+Also notice the $1/\det(\lat)$ normalization factor, which is present because we are integrating over a set of volume $\det(\lat)$, and to make the definition invariant under nonzero scaling (or other invertible linear transform) of~$\lat$ and the input to~$g$ (with the dual transform applied to~$\lat^{*}$).
 
 \subsection{Properties of the Dual Lattice}
 
 We show some basic properties of the dual lattice.
-\Cref{def:dual-lattice} defines the dual of~$\lat$ as the set of
-points whose inner product with any point in~$\lat$ is an integer. The
-following claim establishes that~$\lat^*$ actually is a lattice.
+\Cref{def:dual-lattice} defines the dual of~$\lat$ as the set of points whose inner product with any point in~$\lat$ is an integer.
+The following claim establishes that~$\lat^*$ actually is a lattice.
 
-\begin{claim}
+\begin{claim}%
   \label{clm:dual-basis}
-  If~$\matB$ is a basis of~$\lat$, then~$\matB^{-t}$ is a basis
-  of~$\lat^*$.
+  If~$\matB$ is a basis of~$\lat$, then~$\matB^{-t}$ is a basis of~$\lat^*$.
 \end{claim}
 
 \begin{proof}
-  We show that $\lat^{*} = \lat(\matB^{-t})$ by proving inclusions in
-  both directions. For any $\vecw = \matB^{-t} \vecz$ where
-  $\vecz \in \Z^n$,
-  \[ \inner{\matB \cdot \Z^n, \vecw} = \inner{\matB \cdot
-      \Z^n,\matB^{-t} \vecz} = \inner{\Z^n,\vecz} \subseteq \Z. \] So
-  $\lat(\matB^{-t}) \subseteq \lat^*$. In the other direction, for any
-  $\vecw \in \lat^*$, we have $\vecz := \matB^{t}\vecw \in \Z^{n}$
-  (because the columns of~$\matB$ are vectors in~$\lat$), so
-  $\vecw = \matB^{-t} \vecz \in \lat(\matB^{-t})$, hence
-  $\lat^* \subseteq \lat(\matB^{-t})$.
+  We show that $\lat^{*} = \lat(\matB^{-t})$ by proving inclusions in both directions.
+  For any $\vecw = \matB^{-t} \vecz$ where $\vecz \in \Z^n$,
+  \[ \inner{\matB \cdot \Z^n, \vecw} = \inner{\matB \cdot \Z^n,\matB^{-t} \vecz} = \inner{\Z^n,\vecz} \subseteq \Z.
+  \] So $\lat(\matB^{-t}) \subseteq \lat^*$.
+  In the other direction, for any $\vecw \in \lat^*$, we have $\vecz := \matB^{t}\vecw \in \Z^{n}$ (because the columns of~$\matB$ are vectors in~$\lat$), so $\vecw = \matB^{-t} \vecz \in \lat(\matB^{-t})$, hence $\lat^* \subseteq \lat(\matB^{-t})$.
 \end{proof}
 
 \begin{claim}
@@ -183,153 +128,117 @@ following claim establishes that~$\lat^*$ actually is a lattice.
 \end{claim}
 
 \begin{proof}
-  By \cref{clm:dual-basis}, a basis of $(\lat^*)^*$ is
-  $(\matB^{-t})^{-t} = \matB$. Therefore, $(\lat^*)^{*} = \lat$, since
-  they are generated by the same basis.
+  By \cref{clm:dual-basis}, a basis of $(\lat^*)^*$ is $(\matB^{-t})^{-t} = \matB$.
+  Therefore, $(\lat^*)^{*} = \lat$, since they are generated by the same basis.
 \end{proof}
 
-\begin{claim}
+\begin{claim}%
   \label{clm:dual-determinant}
   For any lattice~$\lat$, we have $\det(\lat^*) = 1/\det(\lat)$.
 \end{claim}
 
 \begin{proof}
-  Since $\matB$ is a basis of $\lat$, and $\matB^{-t}$ is a basis of
-  $\lat^*$,
-  \[ \det(\lat^*) = \abs{\det(\matB^{-t})} = \frac{1}{\abs{\det(\matB)}} =
-    \frac{1}{\det{\lat}}.\]
+  Since $\matB$ is a basis of $\lat$, and $\matB^{-t}$ is a basis of $\lat^*$,
+  \[ \det(\lat^*) = \abs{\det(\matB^{-t})} = \frac{1}{\abs{\det(\matB)}} = \frac{1}{\det{\lat}}.\]
 \end{proof}
 
 \begin{claim}
-  For any $n$-dimensional lattice~$\lat$, we have
-  $\lambda_1(\lat) \cdot \lambda_1(\lat^*) \leq n$.
+  For any $n$-dimensional lattice~$\lat$, we have that $\lambda_1(\lat) \cdot \lambda_1(\lat^*) \leq n$.
 \end{claim}
 
 \begin{proof}
-  By Minkowski's inequality we have
-  $\lambda_1(\lat) \leq \sqrt{n} \det(\lat)^{1/n}$ and
-  $\lambda_1(\lat^*) \leq \sqrt{n}\det(\lat^*)^{1/n}$, so by
-  \cref{clm:dual-determinant},
-  \[ \lambda_{1}(\lat) \cdot \lambda_{1}(\lat^{*}) \leq n \cdot
-    \det(\lat)^{1/n} \cdot \det(\lat^*)^{1/n} = n . \]
+  By Minkowski's inequality, $\lambda_1(\lat) \leq \sqrt{n} \det(\lat)^{1/n}$ and $\lambda_1(\lat^*) \leq \sqrt{n}\det(\lat^*)^{1/n}$, so by \cref{clm:dual-determinant},
+  \[ \lambda_{1}(\lat) \cdot \lambda_{1}(\lat^{*}) \leq n \cdot \det(\lat)^{1/n} \cdot \det(\lat^*)^{1/n} = n .
+  \]
 \end{proof}
 
 \subsection{Properties of the Fourier Series}
 
-We mention two important properties of the Fourier series of
-$\lat$-periodic functions.
+We mention two important properties of the Fourier series of $\lat$-periodic functions.
 
 \paragraph{Inversion formula.}
 
-For any $\lat$-periodic function $g \colon \R^{n}/\lat \to \C$, we
-have
-\[ g(\vecx) = \sum_{\vecw \in \lat^*} \hat{g}(\vecw) \exp(2 \pi i
-  \inner{\vecx,\vecw}). \]
+For any $\lat$-periodic function $g \colon \R^{n}/\lat \to \C$,
+\[ g(\vecx) = \sum_{\vecw \in \lat^*} \hat{g}(\vecw) \exp(2 \pi i \inner{\vecx,\vecw}) .
+\]
 
 \paragraph{Periodization.}
 
-Generalizing the one-dimensional case, we can ``periodize'' a function
-by a lattice, and then establish a link between the Fourier transform
-and Fourier series, respectively. Let $f \in L^{1}(\R^{n})$, and for a
-countable set~$S$, define $f(S) := \sum_{x \in S} f(x)$. For a lattice
-$\lat \subset \R^{n}$, periodize~$f$ by summing all its
-$\lat$-translates, i.e., define $g \colon \R^{n}/\lat \to \C$ as
+Generalizing the one-dimensional case, we can ``periodize'' a function by a lattice, and then establish a link between the Fourier transform and Fourier series, respectively.
+Let $f \in L^{1}(\R^{n})$, and for a countable set~$S$, define $f(S) := \sum_{x \in S} f(x)$.
+For a lattice $\lat \subset \R^{n}$, periodize~$f$ by summing all its $\lat$-translates, i.e., define $g \colon \R^{n}/\lat \to \C$ as
 \begin{equation}
   \label{eq:periodize}
   g(\vecx + \lat) := f(\vecx + \lat) = \sum_{\vecv \in \lat} f(\vecx +
   \vecv) .
 \end{equation}
 
-\begin{lemma}[Periodization lemma]
+\begin{lemma}[Periodization lemma]%
   \label{lem:periodize-series}
-  The Fourier series of~$g$ is
-  $\hat{g}(\vecw) = \hat{f}(\vecw) / \det(\lat) = \det(\lat^{*})
-  \hat{f}(\vecw)$.
+  The Fourier series of~$g$ is $\hat{g}(\vecw) = \hat{f}(\vecw) / \det(\lat) = \det(\lat^{*}) \hat{f}(\vecw)$.
 \end{lemma}
 
 \begin{proof}
-  Let $\cal{F}$ be any fundamental region of~$\lat$. Then for any
-  $\vecw \in \lat^{*}$, we have
+  Let $\cal{F}$ be any fundamental region of~$\lat$.
+  Then for any $\vecw \in \lat^{*}$, we have
   \begin{align*}
     \hat{g}(\vecw)
     &= \frac{1}{\det(\lat)} \int_{\vecx \in \R^n/\lat} g(\vecx) \exp(-
-      2 \pi i  \inner{\vecx,\vecw}) \, d\vecx  \\
+      2 \pi i  \inner{\vecx,\vecw}) \odif{\vecx}  \\
     &= \frac{1}{\det(\lat)} \int_{\vecc \in \cal{F}} g(\vecc + \lat) \exp(-
-      2 \pi i  \inner{\vecc,\vecw}) \, d\vecc  \\
+      2 \pi i  \inner{\vecc,\vecw}) \odif{\vecc}  \\
     &= \frac{1}{\det(\lat)} \int_{\vecc \in \cal{F}} \sum_{\vecv \in
       \lat} f(\vecc + \vecv) \exp(- 2 \pi i \inner{\vecc +
-      \vecv,\vecw}) \, d\vecc \\
+      \vecv,\vecw}) \odif{\vecc} \\
     &= \frac{1}{\det(\lat)} \int_{\vecu \in \R^{n}} f(\vecu) \exp(-2
-      \pi i \inner{\vecu,\vecw}) \, d\vecu
+      \pi i \inner{\vecu,\vecw}) \odif{\vecu}
     & \text{($\vecu=\vecc+\vecv$ runs over $\R^{n}$)} \\
     &= \frac{1}{\det(\lat)} \hat{f}(\vecw).
   \end{align*}
 
 \end{proof}
 
-\begin{lemma}[Poisson Summation Formula]
+\begin{lemma}[Poisson Summation Formula]%
   \label{lem:psf}
-  For any ``nice enough'' (differentiable, continuous, \ldots)
-  function $f \colon \R^n \to \C$ and any lattice
-  $\lat \subset \R^{n}$, we have
-  \[ f(\lat) = \hat{f}(\lat^{*}) / \det(\lat) = \det(\lat^*) \cdot
-    \hat{f}(\lat^*). \]
+  For any ``nice enough'' (differentiable, continuous, \ldots) function $f \colon \R^n \to \C$ and any lattice $\lat \subset \R^{n}$,
+  \[ f(\lat) = \hat{f}(\lat^{*}) / \det(\lat) = \det(\lat^*) \cdot \hat{f}(\lat^*).
+  \]
 \end{lemma}
 
 \begin{proof}
-  Let~$g$ be the $\lat$-periodization of~$f$. By the inversion formula
-  and \cref{lem:periodize-series},
-  \[ f(\lat) = g(\mathbf{0}) = \sum_{\vecw \in \lat^*}
-    \hat{g}(\vecw)\exp(2 \pi i \inner{\mathbf{0},\vecw}) = \sum_{\vecw
-      \in \lat^*} \hat{g}(\vecw) = \sum_{\vecw \in \lat^{*}}
-    \hat{f}(\vecw)/\det(\lat) = \hat{f}(\lat^{*}) / \det(\lat). \]
+  Let~$g$ be the $\lat$-periodization of~$f$.
+  By the inversion formula and \cref{lem:periodize-series},
+  \[ f(\lat) = g(\mathbf{0}) = \sum_{\vecw \in \lat^*} \hat{g}(\vecw)\exp(2 \pi i \inner{\mathbf{0},\vecw}) = \sum_{\vecw \in \lat^*} \hat{g}(\vecw) = \sum_{\vecw \in \lat^{*}} \hat{f}(\vecw)/\det(\lat) = \hat{f}(\lat^{*}) / \det(\lat).
+  \]
 \end{proof}
 
 \section{Application: Closest Vector Problem with Preprocessing}
 
-In this section, we give an application of Fourier series over
-lattices, due to Aharonov and
-Regev~\cite{DBLP:journals/jacm/AharonovR05} and building on
-foundational work by Banaszczyk~\cite{banaszczyk93:_new}. It provides
-a way of distinguishing points that are ``close'' to a lattice~$\lat$
-from those that are ``far'' from the lattice, using some
-polynomial-sized (but typically inefficient-to-compute) ``advice.''
-More generally, the techniques developed here will prove extremely
-useful in other complexity-theoretic and cryptographic contexts.
+In this section, we give an application of Fourier series over lattices, due to Aharonov and Regev~\cite{DBLP:journals/jacm/AharonovR05} and building on foundational work by Banaszczyk~\cite{banaszczyk93:_new}.
+It provides a way of distinguishing points that are ``close'' to a lattice~$\lat$ from those that are ``far'' from the lattice, using some polynomial-sized (but typically inefficient-to-compute) ``advice.''
+More generally, the techniques developed here will prove extremely useful in other complexity-theoretic and cryptographic contexts.
 
 \paragraph{Problem statement.}
 
-For a given $n$-dimensional lattice~$\lat$, we wish to preprocess it
-to some advice~$W$, which will allow us to later efficiently answer
-queries of the form: ``Given a point $\vecx$, is
-$\dist(\vecx,\lat) \leq 1$ or $\dist(\vecx,\lat) \geq \sqrt{n}$?''
-(The advice will not necessarily be useful for distances between these
-two thresholds.) That is, the advice lets us efficiently solve
-$\gapcvp_{\sqrt{n}}$ on the preprocessed lattice.
+For a given $n$-dimensional lattice~$\lat$, we wish to preprocess it to some advice~$W$, which will allow us to later efficiently answer queries of the form: ``Given a point $\vecx$, is $\dist(\vecx,\lat) \leq 1$ or $\dist(\vecx,\lat) \geq \sqrt{n}$?''
+(The advice will not necessarily be useful for distances between these two thresholds.)
+That is, the advice lets us efficiently solve $\gapcvp_{\sqrt{n}}$ on the preprocessed lattice.
 
 \paragraph{Strategy.}
 
 Our strategy is to use a $\lat$-periodic function~$g$ such that:
 \begin{enumerate}
-\item $g(\vecx) \geq 1/1000$ (say) whenever
-  $\dist(\vecx,\lat) = \lambda(\vecx+\lat) \leq 1$,
-\item $g(\vecx) \leq 2^{-n}$ whenever
-  $\dist(\vecx,\lat) = \lambda(\vecx+\lat) \geq \sqrt{n}$, and
-\item there is a succinct (polynomial-sized) advice that allows us to
-  efficiently estimate~$g$ (to within, say, $1/\poly(n)$ additive
-  error).
+\item $g(\vecx) \geq 1/1000$ (say) whenever $\dist(\vecx,\lat) = \lambda(\vecx+\lat) \leq 1$,
+\item $g(\vecx) \leq 2^{-n}$ whenever $\dist(\vecx,\lat) = \lambda(\vecx+\lat) \geq \sqrt{n}$, and
+\item there is a succinct (polynomial-sized) advice that allows us to efficiently estimate~$g$ (to within, say, $1/\poly(n)$ additive error).
 \end{enumerate}
-Then, to determine if a given point~$\vecx$ is ``close'' to or ``far''
-from the lattice, we simply estimate $g(\vecx+\lat)$ using the advice.
+Then, to determine if a given point~$\vecx$ is ``close'' to or ``far'' from the lattice, we simply estimate $g(\vecx+\lat)$ using the advice.
 We construct such~$g$ by periodizing the Gaussian function.
 
-\begin{definition}
+\begin{definition}%
   \label{def:gaussian}
-  The Gaussian function $\rho \colon \R^{n} \to \R^{+}$ is defined as
-  $\rho(\vecx) = \exp(-\pi \length{\vecx}^2) = \exp(-\pi
-  \inner{\vecx,\vecx})$. For an $n$-dimensional lattice~$\lat$, define
-  the (scaled) $\lat$-periodized Gaussian
-  $g \colon \R^{n}/\lat \to \R^{+}$ as
+  The Gaussian function $\rho \colon \R^{n} \to \R^{+}$ is defined as $\rho(\vecx) = \exp(-\pi \length{\vecx}^2) = \exp(-\pi \inner{\vecx,\vecx})$.
+  For an $n$-dimensional lattice~$\lat$, define the (scaled) $\lat$-periodized Gaussian $g \colon \R^{n}/\lat \to \R^{+}$ as
   \begin{equation}
     \label{eq:g}
     g(\vecx + \lat) = \frac{\rho(\vecx+\lat)}{\rho(\lat)} =
@@ -337,29 +246,22 @@ We construct such~$g$ by periodizing the Gaussian function.
   \end{equation}
 \end{definition}
 
-The denominator is simply a normalizing factor that makes
-$g(\lat) = 1$. The expression $\rho(\vecx+\lat)$ in the numerator is
-the sum of the Gaussian function over all elements of the coset
-$\vecx+\lat$. This can equivalently be seen as the sum of Gaussian
-functions centered at every lattice point, evaluated at~$\vecx$.
-When~$\vecx$ is fairly close to a lattice point, the Gaussian centered
-at that point contributes significantly to the sum. (Equivalently, the
-Gaussian mass of the shortest vector in $\vecx+\lat$ is fairly large.)
-Whereas when~$\vecx$ is far from every lattice point, none of the
-lattice-centered Gaussians contribute much. In what follows, we will
-show that~$g$ does indeed satisfy our above three requirements. We
-start with two fairly simple claims.
+The denominator is simply a normalizing factor that makes $g(\lat) = 1$.
+The expression $\rho(\vecx+\lat)$ in the numerator is the sum of the Gaussian function over all elements of the coset $\vecx+\lat$.
+This can equivalently be seen as the sum of Gaussian functions centered at every lattice point, evaluated at~$\vecx$.
+When~$\vecx$ is fairly close to a lattice point, the Gaussian centered at that point contributes significantly to the sum.
+(Equivalently, the Gaussian mass of the shortest vector in $\vecx+\lat$ is fairly large.)
+Whereas when~$\vecx$ is far from every lattice point, none of the lattice-centered Gaussians contribute much.
+In what follows, we will show that~$g$ does indeed satisfy our above three requirements.
+We start with two fairly simple claims.
 
-\begin{claim}
+\begin{claim}%
   \label{clm:gaussian-shift}
-  We have $\rho(\vecx + \lat) \leq \rho(\lat)$ for any $\vecx \in
-  \R^n$, i.e., $g(\vecx) \in [0,1]$.
+  We have that $\rho(\vecx + \lat) \leq \rho(\lat)$ for any $\vecx \in \R^n$, i.e., $g(\vecx) \in [0,1]$.
 \end{claim}
 
 \begin{proof}
-  By the Poisson Summation Formula (twice), the shift property, and
-  the fact that $\hat{\rho} = \rho$ is real-valued and positive, we
-  have
+  By the Poisson Summation Formula (twice), the shift property, and the fact that $\hat{\rho} = \rho$ is real-valued and positive, we have
   \begin{align*}
     \rho(\vecx + \lat)
     &= \det(\lat^*) \sum_{\vecw \in \lat^*} \hat{\rho}(\vecw)\exp(2
@@ -369,50 +271,33 @@ start with two fairly simple claims.
   \end{align*}
 \end{proof}
 
-\begin{claim}
+\begin{claim}%
   \label{clm:gaussian-scale}
-  For any $s \geq 1$, we have
-  $\rho_s(\lat) \leq s^{n} \cdot \rho(\lat)$, where
-  $\rho_s(\vecx) = \rho(\vecx/s)$.
+  For any $s \geq 1$, we have $\rho_s(\lat) \leq s^{n} \cdot \rho(\lat)$, where $\rho_s(\vecx) = \rho(\vecx/s)$.
 \end{claim}
 
 \begin{proof}
-  By the Poisson Summation Formula (twice) and the fact that
-  $\widehat{\rho_{s}} = s^{n} \cdot \rho_{1/s} \leq s^{n} \cdot
-  \rho_{1}$ for $s \geq 1$,
-  \[ \rho_s(\lat) = \det(\lat^*) \cdot \widehat{\rho_{s}}(\lat^*) =
-    \det(\lat^{*}) \cdot s^{n} \cdot \rho_{1/s}(\lat^{*}) \leq
-    \det(\lat^{*}) \cdot s^{n} \cdot \rho(\lat^{*}) = s^{n} \cdot
-    \rho(\lat). \]
+  By the Poisson Summation Formula (twice) and the fact that $\widehat{\rho_{s}} = s^{n} \cdot \rho_{1/s} \leq s^{n} \cdot \rho_{1}$ for $s \geq 1$,
+  \[ \rho_s(\lat) = \det(\lat^*) \cdot \widehat{\rho_{s}}(\lat^*) = \det(\lat^{*}) \cdot s^{n} \cdot \rho_{1/s}(\lat^{*}) \leq \det(\lat^{*}) \cdot s^{n} \cdot \rho(\lat^{*}) = s^{n} \cdot \rho(\lat).
+  \]
 \end{proof}
 
-\noindent Next, we establish three lemmas which show that the
-function~$g$ meets our requirements.
+\noindent Next, we establish three lemmas which show that the function~$g$ meets our requirements.
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:g-close}
-  For all $\vecx \in \R^{n}$, we have
-  $g(\vecx) \geq \exp(-\pi \dist(\vecx,\lat)^2)$.
+  For all $\vecx \in \R^{n}$, we have that $g(\vecx) \geq \exp(-\pi \dist(\vecx,\lat)^2)$.
 \end{lemma}
 
-It is tempting to think that this claim is trivial: letting
-$\vecv \in \lat$ be a closest lattice vector to~$\vecx$, the Gaussian
-centered at~$\vecv$ contributes
-$\rho(\vecx-\vecv) = \exp(-\pi \dist(\vecx,\lat)^{2})$ to the sum of
-Gaussians centered at all lattice points. The issue is that this sum
-is merely the \emph{numerator} of~$g(\vecx + \lat)$, and it is
-normalized by $\rho(\lat) > \rho(\veczero) = 1$. So, the contribution
-of the $\vecv$-centered Gaussian alone is definitely not enough to
-prove the claim. Instead, we use a clever symmetrization argument that
-pairs up the contributions from the centers $\pm \vecv$, over all
-$\vecv \in \lat$.
+It is tempting to think that this claim is trivial: letting $\vecv \in \lat$ be a closest lattice vector to~$\vecx$, the Gaussian centered at~$\vecv$ contributes $\rho(\vecx-\vecv) = \exp(-\pi \dist(\vecx,\lat)^{2})$ to the sum of Gaussians centered at all lattice points.
+The issue is that this sum is merely the \emph{numerator} of~$g(\vecx + \lat)$, and it is normalized by $\rho(\lat) > \rho(\veczero) = 1$.
+So, the contribution of the $\vecv$-centered Gaussian alone is definitely not enough to prove the claim.
+Instead, we use a clever symmetrization argument that pairs up the contributions from the centers $\pm \vecv$, over all $\vecv \in \lat$.
 
 \begin{proof}
   Since $\vecx+\lat = \vecx-\lat$, we have
-  \[ \rho(\vecx+\lat) = \frac{\rho(\vecx+\lat) +
-      \rho(\vecx-\lat)}{2}. \] Now, by definition of the Gaussian
-  function and the fact that $\exp(t) + \exp(-t) \geq 2$ for all~$t$,
-  we have
+  \[ \rho(\vecx+\lat) = \frac{\rho(\vecx+\lat) + \rho(\vecx-\lat)}{2}.
+  \] Now, by definition of the Gaussian function and the fact that $\exp(t) + \exp(-t) \geq 2$ for all~$t$,
   \begin{align*}
     \rho(\vecx+\lat)
     &= \frac12 \sum_{\vecv \in \lat} ( \exp(-\pi \length{\vecx+\vecv}^2)+ \exp(-\pi \length{\vecx-\vecv}^2)) \\
@@ -421,40 +306,25 @@ $\vecv \in \lat$.
       (\exp(-2\pi \inner{\vecx,\vecv})+\exp(2\pi \inner{\vecx,\vecv})) \\
     &\geq \exp(-\pi \length{\vecx}^{2}) \cdot \rho(\lat) .
   \end{align*}
-  The claim follows by noticing that there is a point
-  $\vecx_0 \in \vecx + \lat$ for which
-  $\length{\vecx_0}=\dist(\vecx_0,\lat) = \dist(\vecx,\lat)$.
+  The claim follows by noticing that there is a point $\vecx_0 \in \vecx + \lat$ for which $\length{\vecx_0}=\dist(\vecx_0,\lat) = \dist(\vecx,\lat)$.
 \end{proof}
-By \cref{lem:g-close}, we see that
-$g(\vecx + \lat) \geq \exp(-\pi) > \tfrac{1}{24}$ whenever
-$\dist(\vecx,\lat) \leq 1$, so~$g$ satisfies our first requirement.
+By \cref{lem:g-close}, we see that $g(\vecx + \lat) \geq \exp(-\pi) > \tfrac{1}{24}$ whenever $\dist(\vecx,\lat) \leq 1$, so~$g$ satisfies our first requirement.
 
-\begin{lemma}[\cite{banaszczyk93:_new}]
+\begin{lemma}[\cite{banaszczyk93:_new}]%
   \label{lem:gaussian-mass-far}
-  For any coset $\vecx + \lat$, we have
-  $\rho((\vecx + \lat) \setminus \sqrt{n}\ball) \leq 2^{-n} \cdot
-  \rho(\lat)$, where~$\ball$ is the (open) unit ball.
+  For any coset $\vecx + \lat$, we have that $\rho((\vecx + \lat) \setminus \sqrt{n}\ball) \leq 2^{-n} \cdot \rho(\lat)$, where~$\ball$ is the (open) unit ball.
 \end{lemma}
 
-Let us consider what \cref{lem:gaussian-mass-far} says, and give some
-intuition for the proof. It is a ``tail bound,'' which says that the
-total Gaussian mass of the points in $\vecx+\lat$ having norm at
-least~$\sqrt{n}$ is a tiny fraction of the total Gaussian mass
-of~$\lat$ itself. To prove this, we will go through the scaled
-Gaussian~$\rho_{2}$. For simplicity, consider the coset
-$\vecx+\lat=\lat$. By \cref{clm:gaussian-scale}, we know that
-$\rho_{2}(\lat) \leq 2^{n} \cdot \rho_{1}(\lat)$, i.e., $\lat$'s total
-mass under~$\rho_{2}$ is no more than~$2^{n}$ times larger than its
-mass under~$\rho_{1}$. On the other hand, every vector that is
-sufficiently far from the origin has \emph{much larger} mass
-under~$\rho_{2}$ than it has under~$\rho_{1}$, by a multiplicative
-factor of at least (say)~$2^{2n}$. The only way both statements can be
-true is if, under~$\rho_{1}$, the ``far'' vectors account for at most
-a $2^{n}/2^{2n} = 2^{-n}$ fraction of the total mass.
+Let us consider what \cref{lem:gaussian-mass-far} says, and give some intuition for the proof.
+It is a ``tail bound,'' which says that the total Gaussian mass of the points in $\vecx+\lat$ having norm at least~$\sqrt{n}$ is a tiny fraction of the total Gaussian mass of~$\lat$ itself.
+To prove this, we will go through the scaled Gaussian~$\rho_{2}$.
+For simplicity, consider the coset $\vecx+\lat=\lat$.
+By \cref{clm:gaussian-scale}, we know that $\rho_{2}(\lat) \leq 2^{n} \cdot \rho_{1}(\lat)$, i.e., $\lat$'s total mass under~$\rho_{2}$ is no more than~$2^{n}$ times larger than its mass under~$\rho_{1}$.
+On the other hand, every vector that is sufficiently far from the origin has \emph{much larger} mass under~$\rho_{2}$ than it has under~$\rho_{1}$, by a multiplicative factor of at least (say)~$2^{2n}$.
+The only way both statements can be true is if, under~$\rho_{1}$, the ``far'' vectors account for at most a $2^{n}/2^{2n} = 2^{-n}$ fraction of the total mass.
 
 \begin{proof}
-  By \cref{clm:gaussian-shift,clm:gaussian-scale} above,
-  $2^n \cdot \rho(\lat) \geq \rho_2(\vecx + \lat)$, so
+  By \cref{clm:gaussian-shift,clm:gaussian-scale} above, $2^n \cdot \rho(\lat) \geq \rho_2(\vecx + \lat)$, so
   \begin{align*}
     2^n \cdot \rho(\lat)
     &\geq \rho_2(\vecx + \lat) \\
@@ -474,69 +344,39 @@ a $2^{n}/2^{2n} = 2^{-n}$ fraction of the total mass.
 \end{corollary}
 
 \begin{proof}
-  If $\dist(\vecx,\lat) \geq \sqrt{n}$, then
-  $\vecx + \lat = (\vecx + \lat) \setminus \sqrt{n}\ball$, since
-  $\vecx + \lat$ does not have any point of length less
-  than~$\sqrt{n}$. Therefore, by \cref{lem:gaussian-mass-far} we have
-  \[ g(\vecx + \lat) = \frac{\rho(\vecx + \lat)}{\rho(\lat)} =
-    \frac{\rho((\vecx + \lat)\setminus \sqrt{n}\ball)}{\rho(\lat)}
-    \leq 2^{-n} . \]
+  If $\dist(\vecx,\lat) \geq \sqrt{n}$, then $\vecx + \lat = (\vecx + \lat) \setminus \sqrt{n}\ball$, since $\vecx + \lat$ does not have any point of length less than~$\sqrt{n}$.
+  Therefore, by \cref{lem:gaussian-mass-far} we have
+  \[ g(\vecx + \lat) = \frac{\rho(\vecx + \lat)}{\rho(\lat)} = \frac{\rho((\vecx + \lat)\setminus \sqrt{n}\ball)}{\rho(\lat)} \leq 2^{-n} .
+  \]
 \end{proof}
 
 \begin{lemma}
-  Given appropriate polynomial-sized advice about~$\lat$, the
-  function~$g$ can be efficiently approximated to within additive
-  $1/\poly(n)$ error.
+  Given appropriate polynomial-sized advice about~$\lat$, the function~$g$ can be efficiently approximated to within additive $1/\poly(n)$ error.
 \end{lemma}
 
 \begin{proof}[Proof sketch]
-  The first key idea is that by the inversion formula, $g$ can be
-  evaluated using its Fourier series coefficients $\hat{g}(\vecw)$,
-  over all $\vecw \in \lat^{*}$. Of course, there are an infinite
-  number of these coefficients, which we cannot represent (much less
-  sum over) efficiently.
+  The first key idea is that by the inversion formula, $g$ can be evaluated using its Fourier series coefficients $\hat{g}(\vecw)$, over all $\vecw \in \lat^{*}$.
+  Of course, there are an infinite number of these coefficients, which we cannot represent (much less sum over) efficiently.
 
-  The second key idea is that the Fourier series can be thought of as
-  a \emph{probability distribution}, and the inversion formula as an
-  \emph{expectation} taken over this distribution. Observe that by
-  definition of~$g$ (\cref{eq:g}), the periodization lemma
-  (\cref{lem:periodize-series}), and the Poisson Summation Formula
-  (\cref{lem:psf}), the Fourier coefficients are
-  \[ \hat{g}(\vecw) = \frac{\hat{\rho}(\vecw) /
-      \det(\lat)}{\rho(\lat)} =
-    \frac{\rho(\vecw)/\det(\lat)}{\rho(\lat^{*})/\det(\lat)} =
-    \rho(\vecw) / \rho(\lat^{*}) \in [0,1]. \] Therefore,
-  $\hat{g}(\lat^{*}) = \sum_{\vecw \in \lat^{*}} \hat{g}(\vecw) = 1$,
-  and we can think of the Fourier coefficient~$\hat{g}(\vecw)$ as the
-  probability assigned to~$\vecw$ by distribution~$\hat{g}$. The
-  inversion formula can then be expressed (using the symmetry
-  of~$\lat^{*}$) as
-  \[ g(\vecx + \lat) = \sum_{\vecw \in \lat^{*}} \hat{g}(\vecw)
-    \exp(2\pi i \inner{\vecx,\vecw}) = \E_{\vecw \gets
-      \hat{g}}[\cos(2\pi \inner{\vecx,\vecw})] . \] Therefore, to
-  approximate~$g$, we can estimate the above expectation by random
-  sampling. That is, we sample many values of~$\vecw$ from the
-  probability distribution~$\hat{g}$. Then, given a query
-  point~$\vecx$, we estimate $g(\vecx + \lat)$ simply by computing the
-  average value of $\cos(2 \pi \inner{\vecx,\vecw})$. By standard
-  Chernoff-style bounds, this estimate will be with $1/\poly(n)$ of
-  the true value, with high probability. By the probabilistic method,
-  this implies that there \emph{exists} preprocessing advice that
-  gives a good enough estimate of $g(\vecx+\lat)$.
+  The second key idea is that the Fourier series can be thought of as a \emph{probability distribution}, and the inversion formula as an \emph{expectation} taken over this distribution.
+  Observe that by definition of~$g$ (\cref{eq:g}), the periodization lemma (\cref{lem:periodize-series}), and the Poisson Summation Formula (\cref{lem:psf}), the Fourier coefficients are
+  \[ \hat{g}(\vecw) = \frac{\hat{\rho}(\vecw) / \det(\lat)}{\rho(\lat)} = \frac{\rho(\vecw)/\det(\lat)}{\rho(\lat^{*})/\det(\lat)} = \rho(\vecw) / \rho(\lat^{*}) \in [0,1].
+  \] Therefore, $\hat{g}(\lat^{*}) = \sum_{\vecw \in \lat^{*}} \hat{g}(\vecw) = 1$, and we can think of the Fourier coefficient~$\hat{g}(\vecw)$ as the probability assigned to~$\vecw$ by distribution~$\hat{g}$.
+  The inversion formula can then be expressed (using the symmetry of~$\lat^{*}$) as
+  \[ g(\vecx + \lat) = \sum_{\vecw \in \lat^{*}} \hat{g}(\vecw) \exp(2\pi i \inner{\vecx,\vecw}) = \E_{\vecw \gets \hat{g}}[\cos(2\pi \inner{\vecx,\vecw})] .
+  \] Therefore, to approximate~$g$, we can estimate the above expectation by random sampling.
+  That is, we sample many values of~$\vecw$ from the probability distribution~$\hat{g}$.
+  Then, given a query point~$\vecx$, we estimate $g(\vecx + \lat)$ simply by computing the average value of $\cos(2 \pi \inner{\vecx,\vecw})$.
+  By standard Chernoff-style bounds, this estimate will be with $1/\poly(n)$ of the true value, with high probability.
+  By the probabilistic method, this implies that there \emph{exists} preprocessing advice that gives a good enough estimate of $g(\vecx+\lat)$.
 
-  The above shows that a suitable random sampling of dual lattice
-  vectors $\vecw \in \lat^{*}$ lets us approximate $g(\vecx + \lat)$
-  for a \emph{single} coset $\vecx + \lat$. But what we really want is
-  that the \emph{same collection} of samples is likely to work for
-  \emph{all cosets} simultaneously. This can be shown via a (somewhat
-  grungy) union-bound argument. First, we fix a huge (but finite),
-  exponential-size ``dense net''~$S$ of points that contains a good
-  enough approximation to any $\vecx + \lat$. Then, we can take enough
-  samples so that, by Chernoff-like bounds, the probability that our
-  estimator is inaccurate for any \emph{fixed} point in the net is
-  $\ll 1/\abs{S}$. By the union bound, with positive probability, the
-  estimator is accurate on all net points simultaneously. So, there
-  exists some good advice that works for all query points.
+  The above shows that a suitable random sampling of dual lattice vectors $\vecw \in \lat^{*}$ lets us approximate $g(\vecx + \lat)$ for a \emph{single} coset $\vecx + \lat$.
+  But what we really want is that the \emph{same collection} of samples is likely to work for \emph{all cosets} simultaneously.
+  This can be shown via a (somewhat grungy) union-bound argument.
+  First, we fix a huge (but finite), exponential-size ``dense net''~$S$ of points that contains a good enough approximation to any $\vecx + \lat$.
+  Then, we can take enough samples so that, by Chernoff-like bounds, the probability that our estimator is inaccurate for any \emph{fixed} point in the net is $\ll 1/\abs{S}$.
+  By the union bound, with positive probability, the estimator is accurate on all net points simultaneously.
+  So, there exists some good advice that works for all query points.
 \end{proof}
 
 \bibliography{common/lattices,common/crypto}
