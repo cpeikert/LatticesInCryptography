@@ -1,22 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage{fullpage}
-\usepackage{newtxtext}
-\usepackage{microtype}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
-\usepackage[pagebackref=true]{hyperref} % must set backref at load time
-\usepackage{fancyhdr}
-\usepackage{mathtools}
-\usepackage{enumitem}
-\usepackage[svgnames]{xcolor}
-\usepackage{tikz}
-\usepackage{import}
-
-% load after hyperref, algpseudocode to get proper behavior
-\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
-
-\import{common/}{head.tex}
+\input{header}
 
 % VARIABLES
 
@@ -26,7 +10,6 @@
 
 % END OF VARIABLES
 
-\import{common/}{lechead.tex}
 \lecheader                      % execute lecture commands
 
 \newcommand{\calR}{\ensuremath{\mathcal{R}}}
@@ -40,113 +23,73 @@
 
 % LECTURE MATERIAL STARTS HERE
 
-\section{SIS Lattices}
+\section{SIS Lattices}%
 \label{sec:sis-lat}
 
-In this lecture we give properties and applications of SIS (short
-integer solution) lattices. We first recall the SIS problem.
+In this lecture we give properties and applications of SIS (short integer solution) lattices.
+We first recall the SIS problem.
 
-\begin{definition}[Shortest Integer Solution Problem]
+\begin{definition}[Short Integer Solution Problem]%
   \label{def:sis-problem}
-  For a positive integer modulus~$q$, dimensions~$n,m$ and a norm
-  bound~$\beta > 0$, the $\sis_{n,q,\beta,m}$ problem is defined as
-  follows: given uniformly random $\matA \in \Zq^{n \times m}$, find a
-  nonzero ``short'' solution $\vecz \in \Z^{m}$ such that
-  $\matA \vecz = \veczero \in \Zq^{n}$ and
-  $\length{\vecz} \leq \beta$.
+  For a positive integer modulus~$q$, dimensions~$n,m$ and a norm bound~$\beta > 0$, the $\sis_{n,q,\beta,m}$ problem is defined as follows: given uniformly random $\matA \in \Zq^{n \times m}$, find a nonzero ``short'' solution $\vecz \in \Z^{m}$ such that $\matA \vecz = \veczero \in \Zq^{n}$ and $\length{\vecz} \leq \beta$.
 
-  Equivalently, the goal is to find a non-zero vector of norm at
-  most~$\beta$ in the following integer ``SIS lattice'' (it is easy to
-  verify that this set is a discrete additive subgroup):
-  \[ \latperp(\matA) := \set{\vecz \in \Z^{m} : \matA\vecz = \veczero}
-    . \] Borrowing a term from coding theory, matrix~$\matA$ is often
-  called a \emph{parity-check matrix} for the lattice
-  $\latperp(\matA)$.
+  Equivalently, the goal is to find a non-zero vector of norm at most~$\beta$ in the following integer ``SIS lattice'' (it is easy to verify that this set is a discrete additive subgroup):
+  \[ \latperp(\matA) := \set{\vecz \in \Z^{m} : \matA\vecz = \veczero} .
+  \] Borrowing a term from coding theory, matrix~$\matA$ is often called a \emph{parity-check matrix} for the lattice $\latperp(\matA)$.
 \end{definition}
 
-We begin with some mathematical properties of SIS lattices. First,
-these lattices are called ``$q$-ary'' because they contain every
-integer vector whose entries are all multiples of~$q$:
+We begin with some mathematical properties of SIS lattices.
+First, these lattices are called ``$q$-ary'' because they contain every integer vector whose entries are all multiples of~$q$:
 \[
   q\Z^{m} \subseteq \latperp(\matA) \subseteq \Z^{m}.
 \]
-So, a vector's membership in $\latperp(\matA)$ is determined solely by
-its entries modulo~$q$.
+So, a vector's membership in $\latperp(\matA)$ is determined solely by its entries modulo~$q$.
 
 \paragraph{Cosets.}
 
-Borrowing another term from coding theory let $\vecy \in \Zq^{n}$ be a
-``syndrome'' in the image of~$\matA$, i.e., there exists some
-$\vecx \in \Z^{m}$ such that $\matA \vecx = \vecy$. Then we can define
-the corresponding lattice coset
-\[
-  \latperp_{\vecy}(\matA) := \set{ \vecx' \in \Z^m : \matA \vecx' =
-    \vecy } = \vecx + \latperp(\matA) , \] where the equality holds
-because every $\vecx' \in \vecx + \latperp(\matA)$ satisfies
-$\matA \vecx' = \matA \vecx = \vecy$, and for any $\vecx' \in \Z^{m}$
-such that $\matA \vecx' = \vecy$, we have
-$\vecx' = \vecx + (\vecx' - \vecx) \in \vecx + \latperp(\matA)$
-because $\matA (\vecx'-\vecx) = \veczero$.
+Borrowing another term from coding theory let $\vecy \in \Zq^{n}$ be a ``syndrome'' in the image of~$\matA$, i.e., there exists some $\vecx \in \Z^{m}$ such that $\matA \vecx = \vecy$.
+Then we can define the corresponding lattice coset
+\[ \latperp_{\vecy}(\matA) := \set{ \vecx' \in \Z^m : \matA \vecx' = \vecy } = \vecx + \latperp(\matA) , \] where the equality holds because every $\vecx' \in \vecx + \latperp(\matA)$ satisfies $\matA \vecx' = \matA \vecx = \vecy$, and for any $\vecx' \in \Z^{m}$ such that $\matA \vecx' = \vecy$, we have $\vecx' = \vecx + (\vecx' - \vecx) \in \vecx + \latperp(\matA)$ because $\matA (\vecx'-\vecx) = \veczero$.
 
 \paragraph{Determinant.}
 
-By the bijective correspondence between integer cosets and syndromes
-in the image of~$\matA$, we have that
-\[ \det(\latperp(\matA)) = \abs{\Z^m / \latperp(\matA)} =
-  \abs{\text{Image}(\matA)} \leq q^{n} , \] with equality if the image
-of~$\matA$ is all of~$\Zq^{n}$ (i.e., the columns of~$\matA$
-generate~$\Zq^{n}$), which will be the setting we are almost always
-interested in.
+By the bijective correspondence between integer cosets and syndromes in the image of~$\matA$, we have that
+\[ \det(\latperp(\matA)) = \abs{\Z^m / \latperp(\matA)} = \abs{\text{Image}(\matA)} \leq q^{n} , \] with equality if the image of~$\matA$ is all of~$\Zq^{n}$ (i.e., the columns of~$\matA$ generate~$\Zq^{n}$), which will be the setting we are almost always interested in.
 
-If~$q$ is prime, then $\matA \in \Zq^{n \times m}$ generates all
-of~$\Zq^n$ if and only if it contains an $n \times n$ submatrix that
-is invertible modulo~$q$. (It is not too hard to show that when, say,
-$m \geq (1+\delta)n$ for a constant $\delta > 0$, this holds with high
-probability over the uniformly random choice of~$\matA$.) However, if
-$q$ is composite, this condition is sufficient but not necessary. For
-example, $\matA=(2, 3) \in \Z_6^{1 \times 2}$ generates all of~$\Z_6$,
-even though neither~$2$ nor~$3$ are invertible modulo~$6$.
+If~$q$ is prime, then $\matA \in \Zq^{n \times m}$ generates all of~$\Zq^n$ if and only if it contains an $n \times n$ submatrix that is invertible modulo~$q$.
+(It is not too hard to show that when, say, $m \geq (1+\delta)n$ for a constant $\delta > 0$, this holds with high probability over the uniformly random choice of~$\matA$.)
+However, if $q$ is composite, this condition is sufficient but not necessary.
+For example, $\matA=(2, 3) \in \Z_6^{1 \times 2}$ generates all of~$\Z_6$, even though neither~$2$ nor~$3$ are invertible modulo~$6$.
 
 \paragraph{Minimum distance.}
 
-The minimum distance can be bounded using Minkowski's Theorem and the
-above bound on the determinant:
+The minimum distance can be bounded using Minkowski's Theorem and the above bound on the determinant:
 \begin{align*}
   \lambda_1(\latperp(\matA))
   &\leq \sqrt{m} \cdot \det(\latperp(\matA))^{1/m} \\
   &\leq \sqrt{m} \cdot q^{n/m} .
 \end{align*}
-However, observe that we are not required to use all~$m$ dimensions:
-by fixing some of the vectors' coordinates to zero (equivalently,
-dropping some columns of~$\matA$), we can instead work with a lattice
-of any dimension less than~$m$. Assuming that the original dimension
-is any $m = \Omega(n \log q)$, the above bound is optimized for some
-dimension $\Theta(n \log q)$, and yields a minimum distance of
-$O(\sqrt{n \log q})$.
+However, observe that we are not required to use all~$m$ dimensions: by fixing some of the vectors' coordinates to zero (equivalently, dropping some columns of~$\matA$), we can instead work with a lattice of any dimension less than~$m$.
+Assuming that the original dimension is any $m = \Omega(n \log q)$, the above bound is optimized for some dimension $\Theta(n \log q)$, and yields a minimum distance of $O(\sqrt{n \log q})$.
 
-Also recall from last lecture that if $m > n \log_{2} q$, then there
-exists a nonzero $\set{0,\pm 1}^{m}$-vector in $\latperp(\matA)$, so
-the~$\ell_{p}$ minimum distance is
-$\lambda_{1}^{(p)}(\latperp(\matA)) \leq m^{1/p}$ for any finite~$p$,
-and $\lambda_{1}^{(\infty)}(\latperp(\matA)) \leq 1$.
+Also recall from last lecture that if $m > n \log_{2} q$, then there exists a nonzero $\set{0,\pm 1}^{m}$-vector in $\latperp(\matA)$, so the~$\ell_{p}$ minimum distance is $\lambda_{1}^{(p)}(\latperp(\matA)) \leq m^{1/p}$ for any finite~$p$, and $\lambda_{1}^{(\infty)}(\latperp(\matA)) \leq 1$.
 
 \paragraph{Equivalent representations and lattices.}
 
-We observe that many different matrices~$\matA$ can define
-(essentially) the same lattice. The proofs of the following two lemmas
-are straightforward exercises.
+We observe that many different matrices~$\matA$ can define (essentially) the same lattice.
+The proofs of the following two lemmas are straightforward exercises.
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:parity-check-invertible}
   Let $\matH \in \Zq^{n \times n}$ be invertible. Then
-  \[ \latperp(\matH \cdot \matA) = \latperp(\matA) . \]
+  \[ \latperp(\matH \cdot \matA) = \latperp(\matA) .
+  \]
 \end{lemma}
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:parity-check-permutation}
-  Let~$\matA'$ be a column permutation of~$\matA$, i.e.,
-  $\matA'=\matA\matP$, where $\matP \in \bit^{m \times m}$ is a
-  permutation matrix. Then
+  Let~$\matA'$ be a column permutation of~$\matA$, i.e., $\matA'=\matA\matP$, where $\matP \in \bit^{m \times m}$ is a permutation matrix.
+  Then
   \[ \latperp(\matA') = \matP^{-1} \cdot \latperp(\matA) , \] i.e.,
   the lattice $\latperp(\matA')$ is just a coordinate permutation of
   the lattice $\latperp(\matA)$, so it has the same determinant,
@@ -154,293 +97,186 @@ are straightforward exercises.
 \end{lemma}
 
 More generally, if $\matT \in \Zq^{m \times m}$ is invertible, then
-\[ \latperp(\matA \cdot \matT) = \matT^{-1} \cdot \latperp(\matA) . \]
-However, for general~$\matT$ this is not merely a coordinate
-permutation, so it may change the lattice's essential geometric
-properties.
+\[ \latperp(\matA \cdot \matT) = \matT^{-1} \cdot \latperp(\matA) .
+\] However, for general~$\matT$ this is not merely a coordinate permutation, so it may change the lattice's essential geometric properties.
 
 \paragraph{(Canonical) basis.}
 
-Suppose that~$\matA$ contains an $n \times n$ submatrix that is
-invertible modulo~$q$. Without loss of generality, by permuting
-columns (\cref{lem:parity-check-permutation}), we can write
-$\matA=[\matH \mid \matA']$ where $\matH=\Zq^{n \times n}$ is
-invertible. Then by \cref{lem:parity-check-invertible}, without
-changing the lattice we can write the parity-check matrix as
-$[\matI_{n} \mid \bar{\matA}]$ where
-$\bar{\matA} = \matH^{-1} \matA' \in \Zq^{n \times (m-n)}$. Borrowing
-another coding theory term, this is called the ``systematic form,'' or
-more commonly ``(Hermite) normal form'' in the lattice context.
-Observe that it is a slightly more compact representation, because we
-can treat the identity submatrix as implicit.
+Suppose that~$\matA$ contains an $n \times n$ submatrix that is invertible modulo~$q$.
+Without loss of generality, by permuting columns (\cref{lem:parity-check-permutation}), we can write $\matA=[\matH \mid \matA']$ where $\matH=\Zq^{n \times n}$ is invertible.
+Then by \cref{lem:parity-check-invertible}, without changing the lattice we can write the parity-check matrix as $[\matI_{n} \mid \bar{\matA}]$ where $\bar{\matA} = \matH^{-1} \matA' \in \Zq^{n \times (m-n)}$.
+Borrowing another coding theory term, this is called the ``systematic form,'' or more commonly ``(Hermite) normal form'' in the lattice context.
+Observe that it is a slightly more compact representation, because we can treat the identity submatrix as implicit.
 
-We then have the following basis for the lattice
-$\lat = \latperp([\matI_{n} \mid \bar{\matA}]) \subseteq \Z^{m}$:
+We then have the following basis for the lattice $\lat = \latperp([\matI_{n} \mid \bar{\matA}]) \subseteq \Z^{m}$:
 \[ \matB =
   \begin{bmatrix}
     q\matI_n & -\bar{\matA} \\
     \matzero & \matI_{m-n}
   \end{bmatrix} \in \Z^{m \times m}.
 \]
-(Formally, because $-\bar{\matA}$ is a matrix over~$\Zq$ (not~$\Z$),
-the basis uses any integer-matrix representative of it, e.g., with
-entries in $\set{0,1,\ldots,q-1}$.) We can confirm that~$\matB$ is
-indeed a basis of~$\lat$:
+(Formally, because $-\bar{\matA}$ is a matrix over~$\Zq$ (not~$\Z$), the basis uses any integer-matrix representative of it, e.g., with entries in $\set{0,1,\ldots,q-1}$.)
+We can confirm that~$\matB$ is indeed a basis of~$\lat$:
 \begin{itemize}
-\item First, the columns are linearly independent, because $\matB$ is
-  upper triangular with nonzero diagonal entries.
-\item Second, every column vector of~$\matB$ is in the lattice,
-  because $[\matI_{n} \mid \bar{\matA}] \cdot \matB = \matzero$. But
-  do these columns form a \emph{basis} of~$\lat$?
-\item We have $\det(\matB) = q^{n} = \det(\lat)$, so~$\matB$ is in
-  fact a basis.
+\item First, the columns are linearly independent, because $\matB$ is upper triangular with nonzero diagonal entries.
+\item Second, every column vector of~$\matB$ is in the lattice, because $[\matI_{n} \mid \bar{\matA}] \cdot \matB = \matzero$.
+  But do these columns form a \emph{basis} of~$\lat$?
+\item We have $\det(\matB) = q^{n} = \det(\lat)$, so~$\matB$ is in fact a basis.
 \end{itemize}
 
-For a (full-rank) integer lattice, a basis of the above form is said
-to be in ``Hermite normal form.'' The precise requirements are that
-the basis be upper triangular with positive entries on the diagonal,
-and that every other entry is reduced modulo the diagonal entry of its
-row. It turns out that such a basis is uniquely specified for any
-lattice, and is efficiently computable from any basis of the same
-lattice. Therefore, the Hermite normal form basis acts as a kind of
-``canonical'' representation of an integer lattice.
-(See~\cite{DBLP:conf/issac/MicciancioW01,DBLP:conf/calc/Micciancio01}
-for further details.)
+For a (full-rank) integer lattice, a basis of the above form is said to be in ``Hermite normal form.''
+The precise requirements are that the basis be upper triangular with positive entries on the diagonal, and that every other entry is reduced modulo the diagonal entry of its row.
+It turns out that such a basis is uniquely specified for any lattice, and is efficiently computable from any basis of the same lattice.
+Therefore, the Hermite normal form basis acts as a kind of ``canonical'' representation of an integer lattice.
+(See~\cite{DBLP:conf/issac/MicciancioW01,DBLP:conf/calc/Micciancio01} for further details.)
 
-\section{Applications of SIS}
+\section{Applications of SIS}%
 \label{sec:applications}
 
-\subsection{Collision-Resistant Hashing}
+\subsection{Collision-Resistant Hashing}%
 \label{sec:coll-resist-hash}
 
 \begin{definition}
-  A function $f \colon \calD \to \calR$ where
-  $\abs{\calD} > \abs{\calR}$ is called a \emph{hash function}. A set
-  $\calF = \set{f_{a} \colon \calD \to \calR}$ of such functions is
-  called a \emph{hash function family}.
+  A function $f \colon \calD \to \calR$ where $\abs{\calD} > \abs{\calR}$ is called a \emph{hash function}.
+  A set $\calF = \set{f_{a} \colon \calD \to \calR}$ of such functions is called a \emph{hash function family}.
 \end{definition}
 
-Since the domain~$\calD$ is larger than the range~$\calR$, by the
-pigeonhole principle any function $f \colon \calD \to \calR$ must have
-a \emph{collision}, i.e., some distinct $x_1, x_2 \in \calD$ where
-$f_a(x_1)=f_a(x_2)$. A hash function family is said to be
-\emph{collision resistant} if it is infeasible to find a collision in
-a randomly chosen function from the family. To make this asymptotic,
-we parameterize the family (and the domain and range) by a security
-parameter $\lambda \in \N$.
+Since the domain~$\calD$ is larger than the range~$\calR$, by the pigeonhole principle any function $f \colon \calD \to \calR$ must have a \emph{collision}, i.e., some distinct $x_1, x_2 \in \calD$ where $f_a(x_1)=f_a(x_2)$.
+A hash function family is said to be \emph{collision resistant} if it is infeasible to find a collision in a randomly chosen function from the family.
+To make this asymptotic, we parameterize the family (and the domain and range) by a security parameter $\lambda \in \N$.
 
 \begin{definition}
-  A hash function family~$\calF_{\lambda}$ is \emph{collision
-    resistant} if for any efficient adversary $\Adv$,
+  A hash function family~$\calF_{\lambda}$ is \emph{collision resistant} if for any efficient adversary $\Adv$,
   \[ \Pr_{f_a \gets \calF_{\lambda}}[\Adv(f_a) \text{ outputs a
       collision in $f_{a}$}] = \negl(\lambda) . \]
 \end{definition}
 
-Collision resistance is a central property in cryptography. It is
-often used to ``compress'' data into a small digest, so that only the
-original data can be presented as consistent with that digest (because
-otherwise a collision has been found, which is infeasible). This can
-be used for detecting errors or modifications in data, authenticating
-arbitrary pieces of large data sets, and much more.
+Collision resistance is a central property in cryptography.
+It is often used to ``compress'' data into a small digest, so that only the original data can be presented as consistent with that digest (because otherwise a collision has been found, which is infeasible).
+This can be used for detecting errors or modifications in data, authenticating arbitrary pieces of large data sets, and much more.
 
-We can construct a collision-resistant hash function family directly
-from the $\sis$ problem.
+We can construct a collision-resistant hash function family directly from the $\sis$ problem.
+
 \begin{theorem}
-  Let $n=\lambda$ (the security parameter), $q \geq 2$ be arbitrary,
-  $m > n \log_{2} q$, and $\beta=\sqrt{m}$. If $\sis_{n,q,\beta,m}$ is
-  hard, then the $\sis$ function family
-  $\calF=\set{f_{\matA} \colon \bit^{m} \to \Zq^{n} : \matA \in \Zq^{n
-      \times m}}$, defined as
-  $f_{\matA}(\vecx):=\matA\vecx \in \Zq^{n}$, is a collision-resistant
-  hash function family.
+  Let $n=\lambda$ (the security parameter), $q \geq 2$ be arbitrary, $m > n \log_{2} q$, and $\beta=\sqrt{m}$.
+  If $\sis_{n,q,\beta,m}$ is hard, then the $\sis$ function family $\calF=\set{f_{\matA} \colon \bit^{m} \to \Zq^{n} : \matA \in \Zq^{n \times m}}$, defined as $f_{\matA}(\vecx):=\matA\vecx \in \Zq^{n}$, is a collision-resistant hash function family.
 \end{theorem}
 
-We note that the domain need not consist merely of \emph{binary}
-strings; we can generalize to vectors of ``small'' integers with a
-suitable adjustment of the parameters.
+We note that the domain need not consist merely of \emph{binary} strings; we can generalize to vectors of ``small'' integers with a suitable adjustment of the parameters.
 
 \begin{proof}
-  First, since $\abs{\calD}=2^{m} > q^{n} = \abs{\calR}$, we indeed
-  have a family of hash functions. Let~$\Adv$ be an efficient
-  adversary that attempts to break the collision resistance of the
-  hash function family. We describe an efficient reduction that
-  attempts to solve $\sis$ using~$\Adv$. Given an $\sis$ instance
-  $\matA \in \Zq^{n \times m}$, the reduction gives~$\matA$ to the
-  adversary~$\Adv$, which potentially outputs a collision
-  in~$f_{\matA}$, i.e., distinct $\vecx, \vecx' \in \bit^{m}$ such
-  that $\matA\vecx=\matA\vecx'$. The reduction outputs
-  $\vecz = \vecx-\vecx' \in \set{0, \pm 1}^{m}$ as its potential
-  $\sis$ solution.
+  First, since $\abs{\calD}=2^{m} > q^{n} = \abs{\calR}$, we indeed have a family of hash functions.
+  Let~$\Adv$ be an efficient adversary that attempts to break the collision resistance of the hash function family.
+  We describe an efficient reduction that attempts to solve $\sis$ using~$\Adv$.
+  Given an $\sis$ instance $\matA \in \Zq^{n \times m}$, the reduction gives~$\matA$ to the adversary~$\Adv$, which potentially outputs a collision in~$f_{\matA}$, i.e., distinct $\vecx, \vecx' \in \bit^{m}$ such that $\matA\vecx=\matA\vecx'$.
+  The reduction outputs $\vecz = \vecx-\vecx' \in \set{0, \pm 1}^{m}$ as its potential $\sis$ solution.
 
-  Suppose that~$\Adv$ was successful in outputting a collision. Then
-  $\vecz \neq \veczero$,
-  $\matA\vecz = \matA\vecx - \matA\vecx' = \veczero$, and
-  $\length{\vecz} \leq \sqrt{m} = \beta$, so the reduction
-  successfully solves its given $\sis$ instance. Because $\sis$ is
-  hard by assumption, the adversary~$\Adv$ must have only negligible
-  probability of success, as desired.
+  Suppose that~$\Adv$ was successful in outputting a collision.
+  Then $\vecz \neq \veczero$, $\matA\vecz = \matA\vecx - \matA\vecx' = \veczero$, and $\length{\vecz} \leq \sqrt{m} = \beta$, so the reduction successfully solves its given $\sis$ instance.
+  Because $\sis$ is hard by assumption, the adversary~$\Adv$ must have only negligible probability of success, as desired.
 \end{proof}
 
-\subsection{Regular One-Way Function Family}
+\subsection{Regular One-Way Function Family}%
 \label{sec:regular-one-way}
 
-\begin{definition}
+\begin{definition}%
   \label{def:regular}
-  A function family $\calF = \set{f \colon \calD \to \calR}$ is
-  \emph{$\varepsilon$-regular} if
-  \[ (f, f(x)) \approx_{\varepsilon} (f, y) , \] where
-  $f \gets \calF, x \gets \calD, y \gets \calR$,
-  and~$\approx_{\varepsilon}$ denotes that the two distributions have
-  statistical distance at most~$\varepsilon$.
+  A function family $\calF = \set{f \colon \calD \to \calR}$ is \emph{$\varepsilon$-regular} if
+  \[ (f, f(x)) \approx_{\varepsilon} (f, y) , \] where $f \gets \calF, x \gets \calD, y \gets \calR$, and~$\approx_{\varepsilon}$ denotes that the two distributions have statistical distance at most~$\varepsilon$.
 \end{definition}
 
-\begin{definition}
+\begin{definition}%
   \label{def:one-way}
-  A function family
-  $\calF_{\lambda} = \set{f_{a} \colon \calD_{\lambda} \to
-    \calR_{\lambda}}$ is \emph{one way} if for all efficient
-  adversaries~$\Adv$,
-  \[\Pr_{f_a \gets \calF_{\lambda}, y \gets \calR_{\lambda}}[\Adv(f_a,
-    y) \text{ outputs } x \in \calD_{\lambda} \text{ s.t. } f_a(x)=y]
-    = \negl(\lambda) . \]
+  A function family $\calF_{\lambda} = \set{f_{a} \colon \calD_{\lambda} \to \calR_{\lambda}}$ is \emph{one way} if for all efficient adversaries~$\Adv$,
+  \[ \Pr_{f_a \gets \calF_{\lambda}, y \gets \calR_{\lambda}}[\Adv(f_a, y) \text{ outputs } x \in \calD_{\lambda} \text{ s.t.
+    } f_a(x)=y] = \negl(\lambda) .
+  \]
 \end{definition}
 
-In particular, regularity (for tiny $\varepsilon \geq 0$) implies that
-for a randomly chosen function~$f_{a}$ from the family, almost every
-range value $y \in \calR$ has a preimage, i.e., an $x \in \calD$ for
-which $f_{a}(x)=y$. One-wayness can be seen as saying that finding
-such a pre-image is hard.
+In particular, regularity (for tiny $\varepsilon \geq 0$) implies that for a randomly chosen function~$f_{a}$ from the family, almost every range value $y \in \calR$ has a preimage, i.e., an $x \in \calD$ for which $f_{a}(x)=y$.
+One-wayness can be seen as saying that finding such a pre-image is hard.
 
 \begin{lemma}%
   \label{lem:sis-regular}
-  For $n \geq 1$, any $q \geq 2$, and any
-  $m \geq (1+\delta) n \log_{2} q$ for constant $\delta > 0$, the
-  $\sis$ family
-  $\calF=\set{f_{\matA} \colon \bit^{m} \to \Zq^{n} \colon \matA \in
-    \Zq^{n \times m}}$ is $2^{-\Omega(n)}$-regular.
+  For $n \geq 1$, any $q \geq 2$, and any $m \geq (1+\delta) n \log_{2} q$ for constant $\delta > 0$, the $\sis$ family $\calF=\set{f_{\matA} \colon \bit^{m} \to \Zq^{n} \colon \matA \in \Zq^{n \times m}}$ is $2^{-\Omega(n)}$-regular.
 \end{lemma}
 
 \begin{lemma}%
   \label{lem:sis-oneway}
-  The above $\sis$ function family is one-way if
-  $\sis_{n,q,\beta,m+1}$ is hard, where $\beta=\sqrt{m+1}$.
+  The above $\sis$ function family is one-way if $\sis_{n,q,\beta,m+1}$ is hard, where $\beta=\sqrt{m+1}$.
 \end{lemma}
 
 \begin{proof}
-  Let~$\Adv$ be an efficient adversary that attempts to break the
-  one-wayness of the family. We describe an efficient
-  reduction~$\AdvB$ that attempts to solve~$\sis_{n,q,\beta,m+1}$
-  using~$\Adv$. The reduction works as follows: given an instance
-  $\matA' \in \Zq^{n \times (m+1)}$, $\AdvB$ parses it as
-  $\matA'=[\matA \mid \vecy]$ where $\vecy \in \Zq^{n}$. Then~$\AdvB$
-  invokes $\calI(f_{\matA},\vecy)$, which potentially outputs some
-  $\vecx \in \bit^{m}$ such that $\matA\vecx=\vecy$. Then~$\AdvB$
-  outputs $\vecz = \smlmat{\vecx \\ -1} \in \Z^{m+1}$ as a potential
-  solution to the $\sis$ instance.
+  Let~$\Adv$ be an efficient adversary that attempts to break the one-wayness of the family.
+  We describe an efficient reduction~$\AdvB$ that attempts to solve~$\sis_{n,q,\beta,m+1}$ using~$\Adv$.
+  The reduction works as follows: given an instance $\matA' \in \Zq^{n \times (m+1)}$, $\AdvB$ parses it as $\matA'=[\matA \mid \vecy]$ where $\vecy \in \Zq^{n}$.
+  Then~$\AdvB$ invokes $\calI(f_{\matA},\vecy)$, which potentially outputs some $\vecx \in \bit^{m}$ such that $\matA\vecx=\vecy$.
+  Then~$\AdvB$ outputs $\vecz = \smlmat{\vecx \\ -1} \in \Z^{m+1}$ as a potential solution to the $\sis$ instance.
 
-  Observe that whenever~$\AdvA$ successfully inverts, we have
-  $\matA\vecx=\vecy$ and hence
-  $\matA' \vecz = \matA \vecx - \vecy = \veczero$; moreover,
-  $\vecz \neq \veczero$ $\length{\vecz} \leq \sqrt{m+1}=\beta$,
-  so~$\AdvB$ succeeds at solving its $\sis$ instance. Because $\sis$
-  is hard by assumption,~$\Adv$ must have only negligible probability
-  of success, as needed.
+  Observe that whenever~$\AdvA$ successfully inverts, we have $\matA\vecx=\vecy$ and hence $\matA' \vecz = \matA \vecx - \vecy = \veczero$; moreover, $\vecz \neq \veczero$ $\length{\vecz} \leq \sqrt{m+1}=\beta$, so~$\AdvB$ succeeds at solving its $\sis$ instance.
+  Because $\sis$ is hard by assumption,~$\Adv$ must have only negligible probability of success, as needed.
 \end{proof}
 
-\Cref{lem:sis-regular,lem:sis-oneway} together yield \emph{the central
-  method} (up to some minor variations) of constructing secret/public
-key pairs in lattice-based cryptography, which goes back to Ajtai's
-original work~\cite{ajtai04:_gener_hard_instan_lattic_probl}. The
-procedure operates as follows:
+\Cref{lem:sis-regular,lem:sis-oneway} together yield \emph{the central method} (up to some minor variations) of constructing secret/public key pairs in lattice-based cryptography, which goes back to Ajtai's original work~\cite{ajtai04:_gener_hard_instan_lattic_probl}.
+The procedure operates as follows:
 \begin{enumerate}[itemsep=0pt]
-\item Generate (or be given, from a trusted source) a uniformly random
-  matrix $\matA \in \Zq^{n \times m}$.
-\item Choose a secret key $\vecx \gets \bit^{m} = \calD$ uniformly at
-  random.
-\item Let $\vecy = \matA\vecx = f_{\matA}(\vecx)$ and let the public
-  key be $\matA' = [\matA \mid \vecy] \in \Zq^{n \times (m+1)}$ (or
-  just~$\vecy$, if others already know~$\matA$).
+\item Generate (or be given, from a trusted source) a uniformly random matrix $\matA \in \Zq^{n \times m}$.
+\item Choose a secret key $\vecx \gets \bit^{m} = \calD$ uniformly at random.
+\item Let $\vecy = \matA\vecx = f_{\matA}(\vecx)$ and let the public key be $\matA' = [\matA \mid \vecy] \in \Zq^{n \times (m+1)}$ (or just~$\vecy$, if others already know~$\matA$).
 \end{enumerate}
-We can even do the same with multiple vectors~$\vecx_{i}$, which we
-group into the columns of a secret-key matrix
-$\matX \in \bit^{m \times k}$, yielding the public-key matrix
-$\matA' = [\matA \mid \matY] \in \Zq^{n \times (m+k)}$ where
-$\matY = \matA \matX \in \Zq^{n \times k}$.
+We can even do the same with multiple vectors~$\vecx_{i}$, which we group into the columns of a secret-key matrix $\matX \in \bit^{m \times k}$, yielding the public-key matrix $\matA' = [\matA \mid \matY] \in \Zq^{n \times (m+k)}$ where $\matY = \matA \matX \in \Zq^{n \times k}$.
 
 The procedure above has the following properties:
 \begin{itemize}[itemsep=0pt]
 \item $\matA'$ is statistically close to uniformly random, by
   regularity (\cref{lem:sis-regular}).
-\item Therefore, the adversary cannot find any ``short''
-  $\vecz \in \latperp(\matA')$, by the presumed hardness of~$\sis$.
-\item However, the generating party \emph{does} know such a short
-  vector, namely, $\vecz = \smlmat{\vecx \\ -1}$.
+\item Therefore, the adversary cannot find any ``short'' $\vecz \in \latperp(\matA')$, by the presumed hardness of~$\sis$.
+\item However, the generating party \emph{does} know such a short vector, namely, $\vecz = \smlmat{\vecx \\ -1}$.
 \end{itemize}
-Looking ahead, this asymmetry between the user and the adversary will
-allow us to build more advanced cryptographic primitives, like digital
-signatures and public-key encryption, among many others.
+Looking ahead, this asymmetry between the user and the adversary will allow us to build more advanced cryptographic primitives, like digital signatures and public-key encryption, among many others.
 
 \begin{proof}[Proof of \cref{lem:sis-regular}]
-  This follows immediately from
-  \cref{lem:sis-universal,lem:universal-regular} below.
+  This follows immediately from \cref{lem:sis-universal,lem:universal-regular} below.
 \end{proof}
 
-\begin{definition}
+\begin{definition}%
   \label{def:universal}
-  A function family $\calF = \set{f_{a} \colon \calD \to \calR}$ is
-  \emph{universal} if for all distinct $x, x' \in \calD$,
-  \[ \Pr_{f_a \gets \calF}[f_a(x)=f_a(x')] = \frac{1}{\abs{\calR}}
-    . \]
+  A function family $\calF = \set{f_{a} \colon \calD \to \calR}$ is \emph{universal} if for all distinct $x, x' \in \calD$,
+  \[ \Pr_{f_a \gets \calF}[f_a(x)=f_a(x')] = \frac{1}{\abs{\calR}} .
+  \]
 \end{definition}
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:sis-universal}
-  The $\sis$ function family with domain $\calD=\bit^{m}$ is
-  universal.
+  The $\sis$ function family with domain $\calD=\bit^{m}$ is universal.
 \end{lemma}
 
 \begin{proof}
-  Fix arbitrary distinct $\vecx, \vecx' \in \bit^{m}$. Without loss of
-  generality (by rearranging coordinates and swapping $\vecx,\vecx'$
-  if necessary), we have that $x_1-x'_1 = 1$. Then
+  Fix arbitrary distinct $\vecx, \vecx' \in \bit^{m}$.
+  Without loss of generality (by rearranging coordinates and swapping $\vecx,\vecx'$ if necessary), we have that $x_1-x'_1 = 1$.
+  Then
   \[ \Pr_{\matA}[\matA\vecx = \matA\vecx'] =
     \Pr_{\matA}[\matA(\vecx-\vecx') = \veczero] = \Pr_{\matA}[\veca_1
     = \sum_{i=2}^{m} \veca_{i} (x'_{i}-x_{i})] = q^{-n} =
     \frac{1}{\abs{\calR}} ,
   \]
-  where the second-to-last equality follows by arbitrarily
-  fixing~$\veca_{i}$ for $i=2,\ldots,m$, and considering the
-  probability over~$\veca_{1}$ alone.
+  where the second-to-last equality follows by arbitrarily fixing~$\veca_{i}$ for $i=2,\ldots,m$, and considering the probability over~$\veca_{1}$ alone.
 \end{proof}
 
-\begin{lemma}[Leftover Hash Lemma~\cite{DBLP:journals/siamcomp/HastadILL99}]
+\begin{lemma}[Leftover Hash Lemma~\cite{DBLP:journals/siamcomp/HastadILL99}]%
   \label{lem:universal-regular}
-  Any universal hash family~$\calF$ of functions from~$\calD$
-  to~$\calR$ is $\varepsilon$-regular for
-  $\varepsilon=\sqrt{\abs{\calR}/{\abs{\calD}}}$.
+  Any universal hash family~$\calF$ of functions from~$\calD$ to~$\calR$ is $\varepsilon$-regular for $\varepsilon=\sqrt{\abs{\calR}/{\abs{\calD}}}$.
 \end{lemma}
 
 \begin{proof}
-  Because the first components of the two distributions in
-  \cref{def:regular} are a uniformly random function $f \gets \calF$,
-  the statistical distance in question is simply the expected (i.e.,
-  average) statistical distance between $f(x)$ and~$y$ (where
-  $x \gets \calD$ and $y \gets \calR$), over the choice of~$f$.
+  Because the first components of the two distributions in \cref{def:regular} are a uniformly random function $f \gets \calF$, the statistical distance in question is simply the expected (i.e., average) statistical distance between $f(x)$ and~$y$ (where $x \gets \calD$ and $y \gets \calR$), over the choice of~$f$.
   
-  For any fixed hash function $f \in \calF$, let~$D_{f}$ be the
-  distribution of $f(x)$. The squared~$\ell_{2}$ norm of this
-  distribution is
-  \[ \length{D_{f}}_{2}^{2} := \sum_{y \in \calR} D_{f}(y)^{2} =
-    \Pr_{x,x' \gets \calD}[f(x)=f(x')] \leq \frac{1}{\abs{\calD}} +
-    \Pr_{x,x'}[f(x)=f(x') \mid x \neq x'] . \] Taking the expectation
-  over the uniformly random choice of $f \in \calF$, and using
-  universality, we have that
-  \[ \E_{f \gets \calF} \bracks[\big]{\length{D_{f}}_{2}^{2}} \leq
-    \frac{1}{\abs{\calD}} + \frac{1}{\abs{\calR}} . \] So, by the
-  relation between the~$\ell_{2}$ and~$\ell_{1}$ norms, the fact that
-  the values of each~$D_{f}$ sum to unity, and Jensen's inequality,
-  the expected statistical distance between~$D_{f}$ and the uniform
-  distribution is
+  For any fixed hash function $f \in \calF$, let~$D_{f}$ be the distribution of $f(x)$.
+  The squared~$\ell_{2}$ norm of this distribution is
+  \[ \length{D_{f}}_{2}^{2} := \sum_{y \in \calR} D_{f}(y)^{2} = \Pr_{x,x' \gets \calD}[f(x)=f(x')] \leq \frac{1}{\abs{\calD}} + \Pr_{x,x'}[f(x)=f(x') \mid x \neq x'] .
+  \] Taking the expectation over the uniformly random choice of $f \in \calF$, and using universality, we have that
+  \[ \E_{f \gets \calF} \bracks[\big]{\length{D_{f}}_{2}^{2}} \leq \frac{1}{\abs{\calD}} + \frac{1}{\abs{\calR}} .
+  \] So, by the relation between the~$\ell_{2}$ and~$\ell_{1}$ norms, the fact that the values of each~$D_{f}$ sum to unity, and Jensen's inequality, the expected statistical distance between~$D_{f}$ and the uniform distribution is
   \begin{align*}
     \E_{f \gets \calF} \bracks[\Big]{\sum_{y \in \calR} \abs[\big]{D_{f}(y)
     - \frac{1}{\abs{\calR}}}}
