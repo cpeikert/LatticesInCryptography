@@ -1,22 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage{fullpage}
-\usepackage{newtxtext}
-\usepackage{microtype}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
-\usepackage[pagebackref=true]{hyperref} % must set backref at load time
-\usepackage{fancyhdr}
-\usepackage{mathtools}
-\usepackage{enumitem}
-\usepackage[svgnames]{xcolor}
-\usepackage{tikz}
-\usepackage{import}
-
-% load after hyperref, algpseudocode to get proper behavior
-\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
-
-\import{common/}{head.tex}
+\input{header}
 
 % VARIABLES
 
@@ -26,7 +10,6 @@
 
 % END OF VARIABLES
 
-\import{common/}{lechead.tex}
 \lecheader                      % execute lecture commands
 
 \pagestyle{plain}               % default: no special header
@@ -37,591 +20,275 @@
 
 % LECTURE MATERIAL STARTS HERE
 
-\section{Digital Signatures}
+\section{Digital Signatures}%
 \label{sec:signatures}
 
-In this lecture we cover constructions of, attacks on, and security
-proofs for, \emph{digital signature schemes} based on lattices. We
-first recall the definition of a signature scheme. Informally, it
-allows a user to ``sign'' messages using a secret key, so that anyone
-can verify the validity of the signatures using a corresponding public
-key. At the same time, it should be hard for an attacker to produce a
-valid signature for a message that the signer did not actually sign.
-We now present the formal syntax of a signature scheme and some of the
-main kinds of security that are considered.
+In this lecture we cover constructions of, attacks on, and security proofs for, \emph{digital signature schemes} based on lattices.
+We first recall the definition of a signature scheme.
+Informally, it allows a user to ``sign'' messages using a secret key, so that anyone can verify the validity of the signatures using a corresponding public key.
+At the same time, it should be hard for an attacker to produce a valid signature for a message that the signer did not actually sign.
+We now present the formal syntax of a signature scheme and some of the main kinds of security that are considered.
 
-\begin{definition}
+\begin{definition}%
   \label{def:signature}
   A digital signature scheme consists of three algorithms:
   \begin{itemize}[itemsep=0pt]
-  \item $\siggen()$ outputs a secret \emph{signing key}~$sk$ and a
-    public \emph{verification key}~$vk$.
-  \item $\sigsign(sk, \mu)$, given a signing key~$sk$ and a
-    message~$\mu$, outputs a \emph{signature}~$\sigma$.
-  \item $\sigver(vk, \mu, \sigma)$, given a verification key~$vk$, a
-    message~$\mu$, and a signature~$\sigma$, either accepts or
-    rejects.
+  \item $\siggen()$ outputs a secret \emph{signing key}~$sk$ and a public \emph{verification key}~$vk$.
+  \item $\sigsign(sk, \mu)$, given a signing key~$sk$ and a message~$\mu$, outputs a \emph{signature}~$\sigma$.
+  \item $\sigver(vk, \mu, \sigma)$, given a verification key~$vk$, a message~$\mu$, and a signature~$\sigma$, either accepts or rejects.
   \end{itemize}
-  For correctness, we require that for any $(vk, sk) \gets \siggen()$,
-  any message~$\mu$, and any signature
-  $\sigma \gets \sigsign(sk,\mu)$, the verifier
-  $\sigver(vk, \mu, \sigma)$ always accepts. (We could also relax this
-  slightly, requiring that this holds with high probability over all
-  the random choices.)
+  For correctness, we require that for any $(vk, sk) \gets \siggen()$, any message~$\mu$, and any signature $\sigma \gets \sigsign(sk,\mu)$, the verifier $\sigver(vk, \mu, \sigma)$ always accepts.
+  (We could also relax this slightly, requiring that this holds with high probability over all the random choices.)
 \end{definition}
 
 For security, we want a signature scheme to be \emph{unforgeable}.
-There are a variety of ways this can be defined, depending on what
-kind of power the adversary is allowed to have. Two possibilities are
-as follows:
+There are a variety of ways this can be defined, depending on what kind of power the adversary is allowed to have.
+Two possibilities are as follows:
 \begin{enumerate}[itemsep=0pt]
-\item \emph{Key-only attack}: given a verification key~$\vk$ where
-  $(sk, vk) \gets \siggen$, it should be infeasible for an adversary
-  to produce any $(\mu^*, \sigma^*)$ such that
-  $\sigver(vk, \mu^*, \sigma^*)$ accepts.
-\item \emph{Chosen-message attack}: given a verification key~$vk$ as
-  above, along with ``black-box'' oracle access to
-  $\sigsign(sk, \cdot)$---i.e., the ability to get valid signatures
-  for any desired messages---it should be infeasible for the adversary
-  to produce any $(\mu^*, \sigma^*)$ such that
-  $\sigver(vk, \mu^{*}, \sigma^{*})$ accepts and~$\mu^{*}$ was not a
-  query to the signing oracle.\footnote{Note that the second clause of
-    the forgery condition is necessary, because otherwise the
-    adversary could just query its signing oracle on an
-    arbitrary~$\mu^{*}$, receive a valid signature~$\sigma^{*}$, and
-    output $(\mu^{*}, \sigma^{*})$ as its ``forgery.'' To rule out
-    this trivial attack, the definition requires the adversary to
-    output a valid signature for a ``new'' message, for which it has
-    never received a valid signature.}
+\item \emph{Key-only attack}: given a verification key~$\vk$ where $(sk, vk) \gets \siggen$, it should be infeasible for an adversary to produce any $(\mu^*, \sigma^*)$ such that $\sigver(vk, \mu^*, \sigma^*)$ accepts.
+\item \emph{Chosen-message attack}: given a verification key~$vk$ as above, along with ``black-box'' oracle access to $\sigsign(sk, \cdot)$---i.e., the ability to get valid signatures for any desired messages---it should be infeasible for the adversary to produce any $(\mu^*, \sigma^*)$ such that $\sigver(vk, \mu^{*}, \sigma^{*})$ accepts and~$\mu^{*}$ was not a query to the signing oracle.\footnote{Note that the second clause of the forgery condition is necessary, because otherwise the adversary could just query its signing oracle on an arbitrary~$\mu^{*}$, receive a valid signature~$\sigma^{*}$, and output $(\mu^{*}, \sigma^{*})$ as its ``forgery.''
+    To rule out this trivial attack, the definition requires the adversary to output a valid signature for a ``new'' message, for which it has never received a valid signature.}
 \end{enumerate}
 
-Unforgeability under key-only attack is not strong enough for
-real-world use, because the adversary will typically get to see some
-of the user's legitimate signatures, which could provide helpful
-information in attacking the scheme.\footnote{As an exercise,
-  construct a signature scheme that is unforgeable under key-only
-  attack, but breaks completely once the adversary is given a single
-  valid signature. Hint: the signature on any message can just be the
-  secret signing key.} By contrast, unforgeability under a
-chosen-message attack is a strong security notion, because it says
-that the attacker, even after getting valid signatures on any messages
-of its choice, cannot forge a signature on any new message.
+Unforgeability under key-only attack is not strong enough for real-world use, because the adversary will typically get to see some of the user's legitimate signatures, which could provide helpful information in attacking the scheme.\footnote{As an exercise, construct a signature scheme that is unforgeable under key-only attack, but breaks completely once the adversary is given a single valid signature.
+  Hint: the signature on any message can just be the secret signing key.}
+By contrast, unforgeability under a chosen-message attack is a strong security notion, because it says that the attacker, even after getting valid signatures on any messages of its choice, cannot forge a signature on any new message.
 
-\section{GGH Signature Scheme}
+\section{GGH Signature Scheme}%
+\label{sec:ggh}
 
-The first proposal for a lattice-based signature scheme was given by
-Goldreich, Goldwasser, and Halevi in
-1997~\cite{DBLP:conf/crypto/GoldreichGH97a}. (An efficient real-world
-instantiation of this idea was later given
-in~\cite{DBLP:conf/ctrsa/HoffsteinHPSW03}.) The key idea is that the
-secret signing key is a ``short'' basis of a lattice~$\lat$ (i.e.,
-consisting of short vectors) whereas the public key is a ``bad''
-(long) basis of the same lattice. Each message corresponds to a
-``random'' coset of the lattice, via a suitably complex hash function.
-To sign a message, the signer uses its short basis to find a
-relatively short element of a corresponding lattice coset, which
-serves as the signature. To verify a purported signature on a message,
-one checks that the signature belongs to the appropriate coset and is
-suitably short.
+The first proposal for a lattice-based signature scheme was given by Goldreich, Goldwasser, and Halevi in 1997~\cite{DBLP:conf/crypto/GoldreichGH97a}.
+(An efficient real-world instantiation of this idea was later given in~\cite{DBLP:conf/ctrsa/HoffsteinHPSW03}.)
+The key idea is that the secret signing key is a ``short'' basis of a lattice~$\lat$ (i.e., consisting of short vectors) whereas the public key is a ``bad'' (long) basis of the same lattice.
+Each message corresponds to a ``random'' coset of the lattice, via a suitably complex hash function.
+To sign a message, the signer uses its short basis to find a relatively short element of a corresponding lattice coset, which serves as the signature.
+To verify a purported signature on a message, one checks that the signature belongs to the appropriate coset and is suitably short.
 
 \begin{itemize}
-\item $\siggen()$: somehow generate a lattice~$\lat$ along with both a
-  short basis~$\matS$ and a ``bad'' basis~$\matB$ (or some other
-  public representation). Output $sk=\matS$ and $vk=\matB$.
+\item $\siggen()$: somehow generate a lattice~$\lat$ along with both a short basis~$\matS$ and a ``bad'' basis~$\matB$ (or some other public representation).
+  Output $sk=\matS$ and $vk=\matB$.
 
-  For example, this could be done by generating~$\matS$ as a set of
-  short random vectors, then defining $\matB=\matS \matU$ for some
-  random ``bad'' unimodular matrix~$\matU$. In particular, $\matB$
-  could be the Hermite normal form basis of~$\lat$, which is a
-  ``hardest possible'' basis
-  of~$\lat$~\cite{DBLP:conf/calc/Micciancio01}.
+  For example, this could be done by generating~$\matS$ as a set of short random vectors, then defining $\matB=\matS \matU$ for some random ``bad'' unimodular matrix~$\matU$.
+  In particular, $\matB$ could be the Hermite normal form basis of~$\lat$, which is a ``hardest possible'' basis of~$\lat$~\cite{DBLP:conf/calc/Micciancio01}.
   
-\item $\sigsign(\matS, \mu)$: map~$\mu$ to a lattice coset $\vecy+\lat$
-  using a cryptographic hash function~$H$, as $\vecy = H(\mu)$. Using
-  the short basis~$\matS$, output a relatively short element
-  $\vecx \in \vecy + \lat$ as the signature.
+\item $\sigsign(\matS, \mu)$: map~$\mu$ to a lattice coset $\vecy+\lat$ using a cryptographic hash function~$H$, as $\vecy = H(\mu)$.
+  Using the short basis~$\matS$, output a relatively short element $\vecx \in \vecy + \lat$ as the signature.
 
-  This can be done using the ``round-off'' algorithm, which lets
-  $\vecx = \matS \cdot \text{frac}(\matS^{-1} \cdot \vecy) \in
-  \piped(\matS)$, where $\text{frac}(\vecr) = \vecr - \round{\vecr}$
-  is the ``fractional'' (non-integral) part of a vector~$\vecr$.
-  Alternatively, one can use the iterative ``nearest-plane''
-  algorithm, which can produce a somewhat shorter vector, in
-  $\piped(\gs{\matS})$.
+  This can be done using the ``round-off'' algorithm, which lets $\vecx = \matS \cdot \text{frac}(\matS^{-1} \cdot \vecy) \in \piped(\matS)$, where $\text{frac}(\vecr) = \vecr - \round{\vecr}$ is the ``fractional'' (non-integral) part of a vector~$\vecr$.
+  Alternatively, one can use the iterative ``nearest-plane'' algorithm, which can produce a somewhat shorter vector, in $\piped(\gs{\matS})$.
     
-\item $\sigver(\matB, \mu, \vecx)$: hash the message as
-  $\vecy = H(\mu)$. If $\vecx \in \vecy+\lat$ and~$\vecx$ is
-  ``sufficiently short''---e.g., if
-  $\length{\vecx} \leq \frac{n}{2} \max \length{\vecs_i}$ (or another
-  suitable public bound)---then accept; otherwise, reject.
+\item $\sigver(\matB, \mu, \vecx)$: hash the message as $\vecy = H(\mu)$.
+  If $\vecx \in \vecy+\lat$ and~$\vecx$ is ``sufficiently short''---e.g., if $\length{\vecx} \leq \frac{n}{2} \max \length{\vecs_i}$ (or another suitable public bound)---then accept; otherwise, reject.
 \end{itemize}
 
-Note that, to forge a signature on a particular message, one must find
-a sufficiently short vector in the corresponding lattice coset. So, if
-this problem is hard---on the average, for lattices generated
-according to the key-generation procedure---then the signature scheme
-is plausibly unforgeable---under a key-only attack, at least.
+Note that, to forge a signature on a particular message, one must find a sufficiently short vector in the corresponding lattice coset.
+So, if this problem is hard---on the average, for lattices generated according to the key-generation procedure---then the signature scheme is plausibly unforgeable---under a key-only attack, at least.
 
-\subsection{Instantiation with SIS Lattices}
+\subsection{Instantiation with SIS Lattices}%
 \label{sec:instantiation-sis}
 
-Let us consider instantiating the GGH scheme with the hard SIS
-lattices we have covered previously. In this case, the public
-verification key~$vk$ would not be a basis, but instead would be a
-(near-)uniformly random parity-check matrix
-$\matA \in \Zq^{n \times m}$, which defines the lattice
-$\lat = \latperp(\matA) := \set{\vecz \in \Z^{m} : \matA
-  \vecz=\veczero}$. The secret signing key~$sk$ would be a short
-basis~$\matS$ of~$\lat$, which must somehow be generated together
-with~$\matA$ (see below).
+Let us consider instantiating the GGH scheme with the hard SIS lattices we have covered previously.
+In this case, the public verification key~$vk$ would not be a basis, but instead would be a (near-)uniformly random parity-check matrix $\matA \in \Zq^{n \times m}$, which defines the lattice $\lat = \latperp(\matA) := \set{\vecz \in \Z^{m} : \matA \vecz=\veczero}$.
+The secret signing key~$sk$ would be a short basis~$\matS$ of~$\lat$, which must somehow be generated together with~$\matA$ (see below).
 
-Recall that the integral cosets of $\latperp(\matA)$ correspond to
-syndromes $\vecy \in \Zq^{n}$, as
-$\latperp_{\vecy} := \set{\vecx \in \Z^{m} : \matA \vecx = \vecy}$.
-So, we map each message to a syndrome via some complex cryptographic
-hash function $H \colon \bit^{*} \to \Zq^{n}$. To sign a message
-having syndrome~$\vecy$, the signer outputs the signature
-$\vecx = \matS \cdot \text{frac}(\matS^{-1} \cdot \vect)$, where
-$\vect \in \latperp_{\vecy}(\matA)$ is an arbitrary solution to
-$\matA \vect = \vecy \in \Zq^m$. To verify, check that
-$\matA \vecx = \vecy$ and that~$\vecx$ is sufficiently short.
+Recall that the integral cosets of $\latperp(\matA)$ correspond to syndromes $\vecy \in \Zq^{n}$, as $\latperp_{\vecy} := \set{\vecx \in \Z^{m} : \matA \vecx = \vecy}$.
+So, we map each message to a syndrome via some complex cryptographic hash function $H \colon \bit^{*} \to \Zq^{n}$.
+To sign a message having syndrome~$\vecy$, the signer outputs the signature $\vecx = \matS \cdot \text{frac}(\matS^{-1} \cdot \vect)$, where $\vect \in \latperp_{\vecy}(\matA)$ is an arbitrary solution to $\matA \vect = \vecy \in \Zq^m$.
+To verify, check that $\matA \vecx = \vecy$ and that~$\vecx$ is sufficiently short.
 
-It is straightforward to see that if we model~$H$ as a truly random
-function and if SIS is hard, then this instantiation is unforgeable
-under a \emph{key-only attack}. Specifically, the attacker is given
-uniformly random verification key~$\matA$ and the uniformly random
-hash $\vecy = H(\mu^{*})$ of its target message~$\mu^{*}$, and
-computing a valid signature for~$m^{*}$ means finding a short
-$\vecx \in \Z^m$ such that $\matA \vecx = \vecy$, or equivalently,
-$[\matA \mid \vecy] \cdot \smlmat{\vecx \\ -1} = \veczero$. So,
-forging solves SIS on the uniformly random instance
-$[\matA \mid \vecy]$.
+It is straightforward to see that if we model~$H$ as a truly random function and if SIS is hard, then this instantiation is unforgeable under a \emph{key-only attack}.
+Specifically, the attacker is given uniformly random verification key~$\matA$ and the uniformly random hash $\vecy = H(\mu^{*})$ of its target message~$\mu^{*}$, and computing a valid signature for~$m^{*}$ means finding a short $\vecx \in \Z^m$ such that $\matA \vecx = \vecy$, or equivalently, $[\matA \mid \vecy] \cdot \smlmat{\vecx \\ -1} = \veczero$.
+So, forging solves SIS on the uniformly random instance $[\matA \mid \vecy]$.
 
 \paragraph{Key generation for SIS lattices.}
 
-As mentioned above, the key-generation procedure needs to compute a
-(nearly) uniform parity-check matrix $\matA \in \Zq^{n \times m}$
-together with a short basis $\matS \in \Z^{m \times m}$ of the lattice
-$\latperp(\matA) \subseteq \Z^{m}$. It is not at all obvious how to do
-this!\footnote{Our goal here is roughly analogous to generating an RSA
-  modulus~$N=pq$ together with its prime factorization $(p,q)$, or a
-  discrete logarithm instance $y=g^{x}$ together with its
-  solution~$x$. However, in these cases the method is straightforward:
-  e.g., choose two large primes $p,q$ randomly and independently, and
-  let $N=pq$ be their product.} If we first choose~$\matA$ uniformly
-at random, then it is hard to find \emph{any} short nonzero lattice
-vectors, much less a short basis. On the other hand, if we first
-choose~$\matS$ to consist of random short vectors, then it will be
-highly unlikely to be a basis of a $q$-ary lattice (much less have
-determinant~$q^{n}$), as is required.
+As mentioned above, the key-generation procedure needs to compute a (nearly) uniform parity-check matrix $\matA \in \Zq^{n \times m}$ together with a short basis $\matS \in \Z^{m \times m}$ of the lattice $\latperp(\matA) \subseteq \Z^{m}$.
+It is not at all obvious how to do this!\footnote{Our goal here is roughly analogous to generating an RSA modulus~$N=pq$ together with its prime factorization $(p,q)$, or a discrete logarithm instance $y=g^{x}$ together with its solution~$x$.
+  However, in these cases the method is straightforward: e.g., choose two large primes $p,q$ randomly and independently, and let $N=pq$ be their product.}
+If we first choose~$\matA$ uniformly at random, then it is hard to find \emph{any} short nonzero lattice vectors, much less a short basis.
+On the other hand, if we first choose~$\matS$ to consist of random short vectors, then it will be highly unlikely to be a basis of a $q$-ary lattice (much less have determinant~$q^{n}$), as is required.
 
-We recall from a previous lecture a \emph{partial} solution to this
-problem, which generates a near-uniform~$\matA$ together with
-\emph{one or more} short linearly independent vectors
-in~$\latperp(\matA)$---but not a full basis. The method works as
-follows: choose uniformly random
-$\bar{\matA} \in \Zq^{n \times \bar{m}}$ for some $\bar{m} < m$, then
-choose uniformly random $\matX \in \bit^{\bar{m} \times (m-\bar{m})}$,
-and output
-$\matA = [\bar{\matA} \mid -\bar{\matA} \matX] \in \Zq^{n \times m}$.
-By the ``regularity'' lemma (a.k.a.\ leftover hash lemma), $\matA$ is
-very close to uniform when $\bar{m} \gtrsim n \log q$, and by
-construction, the columns of
-$\smlmat{\matX \\ \matI} \in \bit^{m \times (m-\bar{m})}$ are short
-linearly independent vectors in~$\latperp(\matA)$. However, this
-yields only $m-\bar{m}$ such vectors, whereas we need~$m$ of them to
-have a full basis. Note that adding more columns to~$\matA$ increases
-the number of short vectors we have, but also the number we need by
-the same amount. In the next lecture we will see a way to ``close the
-loop'' and get a full short basis of~$\latperp(\matA)$.
+We recall from a previous lecture a \emph{partial} solution to this problem, which generates a near-uniform~$\matA$ together with \emph{one or more} short linearly independent vectors in~$\latperp(\matA)$---but not a full basis.
+The method works as follows: choose uniformly random $\bar{\matA} \in \Zq^{n \times \bar{m}}$ for some $\bar{m} < m$, then choose uniformly random $\matX \in \bit^{\bar{m} \times (m-\bar{m})}$, and output $\matA = [\bar{\matA} \mid -\bar{\matA} \matX] \in \Zq^{n \times m}$.
+By the ``regularity'' lemma (a.k.a.\ leftover hash lemma), $\matA$ is very close to uniform when $\bar{m} \gtrsim n \log q$, and by construction, the columns of $\smlmat{\matX \\ \matI} \in \bit^{m \times (m-\bar{m})}$ are short linearly independent vectors in~$\latperp(\matA)$.
+However, this yields only $m-\bar{m}$ such vectors, whereas we need~$m$ of them to have a full basis.
+Note that adding more columns to~$\matA$ increases the number of short vectors we have, but also the number we need by the same amount.
+In the next lecture we will see a way to ``close the loop'' and get a full short basis of~$\latperp(\matA)$.
 
-\subsection{Insecurity of GGH Signatures}
+\subsection{Insecurity of GGH Signatures}%
 \label{sec:insecurity-ggh}
 
-As shown by Nguyen and Regev~\cite{DBLP:journals/joc/NguyenR09}, when
-the attacker is given a (small) polynomial number of signatures on
-arbitrary distinct messages, \emph{any} instantiation of the GGH
-scheme is \emph{completely broken}; the choice of lattice family and
-its potential hardness do not matter. In particular, the scheme is
-broken under a chosen-message attack, or even any ``any-message
-attack.'' The key reason for this insecurity is that signatures turn
-out to leak a lot of useful information about the secret key: an
-attacker can efficiently ``learn'' the short secret basis (or its
-equivalent, up to order and sign) from a sequence of signatures.
+As shown by Nguyen and Regev~\cite{DBLP:journals/joc/NguyenR09}, when the attacker is given a (small) polynomial number of signatures on arbitrary distinct messages, \emph{any} instantiation of the GGH scheme is \emph{completely broken}; the choice of lattice family and its potential hardness do not matter.
+In particular, the scheme is broken under a chosen-message attack, or even any ``any-message attack.''
+The key reason for this insecurity is that signatures turn out to leak a lot of useful information about the secret key: an attacker can efficiently ``learn'' the short secret basis (or its equivalent, up to order and sign) from a sequence of signatures.
 
-In a bit more detail, the work of~\cite{DBLP:journals/joc/NguyenR09}
-exploits the fact that the signing procedure produces a signature by
-shifting the message hash $\vecy = H(m)$ into the fundamental
-parallelepiped $\piped(\matS)$ of the short basis~$\matS$. Because the
-hash is uniformly random modulo the lattice, these signatures are
-essentially uniform over the fundamental parallelepiped.\footnote{With
-  slightly more work, the attack also succeeds against the version of
-  GGH that signs using the nearest-plane algorithm, in which
-  signatures are essentially uniform over the fundamental
-  parallelepiped $\piped(\gs{\matS})$ of the Gram-Schmidt vectors of
-  the short basis.} It turns out that, given enough such points, the
-vectors defining the parallelepiped can be recovered using statistical
-analysis techniques, known as Independent Component Analysis.
+In a bit more detail, the work of~\cite{DBLP:journals/joc/NguyenR09} exploits the fact that the signing procedure produces a signature by shifting the message hash $\vecy = H(m)$ into the fundamental parallelepiped $\piped(\matS)$ of the short basis~$\matS$.
+Because the hash is uniformly random modulo the lattice, these signatures are essentially uniform over the fundamental parallelepiped.\footnote{With slightly more work, the attack also succeeds against the version of GGH that signs using the nearest-plane algorithm, in which signatures are essentially uniform over the fundamental parallelepiped $\piped(\gs{\matS})$ of the Gram-Schmidt vectors of the short basis.}
+It turns out that, given enough such points, the vectors defining the parallelepiped can be recovered using statistical analysis techniques, known as Independent Component Analysis.
 
-\section{GPV Signature Scheme}
+\section{GPV Signature Scheme}%
 \label{sec:gpv-signatures}
 
-Work of Gentry, Peikert, and
-Vaikuntanathan~\cite{DBLP:conf/stoc/GentryPV08} gave a
-\emph{theoretically sound} design of a GGH-like signature scheme,
-mainly by adjusting how signatures are produced. The GPV scheme has a
-rigorous proof of unforgeability under chosen-message attack, when
-modeling the message hash as a ``random oracle,'' and assuming the
-hardness of an average-case approximate-SVP problem---in particular,
-assuming that SIS is hard when the scheme is instantiated with SIS
-lattices.
+Work of Gentry, Peikert, and Vaikuntanathan~\cite{DBLP:conf/stoc/GentryPV08} gave a \emph{theoretically sound} design of a GGH-like signature scheme, mainly by adjusting how signatures are produced.
+The GPV scheme has a rigorous proof of unforgeability under chosen-message attack, when modeling the message hash as a ``random oracle,'' and assuming the hardness of an average-case approximate-SVP problem---in particular, assuming that SIS is hard when the scheme is instantiated with SIS lattices.
 
-Recall that the insecurity of the GGH scheme stems from the fact that
-signatures are essentially uniform over the fundamental parallelepiped
-of the secret short basis~$\matS$, and hence reveal that basis. The
-key idea behind the GPV scheme is to suitably \emph{randomize} the
-signing procedure, so that each signature is drawn from a distribution
-that reveals nothing about the short basis, while still being short
-and belonging to the appropriate coset. Specifically, the signature is
-drawn from a \emph{discrete Gaussian} distribution over the coset.
+Recall that the insecurity of the GGH scheme stems from the fact that signatures are essentially uniform over the fundamental parallelepiped of the secret short basis~$\matS$, and hence reveal that basis.
+The key idea behind the GPV scheme is to suitably \emph{randomize} the signing procedure, so that each signature is drawn from a distribution that reveals nothing about the short basis, while still being short and belonging to the appropriate coset.
+Specifically, the signature is drawn from a \emph{discrete Gaussian} distribution over the coset.
 
-More formally, for a given lattice coset $\vecy + \lat$ (corresponding
-to the hashed message), the signing procedure uses the short
-basis~$\matS$ to sample a signature~$\vecx$ from the discrete Gaussian
-distribution $D_{\vecy+\lat,r}$, for some relatively small
-parameter~$r$ that is related to the length of~$\matS$, and exceeds
-the smoothing parameter of~$\lat$. Recall that this distribution is
-defined as
-\[ D_{\vecy+\lat,r}(\vecx) := \frac{\rho_r(\vecx)}{\rho_r(\vecy+\lat)}
-  = \frac{\rho_{r}(\vecx)}{\sum_{\vecv \in \vecy+\lat}
-    \rho_{r}(\vecv)} \] for all $\vecx \in \vecy + \lat$, where
-$\rho_{r}(\vecx) := \exp(-\pi \length{\vecx}^{2}/r^{2})$. By
-previously covered tail bounds for discrete Gaussians, the sample will
-be relatively short with high probability.
+More formally, for a given lattice coset $\vecy + \lat$ (corresponding to the hashed message), the signing procedure uses the short basis~$\matS$ to sample a signature~$\vecx$ from the discrete Gaussian distribution $D_{\vecy+\lat,r}$, for some relatively small parameter~$r$ that is related to the length of~$\matS$, and exceeds the smoothing parameter of~$\lat$.
+Recall that this distribution is defined as
+\[ D_{\vecy+\lat,r}(\vecx) := \frac{\rho_r(\vecx)}{\rho_r(\vecy+\lat)} = \frac{\rho_{r}(\vecx)}{\sum_{\vecv \in \vecy+\lat} \rho_{r}(\vecv)} \] for all $\vecx \in \vecy + \lat$, where $\rho_{r}(\vecx) := \exp(-\pi \length{\vecx}^{2}/r^{2})$.
+By previously covered tail bounds for discrete Gaussians, the sample will be relatively short with high probability.
 
-Observe that the definition of the discrete Gaussian does not depend
-on the secret basis~$\matS$ in any way (other than in its width
-parameter~$r$, which is public). So, intuitively, signatures sampled
-from this distribution do not reveal anything about the secret key.
-More precisely, the security proof will show that signatures can be
-``simulated'' \emph{without knowing any short lattice vectors}, when
-the hash function is suitably modeled.
+Observe that the definition of the discrete Gaussian does not depend on the secret basis~$\matS$ in any way (other than in its width parameter~$r$, which is public).
+So, intuitively, signatures sampled from this distribution do not reveal anything about the secret key.
+More precisely, the security proof will show that signatures can be ``simulated'' \emph{without knowing any short lattice vectors}, when the hash function is suitably modeled.
 
-\subsection{Signature Scheme Template}
+\subsection{Signature Scheme Template}%
 \label{sec:gpv-signature-scheme}
 
-We formalize the above with the following GPV signature scheme
-template. This template can be instantiated with a variety of lattice
-families (e.g., SIS lattices), key-generation procedures, discrete
-Gaussian sampling algorithms, verification checks, and the like.
+We formalize the above with the following GPV signature scheme template.
+This template can be instantiated with a variety of lattice families (e.g., SIS lattices), key-generation procedures, discrete Gaussian sampling algorithms, verification checks, and the like.
 
 \begin{itemize}
-\item $\siggen()$: generate an $m$-dimensional integer lattice~$\lat$
-  together with a basis~$\matS$ that is ``short enough'' to enable the
-  signing algorithm to be run for a public quantity
-  $r \geq \eta_{\varepsilon}(\lat)$, for some
-  negligible~$\varepsilon$.
+\item $\siggen()$: generate an $m$-dimensional integer lattice~$\lat$ together with a basis~$\matS$ that is ``short enough'' to enable the signing algorithm to be run for a public quantity $r \geq \eta_{\varepsilon}(\lat)$, for some negligible~$\varepsilon$.
 
-  Let the secret signing key be $sk = \matS$, and the public
-  verification key~$vk$ be some ``hard'' representation of~$\lat$,
-  e.g., its Hermite normal form basis or parity-check matrix.
+  Let the secret signing key be $sk = \matS$, and the public verification key~$vk$ be some ``hard'' representation of~$\lat$, e.g., its Hermite normal form basis or parity-check matrix.
 
-\item $\sigsign(\matS, \mu)$: if~$\mu$ has already been signed, then
-  output the same signature as before.\footnote{This can be achieved
-    by locally storing all message-signature pairs, or by applying a
-    pseudorandom function to the message to get ``repeatable
-    (pseudo)randomness'' for the signing process, thereby making it a
-    deterministic function of the message and the secret key.}
-  Alternatively, augment~$\mu$ with sufficiently many random bits
-  (which are then included with the signature), so that with high
-  probability the same augmented message is never signed more than
-  once.
+\item $\sigsign(\matS, \mu)$: if~$\mu$ has already been signed, then output the same signature as before.\footnote{This can be achieved by locally storing all message-signature pairs, or by applying a pseudorandom function to the message to get ``repeatable (pseudo)randomness'' for the signing process, thereby making it a deterministic function of the message and the secret key.}
+  Alternatively, augment~$\mu$ with sufficiently many random bits (which are then included with the signature), so that with high probability the same augmented message is never signed more than once.
 
-  Map~$\mu$ (including any augmented randomness) to a lattice coset
-  $\vecy+\lat = H(\mu) \in \Z^{m}/\lat$ using a cryptographic hash
-  function~$H$. Using a suitable algorithm (e.g., the one described in
-  \cref{sec:dgs-alg} below) with basis~$\matS$, sample
-  $\vecx \gets D_{\vecy+\lat,r}$ and output it as the signature.
+  Map~$\mu$ (including any augmented randomness) to a lattice coset $\vecy+\lat = H(\mu) \in \Z^{m}/\lat$ using a cryptographic hash function~$H$.
+  Using a suitable algorithm (e.g., the one described in \cref{sec:dgs-alg} below) with basis~$\matS$, sample $\vecx \gets D_{\vecy+\lat,r}$ and output it as the signature.
 
-\item $\sigver(vk, \mu, \vecx)$: map~$\mu$ (including any augmented
-  randomness) to a lattice coset $\vecy+\lat = H(\mu)$. If
-  $\vecx \in \vecy+\lat$ and $\length{\vecx} \leq r \sqrt{m}$, then
-  accept; otherwise, reject.\footnote{Alternatively (or in addition),
-    other norm checks can be enforced on~$\vecx$, e.g., on
-    the~$\ell_{\infty}$ norm. The check(s) should hold with high
-    probability over the choice of a properly generated~$\vecx$; the
-    stricter they are, the harder forgery will be.}
+\item $\sigver(vk, \mu, \vecx)$: map~$\mu$ (including any augmented randomness) to a lattice coset $\vecy+\lat = H(\mu)$.
+  If $\vecx \in \vecy+\lat$ and $\length{\vecx} \leq r \sqrt{m}$, then accept; otherwise, reject.\footnote{Alternatively (or in addition), other norm checks can be enforced on~$\vecx$, e.g., on the~$\ell_{\infty}$ norm.
+    The check(s) should hold with high probability over the choice of a properly generated~$\vecx$; the stricter they are, the harder forgery will be.}
 \end{itemize}
 
-\subsection{Security}
+\subsection{Security}%
 \label{sec:security}
 
-Here we state and (almost entirely) prove the main security theorem
-about the GPV signature scheme. As described in
-\cref{sec:instantiation-sis} above, the scheme can be instantiated
-with SIS lattices, where the public key is a near-uniformly random
-parity-check matrix $\matA \in \Zq^{n \times m}$, and the hash
-function~$H$ maps messages to syndromes $\vecy \in \Zq^{n}$. A
-signature is a Gaussian-distributed
-$\vecx \in \latperp_{\vecy}(\matA)$, i.e., one for which
-$\matA \vecx = \vecy$. The hardness assumption from the theorem is
-then the SIS assumption, i.e., hardness of finding a short nonzero
-vector in $\latperp(\matA)$ for a uniformly random~$\matA$. As we have
-previously seen, this holds as long as certain lattice problems are
-hard in the worst case.
+Here we state and (almost entirely) prove the main security theorem about the GPV signature scheme.
+As described in \cref{sec:instantiation-sis} above, the scheme can be instantiated with SIS lattices, where the public key is a near-uniformly random parity-check matrix $\matA \in \Zq^{n \times m}$, and the hash function~$H$ maps messages to syndromes $\vecy \in \Zq^{n}$.
+A signature is a Gaussian-distributed $\vecx \in \latperp_{\vecy}(\matA)$, i.e., one for which $\matA \vecx = \vecy$.
+The hardness assumption from the theorem is then the SIS assumption, i.e., hardness of finding a short nonzero vector in $\latperp(\matA)$ for a uniformly random~$\matA$.
+As we have previously seen, this holds as long as certain lattice problems are hard in the worst case.
 
-\begin{theorem}
+\begin{theorem}%
   \label{thm:gpv-security}
-  Suppose that it is infeasible to find a nonzero vector of length at
-  most $2r \sqrt{m}$ in a random $m$-dimensional lattice~$\lat$ as
-  generated by $\siggen$. Then the above signature scheme is
-  (strongly\footnote{\emph{Strong} unforgeability is a strengthening
-    of ordinary unforgeability that means, even for a message that was
-    queried to the signing oracle (possibly more than once), it is
-    infeasible to find a valid signature that is different from the
-    one(s) returned by the oracle.}) unforgeable under chosen-message
-  attack, when the hash function is modeled as a ``random oracle''
-  that maps messages (including any added randomness) to the quotient
-  group $\Z^{m}/\lat$.
+  Suppose that it is infeasible to find a nonzero vector of length at most $2r \sqrt{m}$ in a random $m$-dimensional lattice~$\lat$ as generated by $\siggen$.
+  Then the above signature scheme is (strongly\footnote{\emph{Strong} unforgeability is a strengthening of ordinary unforgeability that means, even for a message that was queried to the signing oracle (possibly more than once), it is infeasible to find a valid signature that is different from the one(s) returned by the oracle.})
+  unforgeable under chosen-message attack, when the hash function is modeled as a ``random oracle'' that maps messages (including any added randomness) to the quotient group $\Z^{m}/\lat$.
 \end{theorem}
 
-The heart of the proof is the following ``preimage sampling'' lemma,
-which is also used in many subsequent works. Essentially, it says that
-sampling a uniformly random coset, then sampling from a discrete
-Gaussian over that coset, can be efficiently simulated given only (the
-public representation of) the lattice, and not any secret short
-vectors. (The lemma's name refers to the fact that sampling from
-$D_{\vecy+\lat,r}$ corresponds to sampling a preimage of a given
-output of the function that maps a Gaussian-distributed~$\vecx$ to
-$\vecx \bmod \lat$.)
+The heart of the proof is the following ``preimage sampling'' lemma, which is also used in many subsequent works.
+Essentially, it says that sampling a uniformly random coset, then sampling from a discrete Gaussian over that coset, can be efficiently simulated given only (the public representation of) the lattice, and not any secret short vectors.
+(The lemma's name refers to the fact that sampling from $D_{\vecy+\lat,r}$ corresponds to sampling a preimage of a given output of the function that maps a Gaussian-distributed~$\vecx$ to $\vecx \bmod \lat$.)
 
-\begin{lemma}[Preimage Sampling Lemma]
+\begin{lemma}[Preimage Sampling Lemma]%
   \label{lem:psf}
-  For any $r \geq \eta_{\varepsilon}(\lat)$ where~$\varepsilon$ is
-  negligible, the output distributions of the following two
-  probabilistic experiments are within negligible statistical distance
-  of each other:
+  For any $r \geq \eta_{\varepsilon}(\lat)$ where~$\varepsilon$ is negligible, the output distributions of the following two probabilistic experiments are within negligible statistical distance of each other:
   \begin{description}[itemsep=0pt]
-  \item[\textbf{REAL:}] choose uniformly random coset
-    $\vecy+\lat \gets \Z^{m}/\lat$, choose
-    $\vecx \gets D_{\vecy+\lat,r}$, and output $(\vecx,\vecy+\lat)$.
-  \item[\textbf{SIM:}] choose $\vecx \gets D_{\Z^{m},r}$,
-    define coset $\vecy+\lat = \vecx \bmod \lat$, and output
-    $(\vecx,\vecy+\lat)$.
+  \item[\textbf{REAL:}] choose uniformly random coset $\vecy+\lat \gets \Z^{m}/\lat$, choose $\vecx \gets D_{\vecy+\lat,r}$, and output $(\vecx,\vecy+\lat)$.
+  \item[\textbf{SIM:}] choose $\vecx \gets D_{\Z^{m},r}$, define coset $\vecy+\lat = \vecx \bmod \lat$, and output $(\vecx,\vecy+\lat)$.
   \end{description}
 \end{lemma}
 
 \begin{proof}
-  We prove this by showing two facts: first, that the $\vecy+\lat$
-  components are statistically close, and second, that conditioned on
-  any fixed value of $\vecy+\lat$ in the second component, the first
-  components are identically distributed.
+  We prove this by showing two facts: first, that the $\vecy+\lat$ components are statistically close, and second, that conditioned on any fixed value of $\vecy+\lat$ in the second component, the first components are identically distributed.
 
-  For the first fact, we need to show that in the SIM
-  experiment, where $\vecx \gets D_{\Z^{m},r}$, the coset
-  $\vecy+\lat = \vecx \bmod \lat$ is nearly uniform over
-  $\Z^{m}/\lat$. For any fixed coset $\bar{\vecy}+\lat$, we are
-  interested in the probability that $\vecx \in \bar{\vecy}+\lat$,
-  which is
-  \[ \sum_{\vecx \in \bar{\vecy}+\lat} D_{\Z^{m},r}(\vecx) =
-    \frac{\sum_{\vecx \in \bar{\vecy}+\lat}
-      \rho_{r}(\vecx)}{\rho_{r}(\Z^{m})} =
-    \frac{\rho_{r}(\bar{\vecy}+\lat)}{\rho_{r}(\Z^{m})} \approx
-    \frac{\rho_{r}(\lat)}{\rho_{r}(\Z^{m})}, \] where the
-  approximation follows from the fact that
-  $r \geq \eta_{\varepsilon}(\lat)$ and the smoothing theorem, which
-  says that all cosets of~$\lat$ have essentially the same mass
-  under~$\rho_{r}$ (up to a multiplicative factor $1 \pm \negl$). So,
-  each coset $\bar{\vecy}+\lat$ is essentially equally likely in the
-  SIM experiment.
+  For the first fact, we need to show that in the SIM experiment, where $\vecx \gets D_{\Z^{m},r}$, the coset $\vecy+\lat = \vecx \bmod \lat$ is nearly uniform over $\Z^{m}/\lat$.
+  For any fixed coset $\bar{\vecy}+\lat$, we are interested in the probability that $\vecx \in \bar{\vecy}+\lat$, which is
+  \[ \sum_{\vecx \in \bar{\vecy}+\lat} D_{\Z^{m},r}(\vecx) = \frac{\sum_{\vecx \in \bar{\vecy}+\lat} \rho_{r}(\vecx)}{\rho_{r}(\Z^{m})} = \frac{\rho_{r}(\bar{\vecy}+\lat)}{\rho_{r}(\Z^{m})} \approx \frac{\rho_{r}(\lat)}{\rho_{r}(\Z^{m})}, \] where the approximation follows from the fact that $r \geq \eta_{\varepsilon}(\lat)$ and the smoothing theorem, which says that all cosets of~$\lat$ have essentially the same mass under~$\rho_{r}$ (up to a multiplicative factor $1 \pm \negl$).
+  So, each coset $\bar{\vecy}+\lat$ is essentially equally likely in the SIM experiment.
 
-  For the second step, we need to show that in the SIM
-  experiment, conditioned on the second component being any fixed
-  coset $\bar{\vecy}+\lat$, the conditional distribution of the first
-  component~$\vecx$ is $D_{\bar{\vecy}+\lat,r}$. This follows
-  immediately by definition: initially, $\vecx$ is distributed
-  according to $D_{\Z^{m},r}$, i.e., each $\vecx \in \Z^{m}$ has
-  probability proportional to $\rho_{r}(\vecx)$. Then we condition on
-  the event $\vecx \in \bar{\vecy}+\lat$, so each such~$\vecx$ still
-  has probability proportional to $\rho_{r}(\vecx)$, but with a new
-  constant of proportionality, namely, $\rho_{r}(\bar{\vecy}+\lat)$.
-  This is exactly the definition of $D_{\bar{\vecy}+\lat,r}$, as
-  needed.
+  For the second step, we need to show that in the SIM experiment, conditioned on the second component being any fixed coset $\bar{\vecy}+\lat$, the conditional distribution of the first component~$\vecx$ is $D_{\bar{\vecy}+\lat,r}$.
+  This follows immediately by definition: initially, $\vecx$ is distributed according to $D_{\Z^{m},r}$, i.e., each $\vecx \in \Z^{m}$ has probability proportional to $\rho_{r}(\vecx)$.
+  Then we condition on the event $\vecx \in \bar{\vecy}+\lat$, so each such~$\vecx$ still has probability proportional to $\rho_{r}(\vecx)$, but with a new constant of proportionality, namely, $\rho_{r}(\bar{\vecy}+\lat)$.
+  This is exactly the definition of $D_{\bar{\vecy}+\lat,r}$, as needed.
 \end{proof}
 
 \begin{proof}[Proof of \cref{thm:gpv-security}]
-  The key idea is that in the chosen-message attack, by
-  \cref{lem:psf}, hash values and signatures can jointly be
-  efficiently ``simulated,'' given only (the public representation of)
-  the lattice~$\lat$. So, having access to the hash and signing
-  oracles does not help the adversary produce a forgery, essentially
-  because it could perform the simulation itself. Moreover, finding a
-  forgery allows one to compute a short nonzero lattice vector, in a
-  way we will see.
+  The key idea is that in the chosen-message attack, by \cref{lem:psf}, hash values and signatures can jointly be efficiently ``simulated,'' given only (the public representation of) the lattice~$\lat$.
+  So, having access to the hash and signing oracles does not help the adversary produce a forgery, essentially because it could perform the simulation itself.
+  Moreover, finding a forgery allows one to compute a short nonzero lattice vector, in a way we will see.
 
-  The proof proceeds via reduction. Let~$\Forger$ be an adversary that
-  attempts to forge a signature using a chosen-message attack, and
-  succeeds with some probability. We construct a reduction~$\Sim$ that
-  attempts finds a short nonzero vector in a given random
-  lattice~$\lat$ (as distributed according to $\siggen$), and succeeds
-  with essentially the same probability (up to negligible additive
-  error). The reduction simulates the chosen-message attack game
-  to~$\Forger$, and then uses~$\Forger$'s output forgery to compute a
-  short nonzero lattice vector. A key point is that because~$\Sim$ has
-  no oracles of its own, it must simulate both the hash oracle~$H$ and
-  the signing oracle to~$\Forger$. At first glance, it is unclear
-  how~$\Sim$ can implement the signing oracle, because it does not not
-  know a valid signing key for the lattice (i.e., a short basis).
-  Instead, $\Sim$ will use its ability to ``program'' the outputs of
-  the hash oracle so that it knows a (properly distributed) signature
-  for any queried message.
+  The proof proceeds via reduction.
+  Let~$\Forger$ be an adversary that attempts to forge a signature using a chosen-message attack, and succeeds with some probability.
+  We construct a reduction~$\Sim$ that attempts finds a short nonzero vector in a given random lattice~$\lat$ (as distributed according to $\siggen$), and succeeds with essentially the same probability (up to negligible additive error).
+  The reduction simulates the chosen-message attack game to~$\Forger$, and then uses~$\Forger$'s output forgery to compute a short nonzero lattice vector.
+  A key point is that because~$\Sim$ has no oracles of its own, it must simulate both the hash oracle~$H$ and the signing oracle to~$\Forger$.
+  At first glance, it is unclear how~$\Sim$ can implement the signing oracle, because it does not not know a valid signing key for the lattice (i.e., a short basis).
+  Instead, $\Sim$ will use its ability to ``program'' the outputs of the hash oracle so that it knows a (properly distributed) signature for any queried message.
 
   \paragraph{Reduction.}
 
-  Formally, the reduction~$\Sim$ is given~$\lat$ as input, and works
-  as follows. It runs~$\Forger$, giving it~$\lat$ as the public
-  verification key. The reduction then simulates the hashing and
-  signing oracles as described below. Without loss of generality, we
-  assume that~$\Forger$ never queries the hash oracle~$H$ on the same
-  input more than once, because repeated queries would yield the same
-  result. The same goes for the signing oracle, in the version of the
-  system where the signer returns the same signature on repeated
-  queries.\footnote{In the version where the signer first augments the
-    message with some randomness, $\Forger$ may call the signing
-    oracle more than once on the same message, because the results on
-    repeated queries can vary. However, observe that with high
-    probability, the same \emph{augmented} message is not signed more
-    than once, which is all we need.} Finally, we can assume
-  that~$\Forger$, before querying the signing oracle or outputting a
-  forgery on a particular message, first queries the hash oracle~$H$
-  on that message (because the reduction can induce such a query
-  itself).
+  Formally, the reduction~$\Sim$ is given~$\lat$ as input, and works as follows.
+  It runs~$\Forger$, giving it~$\lat$ as the public verification key.
+  The reduction then simulates the hashing and signing oracles as described below.
+  Without loss of generality, we assume that~$\Forger$ never queries the hash oracle~$H$ on the same input more than once, because repeated queries would yield the same result.
+  The same goes for the signing oracle, in the version of the system where the signer returns the same signature on repeated queries.\footnote{In the version where the signer first augments the message with some randomness, $\Forger$ may call the signing oracle more than once on the same message, because the results on repeated queries can vary.
+    However, observe that with high probability, the same \emph{augmented} message is not signed more than once, which is all we need.}
+  Finally, we can assume that~$\Forger$, before querying the signing oracle or outputting a forgery on a particular message, first queries the hash oracle~$H$ on that message (because the reduction can induce such a query itself).
   \begin{itemize}
-  \item Hash queries: on the $i$th query~$\mu_{i}$, choose
-    $\vecx_{i} \gets D_{\Z^{m},r}$ and let
-    $\vecy_{i} + \lat = \vecx_{i} \bmod \lat$. Store
-    $(\mu_{i}, \vecx_{i})$ and return $\vecy_{i} + \lat$ as the hash
-    output.
+  \item Hash queries: on the $i$th query~$\mu_{i}$, choose $\vecx_{i} \gets D_{\Z^{m},r}$ and let $\vecy_{i} + \lat = \vecx_{i} \bmod \lat$.
+    Store $(\mu_{i}, \vecx_{i})$ and return $\vecy_{i} + \lat$ as the hash output.
 
-  \item Sign queries: on message~$\mu$, find the unique stored
-    $(\mu_{i}, \vecx_{i})$ for which $\mu_{i} = \mu$, and
-    return~$\vecx_{i}$ as the signature.
+  \item Sign queries: on message~$\mu$, find the unique stored $(\mu_{i}, \vecx_{i})$ for which $\mu_{i} = \mu$, and return~$\vecx_{i}$ as the signature.
   \end{itemize}
-  Finally, $\Forger$ outputs some potential forgery
-  $(\mu^{*}, \vecx^{*})$. The reduction~$\Sim$ finds the unique stored
-  $(\mu_{i}, \vecx_{i})$ for which $\mu_{i} = \mu^{*}$, and outputs
-  $\vecv = \vecx^{*} - \vecx_{i}$ as a potential short nonzero vector
-  in~$\lat$.
+  Finally, $\Forger$ outputs some potential forgery $(\mu^{*}, \vecx^{*})$.
+  The reduction~$\Sim$ finds the unique stored $(\mu_{i}, \vecx_{i})$ for which $\mu_{i} = \mu^{*}$, and outputs $\vecv = \vecx^{*} - \vecx_{i}$ as a potential short nonzero vector in~$\lat$.
 
   \paragraph{Analysis.}
 
-  We now analyze the reduction. First observe that by \cref{lem:psf},
-  the reduction correctly simulates (up to negligible statistical
-  distance) the hashing and signing oracles of the real chosen-message
-  attack, so the probability that~$\Forger$ outputs a valid forgery is
-  essentially the same in the simulation as it is in the real attack
-  game. This is because for each hash query~$\mu_{i}$ (which all are
-  distinct by assumption), the real attack and the simulation
-  respectively correspond to the REAL and SIM experiments of
-  \cref{lem:psf}: in the real attack, the hash output for~$\mu_{i}$ is
-  a fresh uniformly random coset $\vecy_{i} + \lat$, and the
-  corresponding signature (if it is ever queried) is distributed
-  according to $D_{\vecy_{i}+\lat,r}$, whereas in the simulation, the
-  signature $\vecx_{i} \gets D_{\Z^{m},r}$ is chosen first, and the
-  hash output for~$\mu_{i}$ is defined as
-  $\vecy_{i} + \lat = \vecx_{i} \bmod \lat$.\footnote{Notice that here
-    we are using the assumption that no (randomness augmented) message
-    is ever signed more than once: in the simulation, the same
-    signature would be returned each time, so we must ensure that the
-    same is true in the real system.}
+  We now analyze the reduction.
+  First observe that by \cref{lem:psf}, the reduction correctly simulates (up to negligible statistical distance) the hashing and signing oracles of the real chosen-message attack, so the probability that~$\Forger$ outputs a valid forgery is essentially the same in the simulation as it is in the real attack game.
+  This is because for each hash query~$\mu_{i}$ (which all are distinct by assumption), the real attack and the simulation respectively correspond to the REAL and SIM experiments of \cref{lem:psf}: in the real attack, the hash output for~$\mu_{i}$ is a fresh uniformly random coset $\vecy_{i} + \lat$, and the corresponding signature (if it is ever queried) is distributed according to $D_{\vecy_{i}+\lat,r}$, whereas in the simulation, the signature $\vecx_{i} \gets D_{\Z^{m},r}$ is chosen first, and the hash output for~$\mu_{i}$ is defined as $\vecy_{i} + \lat = \vecx_{i} \bmod \lat$.\footnote{Notice that here we are using the assumption that no (randomness augmented) message is ever signed more than once: in the simulation, the same signature would be returned each time, so we must ensure that the same is true in the real system.}
 
-  Finally, we claim that if~$\Forger$ outputs a valid forgery
-  $(\mu^{*}, \vecx^{*})$, the reduction~$\Sim$ outputs a nonzero
-  $\vecv \in \lat$ of norm $\length{\vecv} \leq 2r \sqrt{m}$, with
-  high probability. First, let $(\mu_{i} = \mu^{*}, \vecx_{i})$ be as
-  defined in the reduction, and observe that since both
-  $\vecx_{i}, \vecx^{*}$ belong to the same coset
-  $\vecy_{i} + \lat = H(\mu^{*}) = H(\mu_{i})$ and
-  $\length{\vecx_{i}}, \length{\vecx^{*}} \leq r \sqrt{m}$ (because
-  they are valid signatures for~$\mu^{*} = \mu_{i}$), we have
-  $\vecv = \vecx^{*} - \vecx_{i} \in \lat$ and
-  $\length{\vecv} \leq 2r\sqrt{m}$ by the triangle inequality.
+  Finally, we claim that if~$\Forger$ outputs a valid forgery $(\mu^{*}, \vecx^{*})$, the reduction~$\Sim$ outputs a nonzero $\vecv \in \lat$ of norm $\length{\vecv} \leq 2r \sqrt{m}$, with high probability.
+  First, let $(\mu_{i} = \mu^{*}, \vecx_{i})$ be as defined in the reduction, and observe that since both $\vecx_{i}, \vecx^{*}$ belong to the same coset $\vecy_{i} + \lat = H(\mu^{*}) = H(\mu_{i})$ and $\length{\vecx_{i}}, \length{\vecx^{*}} \leq r \sqrt{m}$ (because they are valid signatures for~$\mu^{*} = \mu_{i}$), we have $\vecv = \vecx^{*} - \vecx_{i} \in \lat$ and $\length{\vecv} \leq 2r\sqrt{m}$ by the triangle inequality.
 
-  It just remains to show that $\vecv \neq \veczero$ with high
-  probability. There are two cases, based on whether~$\Forger$ queried
-  the signing oracle on~$\mu^{*}$, or not. In the former case,
-  according to the definition of strong unforgeability we must have
-  $\vecx^{*} \neq \vecx_{i}$, so
-  $\vecv = \vecx^{*} - \vecx_{i} \neq \veczero$. In the latter case,
-  we use an information-theoretic argument: because~$\Forger$ did not
-  query the signing oracle on $\mu^{*} = \mu_{i}$, the only random
-  variable that depends on~$\vecx_{i}$ that~$\Forger$ has seen is the
-  hash value $\vecy_{i} + \lat = \vecx_{i} \bmod \lat = H(\mu_{i})$.
-  Therefore, conditioned on~$\Forger$'s view, $\vecx_{i}$ is random
-  with discrete Gaussian distribution $D_{\vecy_{i}+\lat,r}$. One can
-  show that this distribution has large ``min-entropy,'' i.e., even
-  the most likely outcome is very unlikely. In particular, for any
-  forged signature~$\vecx^{*}$, we have that
-  $\vecx_{i} \neq \vecx^{*}$ with high probability, as needed.
+  It just remains to show that $\vecv \neq \veczero$ with high probability.
+  There are two cases, based on whether~$\Forger$ queried the signing oracle on~$\mu^{*}$, or not.
+  In the former case, according to the definition of strong unforgeability we must have $\vecx^{*} \neq \vecx_{i}$, so $\vecv = \vecx^{*} - \vecx_{i} \neq \veczero$.
+  In the latter case, we use an information-theoretic argument: because~$\Forger$ did not query the signing oracle on $\mu^{*} = \mu_{i}$, the only random variable that depends on~$\vecx_{i}$ that~$\Forger$ has seen is the hash value $\vecy_{i} + \lat = \vecx_{i} \bmod \lat = H(\mu_{i})$.
+  Therefore, conditioned on~$\Forger$'s view, $\vecx_{i}$ is random with discrete Gaussian distribution $D_{\vecy_{i}+\lat,r}$.
+  One can show that this distribution has large ``min-entropy,'' i.e., even the most likely outcome is very unlikely.
+  In particular, for any forged signature~$\vecx^{*}$, we have that $\vecx_{i} \neq \vecx^{*}$ with high probability, as needed.
 \end{proof}
 
-\subsection{Discrete Gaussian Sampling Algorithm}
+\subsection{Discrete Gaussian Sampling Algorithm}%
 \label{sec:dgs-alg}
 
-It remains to give an efficient algorithm for discrete Gaussian
-sampling. Specifically, given an $m$-dimensional lattice coset
-$\vecy+\lat$, a width~$r$, and a sufficiently short basis~$\matS$
-of~$\lat$, the algorithm should sample from (a distribution
-statistically very close to) the discrete Gaussian $D_{\vecy+\lat,r}$.
-The work of~\cite{DBLP:conf/stoc/GentryPV08} showed that a
-\emph{randomized} version of the \emph{nearest-plane} algorithm
-fulfills this goal.\footnote{A similarly randomized nearest-plane
-  algorithm was previously considered
-  in~\cite{DBLP:conf/soda/Klein00}, but for the very different purpose
-  of solving BDD, and for complementary parameters in relation to the
-  short basis vectors.}
+It remains to give an efficient algorithm for discrete Gaussian sampling.
+Specifically, given an $m$-dimensional lattice coset $\vecy+\lat$, a width~$r$, and a sufficiently short basis~$\matS$ of~$\lat$, the algorithm should sample from (a distribution statistically very close to) the discrete Gaussian $D_{\vecy+\lat,r}$.
+The work of~\cite{DBLP:conf/stoc/GentryPV08} showed that a \emph{randomized} version of the \emph{nearest-plane} algorithm fulfills this goal.\footnote{A similarly randomized nearest-plane algorithm was previously considered in~\cite{DBLP:conf/soda/Klein00}, but for the very different purpose of solving BDD, and for complementary parameters in relation to the short basis vectors.}
 
-More formally, the algorithm works as follows. (Recall
-that~$\gs{\matS}$ denotes the Gram-Schmidt orthogonalization
-of~$\matS$, which can be precomputed before the input coset is known.)
+More formally, the algorithm works as follows.
+(Recall that~$\gs{\matS}$ denotes the Gram-Schmidt orthogonalization of~$\matS$, which can be precomputed before the input coset is known.)
 For $i=m$ down to~$1$:
 \begin{enumerate}[itemsep=0pt]
-\item Let
-  $c_i = \inner{\vecy, \gs\vecs_i}/\inner{\gs\vecs_i, \gs\vecs_i}$.
+\item Let $c_i = \inner{\vecy, \gs\vecs_i}/\inner{\gs\vecs_i, \gs\vecs_i}$.
 
 \item Let $z_i \gets c_i + D_{\Z-c_i, r/\length{\gs\vecs_i}}$.
 
-  (This is the only difference with the nearest-plane algorithm:
-  instead of letting $z_{i} = \round{c_{i}}$, we let it be a random
-  integer from a discrete Gaussian ``centered'' at~$c_{i}$, of
-  appropriate width.)
+  (This is the only difference with the nearest-plane algorithm: instead of letting $z_{i} = \round{c_{i}}$, we let it be a random integer from a discrete Gaussian ``centered'' at~$c_{i}$, of appropriate width.)
     
 \item Let $\vecy \gets \vecy - z_i \vecs_i$.
 \end{enumerate}
 Finally, output (the most recent value of) $\vecy$.
 
 \begin{theorem}
-  If
-  $r \geq (\max_i \length{\gs\vecs_i}) \cdot
-  \sqrt{\ln(O(m/\varepsilon))} \geq \eta_{\varepsilon}(\lat(\matS))$
-  for some positive $\varepsilon < 1/2$, then the above algorithm
-  samples from $D_{\vecy+\lat,r}$, to within~$\varepsilon$ statistical
-  distance.
+  If $r \geq (\max_i \length{\gs\vecs_i}) \cdot \sqrt{\ln(O(m/\varepsilon))} \geq \eta_{\varepsilon}(\lat(\matS))$ for some positive $\varepsilon < 1/2$, then the above algorithm samples from $D_{\vecy+\lat,r}$, to within~$\varepsilon$ statistical distance.
 \end{theorem}
 
 \begin{proof}
-  By construction, the algorithm returns a vector in the coset
-  $\vecy + \lat$, because it changes~$\vecy$ only by subtracting
-  lattice vectors from it. Now let~$\vecx \in \vecy+\lat$ be
-  arbitrary; to establish the claim, we show that the probability that
-  the algorithm outputs~$\vecx$ is proportional to $\rho_r(\vecx)$, up
-  to a factor within $1 \pm \varepsilon$. Trivially,~$\vecx$ is output
-  if and only if the unique sequence of~$z_i$ yielding~$\vecx$ is
-  chosen; these satisfy
-  $\vecx = \sum_{i=1}^{m} (c_{i} - z_{i}) \gs{\vecs}_{i}$, where
-  the~$c_{i}$ are as defined in the algorithm (and implicitly depend
-  on the chosen values of~$z_{j}$ for $j > i$). The probability that
-  this sequence of~$z_{i}$ is chosen is:
+  By construction, the algorithm returns a vector in the coset $\vecy + \lat$, because it changes~$\vecy$ only by subtracting lattice vectors from it.
+  Now let~$\vecx \in \vecy+\lat$ be arbitrary; to establish the claim, we show that the probability that the algorithm outputs~$\vecx$ is proportional to $\rho_r(\vecx)$, up to a factor within $1 \pm \varepsilon$.
+  Trivially,~$\vecx$ is output if and only if the unique sequence of~$z_i$ yielding~$\vecx$ is chosen; these satisfy $\vecx = \sum_{i=1}^{m} (c_{i} - z_{i}) \gs{\vecs}_{i}$, where the~$c_{i}$ are as defined in the algorithm (and implicitly depend on the chosen values of~$z_{j}$ for $j > i$).
+  The probability that this sequence of~$z_{i}$ is chosen is:
   \begin{align*}
     \prod_{i} D_{\Z-c_i,r/\length{\gs\vecs_i}}(z_i-c_i)
     &= \frac{\prod_{i}
@@ -633,18 +300,9 @@ Finally, output (the most recent value of) $\vecy$.
       \rho_{r/\length{\gs\vecs_i}}(c_i+\Z)} \\
     &\approx \frac{\rho_r(\vecx)}{\prod_{i} \rho_{r/\length{\gs\vecs_i}}(\Z)} . 
   \end{align*}
-  The final equality follows from the fact that
-  $\length{\vecx}^{2} = \sum_{i=1}^{m} (z_{i}-c_{i})^{2}
-  \length{\gs{\vecs}_{i}}^{2}$ by orthogonality of
-  the~$\gs{\vecs}_{i}$, and by definition of $\rho_{r}$ (over
-  both~$\R^{m}$ and~$\R$). The final approximation follows from our
-  assumption that
-  $r/\length{\gs\vecs_i} \geq \sqrt{\ln(O(m/\varepsilon))} \geq
-  \smooth_{\varepsilon}(\Z)$, which implies that
-  $\prod_{i} \rho_{r/\length{\gs\vecs_i}}(c_i+\Z)$ is sufficiently
-  close to $\prod_{i} \rho_{r/\length{\gs\vecs_i}}(\Z)$. Since the
-  denominator in the final expression is just a fixed constant of
-  proportionality, the proof is complete.
+  The final equality follows from the fact that $\length{\vecx}^{2} = \sum_{i=1}^{m} (z_{i}-c_{i})^{2} \length{\gs{\vecs}_{i}}^{2}$ by orthogonality of the~$\gs{\vecs}_{i}$, and by definition of $\rho_{r}$ (over both~$\R^{m}$ and~$\R$).
+  The final approximation follows from our assumption that $r/\length{\gs\vecs_i} \geq \sqrt{\ln(O(m/\varepsilon))} \geq \smooth_{\varepsilon}(\Z)$, which implies that $\prod_{i} \rho_{r/\length{\gs\vecs_i}}(c_i+\Z)$ is sufficiently close to $\prod_{i} \rho_{r/\length{\gs\vecs_i}}(\Z)$.
+  Since the denominator in the final expression is just a fixed constant of proportionality, the proof is complete.
 \end{proof}
 
 \bibliography{common/lattices,common/crypto}
