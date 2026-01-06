@@ -1,22 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage{fullpage}
-\usepackage{newtxtext}
-\usepackage{microtype}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage[amsmath,amsthm,thmmarks,hyperref]{ntheorem}
-\usepackage[pagebackref=true]{hyperref} % must set backref at load time
-\usepackage{fancyhdr}
-\usepackage{mathtools}
-\usepackage{enumitem}
-\usepackage[svgnames]{xcolor}
-\usepackage{tikz}
-\usepackage{import}
-
-% load after hyperref, algpseudocode to get proper behavior
-\usepackage[capitalize,nameinlink,noabbrev]{cleveref}
-
-\import{common/}{head.tex}
+\input{header}
 
 % VARIABLES
 
@@ -26,7 +10,6 @@
 
 % END OF VARIABLES
 
-\import{common/}{lechead.tex}
 \lecheader                      % execute lecture commands
 
 \pagestyle{plain}               % default: no special header
@@ -37,114 +20,62 @@
 
 % LECTURE MATERIAL STARTS HERE
 
-\section{The Shortest and Closest Vector Problems}
+\section{The Shortest and Closest Vector Problems}%
 \label{sec:svp-cvp}
 
-Recall the definition of the approximate Shortest Vector Problem. (The
-exact version is obtained by taking $\gamma=1$, which is implicit
-when~$\gamma$ is omitted.)
+Recall the definition of the approximate Shortest Vector Problem.
+(The exact version is obtained by taking $\gamma=1$, which is implicit when~$\gamma$ is omitted.)
 
-\begin{definition}
+\begin{definition}%
   \label{def:svp}
-  For $\gamma = \gamma(n) \geq 1$, the $\gamma$-approximate Shortest
-  Vector Problem $\svp_{\gamma}$ is: given a basis $\matB$ of a
-  lattice $\lat = \lat(\matB) \subset \R^{n}$, find some nonzero
-  $\vecv \in \lat$ such that
-  $\length{\vecv} \leq \gamma(n) \cdot \lambda_{1}(\lat)$.
+  For $\gamma = \gamma(n) \geq 1$, the $\gamma$-approximate Shortest Vector Problem $\svp_{\gamma}$ is: given a basis $\matB$ of a lattice $\lat = \lat(\matB) \subset \R^{n}$, find some nonzero $\vecv \in \lat$ such that $\length{\vecv} \leq \gamma(n) \cdot \lambda_{1}(\lat)$.
 \end{definition}
 
-\noindent A closely related inhomogeneous variant is the approximate
-Closest Vector Problem.
+\noindent A closely related inhomogeneous variant is the approximate Closest Vector Problem.
 
-\begin{definition}
+\begin{definition}%
   \label{def:cvp}
-  For $\gamma = \gamma(n) \geq 1$, the $\gamma$-approximate Closest
-  Vector Problem $\cvp_{\gamma}$ is: given a basis $\matB$ of a
-  lattice $\lat = \lat(\matB) \subset \R^{n}$ and a point
-  $\vect \in \R^{n}$, find some $\vecv \in \lat$ such that
-  $\length{\vect - \vecv} \leq \gamma(n) \cdot \dist(\vect,\lat)$.
-  Equivalently, find an element of the lattice coset $\vect + \lat$
-  having norm at most $\gamma(n) \cdot \lambda(\vect+\lat)$, where
-  $\lambda(\vect+\lat) := \min_{\vecx \in \vect+\lat} \length{\vecx} =
-  \dist(\vect,\lat)$.
+  For $\gamma = \gamma(n) \geq 1$, the $\gamma$-approximate Closest Vector Problem $\cvp_{\gamma}$ is: given a basis $\matB$ of a lattice $\lat = \lat(\matB) \subset \R^{n}$ and a point $\vect \in \R^{n}$, find some $\vecv \in \lat$ such that $\length{\vect - \vecv} \leq \gamma(n) \cdot \dist(\vect,\lat)$.
+  Equivalently, find an element of the lattice coset $\vect + \lat$ having norm at most $\gamma(n) \cdot \lambda(\vect+\lat)$, where $\lambda(\vect+\lat) := \min_{\vecx \in \vect+\lat} \length{\vecx} = \dist(\vect,\lat)$.
 \end{definition}
 
-Above we have used the fact that
-$\dist(\vect, \lat) = \min_{\vecv \in \lat} \length{\vect - \vecv} =
-\min_{\vecx \in \vect+\lat} \length{\vecx}$, because $\lat = -\lat$.
-The two versions of $\cvp$ are equivalent by associating each
-$\vecv \in \lat$ with $\vect - \vecv \in \vect + \lat$, and vice
-versa. Although the former version of the problem is the more
-``obvious'' formulation, the latter version is often more convenient
-in algorithmic settings, so we will use it throughout what follows.
+Above we have used the fact that $\dist(\vect, \lat) = \min_{\vecv \in \lat} \length{\vect - \vecv} = \min_{\vecx \in \vect+\lat} \length{\vecx}$, because $\lat = -\lat$.
+The two versions of $\cvp$ are equivalent by associating each $\vecv \in \lat$ with $\vect - \vecv \in \vect + \lat$, and vice versa.
+Although the former version of the problem is the more ``obvious'' formulation, the latter version is often more convenient in algorithmic settings, so we will use it throughout what follows.
 
-We first show that $\svp_{\gamma}$ is no harder than $\cvp_{\gamma}$;
-more specifically, given an oracle for $\cvp_{\gamma}$ we can solve
-$\svp_{\gamma}$ efficiently. Several other natural lattice problems
-also reduce to $\cvp_{\gamma}$~\cite{DBLP:conf/soda/Micciancio08},
-making it a central algorithmic target of interest.
+We first show that $\svp_{\gamma}$ is no harder than $\cvp_{\gamma}$; more specifically, given an oracle for $\cvp_{\gamma}$ we can solve $\svp_{\gamma}$ efficiently.
+Several other natural lattice problems also reduce to $\cvp_{\gamma}$~\cite{DBLP:conf/soda/Micciancio08}, making it a central algorithmic target of interest.
 
 \begin{theorem}
-  For any $\gamma \geq 1$, we have $\svp_{\gamma} \leq \cvp_{\gamma}$
-  via a Cook reduction.
+  For any $\gamma \geq 1$, we have $\svp_{\gamma} \leq \cvp_{\gamma}$ via a Cook reduction.
 \end{theorem}
 
 \begin{proof}
-  Consider the following algorithm that, given a lattice basis
-  $\matB=(\vecb_1, \ldots, \vecb_n)$, and $\cvp$ oracle $\Ora$,
-  outputs some $\vecv \in \lat = \lat(\matB)$:
+  Consider the following algorithm that, given a lattice basis $\matB=(\vecb_1, \ldots, \vecb_n)$, and $\cvp$ oracle $\Ora$, outputs some $\vecv \in \lat = \lat(\matB)$:
   \begin{itemize}[itemsep=0pt]
   \item For each $i=1,\ldots, n$, compute basis
     $\matB_i = (\vecb_1, \ldots, \vecb_{i-1}, 2\vecb_i, \vecb_{i+1},
     \ldots, \vecb_n )$ and let $\vecv_i = \Ora(\matB_i, \vecb_i)$.
-  \item Output any one of the~$\vecv_i$ that has minimal length
-    $\length{\vecv_{i}}$.
+  \item Output any one of the~$\vecv_i$ that has minimal length $\length{\vecv_{i}}$.
   \end{itemize}
-  We claim that this algorithm solves $\svp_{\gamma}$, i.e., it
-  returns some nonzero lattice vector of length at most
-  $\gamma \cdot \lambda_{1}(\lat)$.
+  We claim that this algorithm solves $\svp_{\gamma}$, i.e., it returns some nonzero lattice vector of length at most $\gamma \cdot \lambda_{1}(\lat)$.
 
-  First observe that for each~$i$, the lattice
-  $\lat_{i} = \lat(\matB_{i}) \subset \lat$ consists of all those
-  vectors in~$\lat$ whose $\vecb_{i}$-coordinate is even, whereas the
-  coset $\vecb_{i} + \lat_{i} \subset \lat$ consists of all those
-  whose $\vecb_{i}$-coordinate is odd. Therefore,
-  $\veczero \not\in \vecb_{i} + \lat_{i}$ for all~$i$, so
-  $\lambda(\vecb_{i} + \lat_{i}) \geq \lambda_{1}(\lat)$. Moreover, if
-  $\vecv \in \lat$ is any shortest nonzero lattice vector, then at
-  least one of its coefficients with respect to $\matB$ must be odd,
-  otherwise $\vecv/2 \in \lat$ would be a shorter nonzero lattice
-  vector. Therefore, $\vecv \in \vecb_{i} + \lat_{i}$ for at least
-  one~$i$, and so $\lambda(\vecb_{i}+\lat_{i}) = \lambda_{1}(\lat)$
-  for such~$i$.
+  First observe that for each~$i$, the lattice $\lat_{i} = \lat(\matB_{i}) \subset \lat$ consists of all those vectors in~$\lat$ whose $\vecb_{i}$-coordinate is even, whereas the coset $\vecb_{i} + \lat_{i} \subset \lat$ consists of all those whose $\vecb_{i}$-coordinate is odd.
+  Therefore, $\veczero \not\in \vecb_{i} + \lat_{i}$ for all~$i$, so $\lambda(\vecb_{i} + \lat_{i}) \geq \lambda_{1}(\lat)$.
+  Moreover, if $\vecv \in \lat$ is any shortest nonzero lattice vector, then at least one of its coefficients with respect to $\matB$ must be odd, otherwise $\vecv/2 \in \lat$ would be a shorter nonzero lattice vector.
+  Therefore, $\vecv \in \vecb_{i} + \lat_{i}$ for at least one~$i$, and so $\lambda(\vecb_{i}+\lat_{i}) = \lambda_{1}(\lat)$ for such~$i$.
 
-  Now by hypothesis on~$\Ora$, for every~$i$ we have
-  $\vecv_{i} \in \vecb_{i} + \lat_{i} \subset \lat \setminus
-  \set{\veczero}$ (so the reduction outputs a nonzero lattice vector)
-  and
-  $\length{\vecv_{i}} \leq \gamma \cdot \lambda(\vecb_{i} +
-  \lat_{i})$. Since
-  $\lambda(\vecb_{i} + \lat_{i}) = \lambda_{1}(\lat)$ for at least
-  one~$i$, some
-  $\length{\vecv_{i}} \leq \gamma \cdot \lambda_{1}(\lat)$, and
-  correctness follows.
+  Now by hypothesis on~$\Ora$, for every~$i$ we have $\vecv_{i} \in \vecb_{i} + \lat_{i} \subset \lat \setminus \set{\veczero}$ (so the reduction outputs a nonzero lattice vector) and $\length{\vecv_{i}} \leq \gamma \cdot \lambda(\vecb_{i} + \lat_{i})$.
+  Since $\lambda(\vecb_{i} + \lat_{i}) = \lambda_{1}(\lat)$ for at least one~$i$, some $\length{\vecv_{i}} \leq \gamma \cdot \lambda_{1}(\lat)$, and correctness follows.
 \end{proof}
 
-We note that essentially the same reduction works for the
-\emph{decisional} variants $\gapsvp_{\gamma}$ and $\gapcvp_{\gamma}$
-of the problems, where instead of returning vectors $\vecv_{i}$, the
-oracle $\Ora$ returns yes/no answers, and the reduction outputs the
-logical OR of all the answers. It is unknown if there exists a reverse
-reduction, i.e., if $\cvp_{\gamma} \leq \svp_{\gamma}$, even for the
-exact regime $\gamma=1$, or for (nontrivial) different approximation
-factors, or allowing randomization.
+We note that essentially the same reduction works for the \emph{decisional} variants $\gapsvp_{\gamma}$ and $\gapcvp_{\gamma}$ of the problems, where instead of returning vectors $\vecv_{i}$, the oracle $\Ora$ returns yes/no answers, and the reduction outputs the logical OR of all the answers.
+It is unknown if there exists a reverse reduction, i.e., if $\cvp_{\gamma} \leq \svp_{\gamma}$, even for the exact regime $\gamma=1$, or for (nontrivial) different approximation factors, or allowing randomization.
 
-\subsection{Algorithms for $\svp$ and $\cvp$}
+\subsection{Algorithms for $\svp$ and $\cvp$}%
 \label{sec:algorithms-svp-cvp}
 
-The following are some historical milestones in algorithms for $\svp$
-and $\cvp$ (for simplicity, we ignore polynomial factors in the
-dimension~$n$ and bit length of the input basis):
+The following are some historical milestones in algorithms for $\svp$ and $\cvp$ (for simplicity, we ignore polynomial factors in the dimension~$n$ and bit length of the input basis):
 \begin{itemize}[itemsep=0pt]
 \item Using the LLL algorithm~\cite{lenstra82:_factor} and brute-force
   search over coefficient vectors, one can get an algorithm that
@@ -153,272 +84,157 @@ dimension~$n$ and bit length of the input basis):
 \item In 1983, Kannan~\cite{DBLP:conf/stoc/Kannan83} gave
   deterministic algorithms that solve $\svp$ and $\cvp$ in
   $n^{O(n)} = 2^{O(n \log n)}$ time and $\poly(n)$ space.
-\item In 2001, Ajtai, Kumar, and Sivakumar
-  (AKS)~\cite{DBLP:conf/stoc/AjtaiKS01} gave \emph{randomized}
-  ``sieve'' algorithms that solve $\svp$ and $\cvp_{1+\epsilon}$ (for
-  any constant $\epsilon > 0$) in singly exponential $2^{O(n)}$ time
-  \emph{and} space. (For $\cvp_{1+\varepsilon}$, the exponent in the
-  running time depends inversely on~$\varepsilon$.)
-\item In 2010, Micciancio and Voulgaris
-  (MV)~\cite{DBLP:conf/stoc/MicciancioV10} gave a \emph{deterministic}
-  algorithm that solves $\cvp$ (and hence $\svp$ and other problems)
-  in $2^{2n}$ time and $2^{n}$ space.
-\item In 2015, Aggarwal, Dadush, Regev, and
-  Stephens-Davidowitz~\cite{DBLP:conf/stoc/AggarwalDRS15} gave a
-  randomized algorithm that solves $\svp$ in $2^{n}$ time and space
-  (note that the constant factor in the exponent here is exactly one).
-  A follow-up work by Aggarwal, Dadush, and
-  Stephens-Davidowitz~\cite{DBLP:conf/focs/AggarwalDS15} obtained a
-  similar result for $\cvp$.
+\item In 2001, Ajtai, Kumar, and Sivakumar (AKS)~\cite{DBLP:conf/stoc/AjtaiKS01} gave \emph{randomized} ``sieve'' algorithms that solve $\svp$ and $\cvp_{1+\epsilon}$ (for any constant $\epsilon > 0$) in singly exponential $2^{O(n)}$ time \emph{and} space.
+  (For $\cvp_{1+\varepsilon}$, the exponent in the running time depends inversely on~$\varepsilon$.)
+\item In 2010, Micciancio and Voulgaris (MV)~\cite{DBLP:conf/stoc/MicciancioV10} gave a \emph{deterministic} algorithm that solves $\cvp$ (and hence $\svp$ and other problems) in $2^{2n}$ time and $2^{n}$ space.
+\item In 2015, Aggarwal, Dadush, Regev, and Stephens-Davidowitz~\cite{DBLP:conf/stoc/AggarwalDRS15} gave a randomized algorithm that solves $\svp$ in $2^{n}$ time and space (note that the constant factor in the exponent here is exactly one).
+  A follow-up work by Aggarwal, Dadush, and Stephens-Davidowitz~\cite{DBLP:conf/focs/AggarwalDS15} obtained a similar result for $\cvp$.
 \end{itemize}
-It is an important open question whether there exists a singly
-exponential-time (or better) algorithm that uses only polynomial
-space, or even subexponential space.
+It is an important open question whether there exists a singly exponential-time (or better) algorithm that uses only polynomial space, or even subexponential space.
 
-\section{The Micciancio-Voulgaris Algorithm for $\cvp$}
+\section{The Micciancio-Voulgaris Algorithm for $\cvp$}%
 \label{sec:mv-alg}
 
 \newcommand{\Vbar}{\ensuremath{\bar{\mathcal{V}}}}
 
-The MV algorithm solves $\cvp$ on any $n$-dimensional lattice in
-$2^{O(n)}$ time (again, ignoring polynomial factors in the input
-length). It is based around the (closed) \emph{Voronoi} cell of the
-lattice, which, to recall, is the set of all points in $\R^{n}$ that
-are at least as close to the origin as to any other lattice point:
+The MV algorithm solves $\cvp$ on any $n$-dimensional lattice in $2^{O(n)}$ time (again, ignoring polynomial factors in the input length).
+It is based around the (closed) \emph{Voronoi} cell of the lattice, which, to recall, is the set of all points in $\R^{n}$ that are at least as close to the origin as to any other lattice point:
 \begin{equation}
   \label{eq:voronoi}
   \Vbar(\lat) = \set{\vecx \in \R^n : \length{\vecx} \leq
     \length{\vecx - \vecv} \; \forall\;
     \vecv \in \lat \setminus \set{\veczero} }.
 \end{equation}
-We often omit the argument~$\lat$ when it is clear from context. From
-the definition it can be seen that for any coset $\vect+\lat$, the set
-$(\vect+\lat) \cap \Vbar$ consists of all the shortest elements of
-$\vect+\lat$ (i.e., all the correct $\cvp$ solutions for
-$\lat,\vect$). For any nonzero lattice vector~$\vecv$, define the
-halfspace
+We often omit the argument~$\lat$ when it is clear from context.
+From the definition it can be seen that for any coset $\vect+\lat$, the set $(\vect+\lat) \cap \Vbar$ consists of all the shortest elements of $\vect+\lat$ (i.e., all the correct $\cvp$ solutions for $\lat,\vect$).
+For any nonzero lattice vector~$\vecv$, define the halfspace
 \begin{align}
   \label{eq:Hv}
   H_{\vecv}
   &= \set{ \vecx : \length{\vecx} \leq \length{\vecx-\vecv}} \\
   &= \set{\vecx : 2\inner{\vecx, \vecv} \leq \inner{\vecv, \vecv}}.
 \end{align}
-It is easy to see that~$\Vbar$ is the intersection of the~$H_{\vecv}$
-over all $\vecv \in \lat \setminus \set{\veczero}$. However, some of
-these~$H_{\vecv}$ can be omitted without affecting the resulting
-intersection. The minimal set~$V$ of lattice vectors such that
-$\Vbar = \bigcap_{\vecv \in V} H_{\vecv}$ is called the set of
-\emph{(Voronoi) relevant} vectors. The following characterizes the
-relevant vectors of a lattice:
+It is easy to see that~$\Vbar$ is the intersection of the~$H_{\vecv}$ over all $\vecv \in \lat \setminus \set{\veczero}$.
+However, some of these~$H_{\vecv}$ can be omitted without affecting the resulting intersection.
+The minimal set~$V$ of lattice vectors such that $\Vbar = \bigcap_{\vecv \in V} H_{\vecv}$ is called the set of \emph{(Voronoi) relevant} vectors.
+The following characterizes the relevant vectors of a lattice:
 
-\begin{fact}[Voronoi]
+\begin{fact}[Voronoi]%
   \label{fact:voronoi}
-  A nonzero lattice vector $\vecv \in \lat \setminus \set{\veczero}$
-  is relevant if and only if $\pm \vecv$ are the only shortest vectors
-  in the coset $\vecv + 2\lat$.
+  A nonzero lattice vector $\vecv \in \lat \setminus \set{\veczero}$ is relevant if and only if $\pm \vecv$ are the only shortest vectors in the coset $\vecv + 2\lat$.
 \end{fact}
 
 \begin{corollary}
-  An $n$-dimensional lattice has at most $2(2^{n}-1) \leq 2^{n+1}$
-  relevant vectors.
+  An $n$-dimensional lattice has at most $2(2^{n}-1) \leq 2^{n+1}$ relevant vectors.
 \end{corollary}
 
 \begin{proof}
-  Every relevant vector belongs to some nonzero coset of $\lat/2\lat$,
-  of which there exactly $2^{n}-1$. By the above, there are at most
-  two relevant vectors in each such coset.
+  Every relevant vector belongs to some nonzero coset of $\lat/2\lat$, of which there exactly $2^{n}-1$.
+  By the above, there are at most two relevant vectors in each such coset.
 \end{proof}
 
-The MV algorithm has the following high-level structure. Given a
-basis~$\matB$ of a lattice $\lat = \lat(\matB)$ and a target
-point~$\vect$ defining a coset $\vect + \lat$, the algorithm does the
-following:
+The MV algorithm has the following high-level structure.
+Given a basis~$\matB$ of a lattice $\lat = \lat(\matB)$ and a target point~$\vect$ defining a coset $\vect + \lat$, the algorithm does the following:
 \begin{enumerate}
-\item Compute (a description of) the Voronoi cell $\Vbar(\lat)$, as a
-  list of all the relevant vectors of the lattice, of which there are
-  at most $2^{n+1} = 2^{O(n)}$. (The possibly exponential number of
-  relevant vectors is the sole reason for the algorithm's exponential
-  space complexity.)\label{item:compute-voronoi}
+\item Compute (a description of) the Voronoi cell $\Vbar(\lat)$, as a list of all the relevant vectors of the lattice, of which there are at most $2^{n+1} = 2^{O(n)}$.
+  (The possibly exponential number of relevant vectors is the sole reason for the algorithm's exponential space complexity.)\label{item:compute-voronoi}
 
-  Note that this ``preprocessing'' phase depends only on the
-  lattice~$\lat$, not the target~$\vect$, so it can be performed
-  before the target is known, and the result can be reused for
-  additional targets.
+  Note that this ``preprocessing'' phase depends only on the lattice~$\lat$, not the target~$\vect$, so it can be performed before the target is known, and the result can be reused for additional targets.
 
-\item Use the relevant vectors to ``walk,'' starting from~$\vect$,
-  through a sequence of vectors in the coset $\vect+\lat$ by adding
-  appropriately chosen lattice vectors to the target. The walk finally
-  terminates at some element of $(\vect+\lat) \cap \Vbar$, which is a
-  solution to the~$\cvp$ instance.\label{item:walk}
+\item Use the relevant vectors to ``walk,'' starting from~$\vect$, through a sequence of vectors in the coset $\vect+\lat$ by adding appropriately chosen lattice vectors to the target.
+  The walk finally terminates at some element of $(\vect+\lat) \cap \Vbar$, which is a solution to the~$\cvp$ instance.\label{item:walk}
 
-  The walk proceeds in phases, where each phase starts with some
-  $\vect_{k} \in (\vect+\lat) \cap 2^{k} \cdot \Vbar$, and outputs
-  some $\vect_{k-1} \in (\vect + \lat) \cap 2^{k-1} \cdot \Vbar$. We
-  show below that each phase takes $2^{O(n)}$ time, and by using LLL
-  we can ensure that the initial target point $\vect$ is in
-  $2^{O(n)} \cdot \Vbar$, so the total number of phases is only
-  $O(n)$. Therefore, the overall runtime of this step is $2^{O(n)}$.
+  The walk proceeds in phases, where each phase starts with some $\vect_{k} \in (\vect+\lat) \cap 2^{k} \cdot \Vbar$, and outputs some $\vect_{k-1} \in (\vect + \lat) \cap 2^{k-1} \cdot \Vbar$.
+  We show below that each phase takes $2^{O(n)}$ time, and by using LLL we can ensure that the initial target point $\vect$ is in $2^{O(n)} \cdot \Vbar$, so the total number of phases is only $O(n)$.
+  Therefore, the overall runtime of this step is $2^{O(n)}$.
 \end{enumerate}
 
-\subsection{The Walk}
+\subsection{The Walk}%
 \label{sec:walk}
 
 We first describe how \cref{item:walk}, the ``walk,'' is performed.
-The first observation is that by a scaling argument, it suffices to
-show how to perform the final phase of the walk, which takes some
-$\vect_{2} \in (\vect+\lat) \cap 2 \Vbar$ and outputs some
-$\vect_{1} \in (\vect+\lat) \cap \Vbar$. All the prior phases can be
-performed using this procedure with a suitable scaling of the lattice:
-since $2^{k} \cdot \Vbar(\lat) = 2 \cdot \Vbar(2^{k-1} \lat)$, we can
-use the procedure on the lattice $2^{k-1} \lat$ (whose relevant
-vectors are just $2^{k-1}$-factor scalings of $\lat$'s relevant
-vectors) to go from some
-$\vect_{k} \in (\vect+\lat) \cap 2^{k} \cdot \Vbar(\lat)$ to some
-$\vect_{k-1} \in (\vect+\lat) \cap 2^{k-1} \cdot \Vbar(\lat)$.
+The first observation is that by a scaling argument, it suffices to show how to perform the final phase of the walk, which takes some $\vect_{2} \in (\vect+\lat) \cap 2 \Vbar$ and outputs some $\vect_{1} \in (\vect+\lat) \cap \Vbar$.
+All the prior phases can be performed using this procedure with a suitable scaling of the lattice: since $2^{k} \cdot \Vbar(\lat) = 2 \cdot \Vbar(2^{k-1} \lat)$, we can use the procedure on the lattice $2^{k-1} \lat$ (whose relevant vectors are just $2^{k-1}$-factor scalings of $\lat$'s relevant vectors) to go from some $\vect_{k} \in (\vect+\lat) \cap 2^{k} \cdot \Vbar(\lat)$ to some $\vect_{k-1} \in (\vect+\lat) \cap 2^{k-1} \cdot \Vbar(\lat)$.
 
-The walk from $2 \Vbar$ to $\Vbar$ works as follows: first, check if
-our current target $\vect \in \Vbar$, by testing if
-$\vect \in H_{\vecv}$ for all $\vecv \in V$; if so, then simply output
-$\vect$. Otherwise, subtract an appropriately chosen relevant
-vector~$\vecv \in V$ from $\vect$ and loop. The main question is,
-which relevant vector should we choose to ensure that we make
-progress, and terminate within $2^{O(n)}$ iterations?
+The walk from $2 \Vbar$ to $\Vbar$ works as follows: first, check if our current target $\vect \in \Vbar$, by testing if $\vect \in H_{\vecv}$ for all $\vecv \in V$; if so, then simply output $\vect$.
+Otherwise, subtract an appropriately chosen relevant vector~$\vecv \in V$ from $\vect$ and loop.
+The main question is, which relevant vector should we choose to ensure that we make progress, and terminate within $2^{O(n)}$ iterations?
 
-Recall that if $\vect \not\in \Vbar(\lat)$, then it lies outside the
-halfspace $H_{\vecv}$, i.e., it violates the inequality
-$2\inner{\vect, \vecv} \leq \inner{\vecv, \vecv}$, for some relevant
-vector $\vecv$. The MV algorithm greedily chooses a relevant vector
-$\vecv$ whose inequality is ``most violated,'' i.e., it maximizes the
-ratio $2 \inner{\vect, \vecv}/\inner{\vecv, \vecv}$. Observe that for
-such~$\vecv$, if we define
-$\alpha = 2\inner{\vect, \vecv}/\inner{\vecv,\vecv}$, then $\alpha$ is
-the smallest (positive) real scaling factor of the Voronoi cell such
-that $\vect \in \alpha \Vbar(\lat)$. By assumption, we have that
-$1 < \alpha \leq 2$.
+Recall that if $\vect \not\in \Vbar(\lat)$, then it lies outside the halfspace $H_{\vecv}$, i.e., it violates the inequality $2\inner{\vect, \vecv} \leq \inner{\vecv, \vecv}$, for some relevant vector $\vecv$.
+The MV algorithm greedily chooses a relevant vector $\vecv$ whose inequality is ``most violated,'' i.e., it maximizes the ratio $2 \inner{\vect, \vecv}/\inner{\vecv, \vecv}$.
+Observe that for such~$\vecv$, if we define $\alpha = 2\inner{\vect, \vecv}/\inner{\vecv,\vecv}$, then $\alpha$ is the smallest (positive) real scaling factor of the Voronoi cell such that $\vect \in \alpha \Vbar(\lat)$.
+By assumption, we have that $1 < \alpha \leq 2$.
 
-\begin{lemma}
+\begin{lemma}%
   \label{lem:MV-steps}
-  The walk from $(\vect+\lat) \cap 2\Vbar$ to
-  $(\vect+\lat) \cap \Vbar$ terminates within at most $2^{n}$
-  iterations.
+  The walk from $(\vect+\lat) \cap 2\Vbar$ to $(\vect+\lat) \cap \Vbar$ terminates within at most $2^{n}$ iterations.
 \end{lemma}
 
-The above lemma follows by combining the following two claims. The
-first shows that subtracting the chosen~$\vecv$ brings~$\vect$ closer
-to the origin, while staying within the same multiple of the Voronoi
-cell.
+The above lemma follows by combining the following two claims.
+The first shows that subtracting the chosen~$\vecv$ brings~$\vect$ closer to the origin, while staying within the same multiple of the Voronoi cell.
 
-\begin{claim}
+\begin{claim}%
   \label{clm:MV-progress}
-  For any $\vect \notin \Vbar$, if $\vecv \in \lat$ is a relevant
-  vector maximizing
-  $\alpha = 2 \inner{\vect, \vecv}/\inner{\vecv, \vecv}$, then
-  $\vect - \vecv \in \alpha \Vbar$ and
-  $\length{\vect - \vecv} < \length{\vect}$.
+  For any $\vect \notin \Vbar$, if $\vecv \in \lat$ is a relevant vector maximizing $\alpha = 2 \inner{\vect, \vecv}/\inner{\vecv, \vecv}$, then $\vect - \vecv \in \alpha \Vbar$ and $\length{\vect - \vecv} < \length{\vect}$.
 \end{claim}
 
 \begin{proof}
-  Below we show that $\vect$ and $\vect-\alpha \vecv$ have equal
-  norms, and that both lie in $\alpha \Vbar$. Then because
-  $\alpha > 1$, it follows that $\vect-\vecv$ is on the interior of
-  the line segment between $\vect$ and $\vect - \alpha \vecv$, so
-  $\length{\vect - \vecv} < \length{\vect}$ and
-  $\vect - \vecv \in \alpha \Vbar$ by convexity of $\Vbar$, as
-  claimed.
+  Below we show that $\vect$ and $\vect-\alpha \vecv$ have equal norms, and that both lie in $\alpha \Vbar$.
+  Then because $\alpha > 1$, it follows that $\vect-\vecv$ is on the interior of the line segment between $\vect$ and $\vect - \alpha \vecv$, so $\length{\vect - \vecv} < \length{\vect}$ and $\vect - \vecv \in \alpha \Vbar$ by convexity of $\Vbar$, as claimed.
 
-  Because $\alpha = 2 \inner{\vect, \vecv}/\inner{\vecv, \vecv}$, we
-  have
+  Because $\alpha = 2 \inner{\vect, \vecv}/\inner{\vecv, \vecv}$, we have
   \begin{equation}
     \length{\vect}^{2} = \inner{\vect,\vect} =
     \inner{\vect, \vect} - 2 \alpha \inner{\vect, \vecv} + \alpha^{2} \inner{\vecv, \vecv}
     = \length{\vect- \alpha \vecv}^{2}. 
   \end{equation}
-  Now because $\vect \in \alpha \Vbar(\lat) = \Vbar(\alpha \lat)$, it
-  must be that $\vect$ is a shortest element of $\vect + \alpha\lat$.
-  Since $\alpha \vecv \in \alpha \lat$, we also have
-  $\vect - \alpha \vecv \in \vect + \alpha \lat$. Then because
-  $\length{\vect - \alpha \vecv} = \length{\vect}$, we conclude that
-  $\vect-\alpha\vecv$ is also a shortest element in
-  $\vect + \alpha \lat$, hence
-  $\vect-\alpha \vecv \in \alpha \Vbar(\lat)$.
+  Now because $\vect \in \alpha \Vbar(\lat) = \Vbar(\alpha \lat)$, it must be that $\vect$ is a shortest element of $\vect + \alpha\lat$.
+  Since $\alpha \vecv \in \alpha \lat$, we also have $\vect - \alpha \vecv \in \vect + \alpha \lat$.
+  Then because $\length{\vect - \alpha \vecv} = \length{\vect}$, we conclude that $\vect-\alpha\vecv$ is also a shortest element in $\vect + \alpha \lat$, hence $\vect-\alpha \vecv \in \alpha \Vbar(\lat)$.
 
-  Finally, because $\alpha > 1$ and $\vecv \neq \veczero$ we have
+  Finally, because $\alpha > 1$ and $\vecv \neq \veczero$,
   \[\length{\vect-\vecv}^{2} = \length{\vect}^2 + \length{\vecv}^2 - 2
-    \inner{\vect, \vecv} = \length{\vect}^2 - (\alpha-1)
-    \length{\vecv}^2 < \length{\vect}^2. \]
+    \inner{\vect, \vecv} = \length{\vect}^2 - (\alpha-1) \length{\vecv}^2 < \length{\vect}^2.
+  \]
 \end{proof}
 
 \noindent
-The second claim bounds the number of distinct lengths our
-intermediate target vectors can have.
+The second claim bounds the number of distinct lengths our intermediate target vectors can have.
 
-\begin{claim}
+\begin{claim}%
   \label{clm:distinct-lengths}
   For any $\vect$, let $U_{\vect} = (\vect + \lat) \cap 2\Vbar(\lat)$.
-  Then
-  $\abs*{ \set*{ \length{\vecu} : \vecu \in U_{\vect}}} \leq 2^n$.
+  Then $\abs*{ \set*{ \length{\vecu} : \vecu \in U_{\vect}}} \leq 2^n$.
 \end{claim}
 
 \begin{proof}
-  For any $\vect' \in \R^n$, the elements of
-  $(\vect' + 2\lat) \cap 2\Vbar (\lat)$ are the shortest vectors in
-  the coset $\vect' + 2\lat$, and therefore all have the same length.
-  Because~$\lat$ is the union of~$2^{n}$ distinct cosets of~$2\lat$,
-  we see that $\vect + \lat$ is also the union of~$2^n$ cosets
-  of~$2\lat$. By partitioning the elements of~$U$ according to these
-  cosets, we conclude that the elements of~$U$ have at most~$2^n$
-  distinct lengths.
+  For any $\vect' \in \R^n$, the elements of $(\vect' + 2\lat) \cap 2\Vbar (\lat)$ are the shortest vectors in the coset $\vect' + 2\lat$, and therefore all have the same length.
+  Because~$\lat$ is the union of~$2^{n}$ distinct cosets of~$2\lat$, we see that $\vect + \lat$ is also the union of~$2^n$ cosets of~$2\lat$.
+  By partitioning the elements of~$U$ according to these cosets, we conclude that the elements of~$U$ have at most~$2^n$ distinct lengths.
 \end{proof}
 
-We can now prove \cref{lem:MV-steps}: since each step strictly
-decreases the length of the target while keeping it in~$2\Vbar$, and
-the intermediate targets can take on at most~$2^{n}$ distinct lengths
-overall, the walk must terminate within~$2^{n}$ steps (and when it
-terminates, the target is in~$\Vbar$). This completes the analysis of
-the ``walk'' step.
+We can now prove \cref{lem:MV-steps}: since each step strictly decreases the length of the target while keeping it in~$2\Vbar$, and the intermediate targets can take on at most~$2^{n}$ distinct lengths overall, the walk must terminate within~$2^{n}$ steps (and when it terminates, the target is in~$\Vbar$).
+This completes the analysis of the ``walk'' step.
 
-\subsection{Computing the Voronoi Cell}
+\subsection{Computing the Voronoi Cell}%
 \label{sec:comp-voron-cell}
 
-We only summarize the main ideas behind the computation of the
-relevant vectors of the lattice $\lat=\lat(\matB)$. The basic idea is
-the compute them in a ``bottom-up'' fashion, by iteratively computing
-the relevant vectors of the lower-rank lattices
-$\lat_{1} = \lat(\vecb_{1})$, $\lat_{2} = \lat(\vecb_{1}, \vecb_{2})$,
-$\lat_{3}=\lat(\vecb_{1}, \vecb_{2}, \vecb_{3})$, etc. Clearly, the
-relevant vectors of $\lat_{1} = \lat(\vecb_{1})$ are just
-$\set{\pm \vecb_{1}}$.
+We only summarize the main ideas behind the computation of the relevant vectors of the lattice $\lat=\lat(\matB)$.
+The basic idea is the compute them in a ``bottom-up'' fashion, by iteratively computing the relevant vectors of the lower-rank lattices $\lat_{1} = \lat(\vecb_{1})$, $\lat_{2} = \lat(\vecb_{1}, \vecb_{2})$, $\lat_{3}=\lat(\vecb_{1}, \vecb_{2}, \vecb_{3})$, etc. Clearly, the relevant vectors of $\lat_{1} = \lat(\vecb_{1})$ are just $\set{\pm \vecb_{1}}$.
 
-To iteratively compute the relevant vectors of~$\lat_{i}$, we use a
-$\cvp$ oracle for~$\lat_{i-1}$, which we can implement using the
-``walk'' step with the already-computed relevant vectors
-of~$\lat_{i-1}$. Here we use \cref{fact:voronoi}, which says that
-every relevant vector $\vecv \in \lat_{i}$ is the (unique, up to sign)
-shortest vector of some coset $\vect + 2\lat_{i}$ for
-$\vect \in \lat_{i}$. So if we find a shortest vector of each of
-the~$2^{n}$ such cosets $\vect + 2\lat_{i}$, we will find every
-relevant vector. (We might find other non-relevant vectors as well,
-but these do not interfere with the ``walk'' step, so they can safely
-be retained. In fact, there is a way to check for relevance if
-desired.)
+To iteratively compute the relevant vectors of~$\lat_{i}$, we use a $\cvp$ oracle for~$\lat_{i-1}$, which we can implement using the ``walk'' step with the already-computed relevant vectors of~$\lat_{i-1}$.
+Here we use \cref{fact:voronoi}, which says that every relevant vector $\vecv \in \lat_{i}$ is the (unique, up to sign) shortest vector of some coset $\vect + 2\lat_{i}$ for $\vect \in \lat_{i}$.
+So if we find a shortest vector of each of the~$2^{n}$ such cosets $\vect + 2\lat_{i}$, we will find every relevant vector.
+(We might find other non-relevant vectors as well, but these do not interfere with the ``walk'' step, so they can safely be retained.
+In fact, there is a way to check for relevance if desired.)
 
-For each coset $\vect + 2\lat_{i}$, we find a shortest element using
-our $\cvp$ oracle for~$\lat_{i-1}$. This is done by partitioning the
-coset $\vect + 2\lat_{i}$ according to the $\vecb_{i}$ coefficient,
-which yields several ``slices'' that each correspond to some coset of
-$2\lat_{i-1}$. By using an LLL-reduced basis $\matB$ we can ensure
-that the number of slices we need to inspect is only $2^{O(n)}$. For
-each of the slices we find a shortest element in the corresponding
-coset, and then take a shortest one overall to get a shortest element
-of $\vect + 2\lat_{i}$.
+For each coset $\vect + 2\lat_{i}$, we find a shortest element using our $\cvp$ oracle for~$\lat_{i-1}$.
+This is done by partitioning the coset $\vect + 2\lat_{i}$ according to the $\vecb_{i}$ coefficient, which yields several ``slices'' that each correspond to some coset of $2\lat_{i-1}$.
+By using an LLL-reduced basis $\matB$ we can ensure that the number of slices we need to inspect is only $2^{O(n)}$.
+For each of the slices we find a shortest element in the corresponding coset, and then take a shortest one overall to get a shortest element of $\vect + 2\lat_{i}$.
 
-Overall, to find the relevant vectors of~$\lat_{i}$ given those
-of~$\lat_{i-1}$, we need to solve $\cvp$ on $2^{n}$ cosets of
-$2\lat_{i}$, each of which reduces to solving $\cvp$ on $2^{O(n)}$
-cosets of $2\lat_{i-1}$, each of which takes $2^{O(n)}$ time using the
-``walk'' step. So the relevant vectors of $\lat_{i}$ can be computed
-in $2^{O(n)}$ time overall, and hence so can the relevant vectors of
-$\lat = \lat(\matB)$.
+Overall, to find the relevant vectors of~$\lat_{i}$ given those of~$\lat_{i-1}$, we need to solve $\cvp$ on $2^{n}$ cosets of $2\lat_{i}$, each of which reduces to solving $\cvp$ on $2^{O(n)}$ cosets of $2\lat_{i-1}$, each of which takes $2^{O(n)}$ time using the ``walk'' step.
+So the relevant vectors of $\lat_{i}$ can be computed in $2^{O(n)}$ time overall, and hence so can the relevant vectors of $\lat = \lat(\matB)$.
 
 \bibliography{common/lattices,common/crypto}
 \bibliographystyle{common/alphaabbrvprelim}
