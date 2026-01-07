@@ -89,7 +89,7 @@ Shortly thereafter, Lagarias and Odlyzko~\cite{DBLP:journals/jacm/LagariasO85} g
 \end{definition}
 
 \begin{theorem}[Lagarias--Odlyzko, Frieze]
-  There is an efficient algorithm that, given uniformly random and independent weights $a_{1},\ldots, a_{n} \in \set{1,\ldots, X}$, where $X \geq 2^{n^2(1/2+\epsilon)}$ for some arbitrary constant $\varepsilon > 0$, and $s = \inner{\veca,\vecx}$ for some arbitrary $\vecx \in \bit^{n}$, outputs~$\vecx$ with probability $1-2^{-n^{2} (\varepsilon - o(1))}$ over the choice of the~$a_{i}$.
+  There is an efficient algorithm that, given uniformly random and independent weights $a_{1},\ldots, a_{n} \in \set{1,\ldots, X}$, where $X \geq 2^{n^2(1/2+\varepsilon)}$ for some arbitrary constant $\varepsilon > 0$, and $s = \inner{\veca,\vecx}$ for some arbitrary $\vecx \in \bit^{n}$, outputs~$\vecx$ with probability $1-2^{-n^{2} (\varepsilon - o(1))}$ over the choice of the~$a_{i}$.
 \end{theorem}
 Notice that the density of the above subset-sum instances is roughly~$2/n$.
 
@@ -143,7 +143,7 @@ Notice that the density of the above subset-sum instances is roughly~$2/n$.
   Because $\length{\vecz} \leq 2^{n/2} \sqrt{n} \leq B$, each coordinate of $\vecz$ has magnitude at most $B$, and similarly, $\abs{z_{n+1}} \leq 2 \length{\vecz} \leq 2B$.
   Therefore, the number of choices for $\vecz, z_{n+1}$ is (crudely) upper bounded by
   \[ (2B+1)^{n} \cdot (4B+1) \leq (5B)^{n+1} \leq 2^{n^{2}(1/2+o(1))}.
-  \] Because $X = 2^{n^{2}(1/2+\epsilon)}$ for some constant $\epsilon > 0$, the probability that there exists any $\smlmat{\vecz \\ 0} \in \lat$ satisfying the above constraints is at most $2^{-n^{2}(\varepsilon - o(1))}$, as claimed.
+  \] Because $X = 2^{n^{2}(1/2+\varepsilon)}$ for some constant $\varepsilon > 0$, the probability that there exists any $\smlmat{\vecz \\ 0} \in \lat$ satisfying the above constraints is at most $2^{-n^{2}(\varepsilon - o(1))}$, as claimed.
 \end{proof}
 
 \paragraph{Variants.}
