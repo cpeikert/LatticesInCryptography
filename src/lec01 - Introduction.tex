@@ -59,7 +59,7 @@ We start with the definition of a lattice.
 
 Let's unpack this definition.
 First, a lattice $\lat$ is a \emph{subgroup} of $\R^{n}$, under standard component-wise addition.
-Recall that $\lat$ is a subgroup if it contains the identity element $\veczero \in \R^{n}$ (the all-zeros vector), and if for any $\vecx, \vecy \in \lat$, we have $-\vecx \in \lat$ and $\vecx + \vecy \in \lat$.
+Recall that $\lat$ is a subgroup if it contains the identity element $\veczero \in \R^{n}$ (the all-zeros vector), and if for any $\vecx, \vecy \in \lat$, we have that $-\vecx \in \lat$ and $\vecx + \vecy \in \lat$.
 
 Second, a lattice is \emph{discrete}: this means that every $\vecx \in \lat$ has some ``neighborhood'' in which $\vecx$ is the only lattice point.
 Formally, for every $\vecx \in \lat$ there exists some $\epsilon > 0$ such that $(\vecx + \epsilon \ball) \cap \lat = \set{\vecx}$, where $(\vecx + \epsilon \ball)$ denotes the (open) ball of radius $\epsilon$ centered at $\vecx$.
@@ -74,12 +74,12 @@ Moreover, this is equivalent to the existence of some $\epsilon > 0$ that works 
   \item The integers $\Z \subset \R$ form a $1$-dimensional lattice, and the integer grid $\Z^{n} \subset \R^{n}$ is an $n$-dimensional lattice.
     The set $\Z \times \set{0} = \set{(z,0) : z \in \Z} \subseteq \R^{2}$ is a two-dimensional lattice, though its rank is only one (see \cref{def:rank} below).
   \item For any lattice $\lat$, its scaling $c \lat = \set{c \vecx : \vecx \in \lat}$ by any real $c$ is also a lattice, e.g., the even integers~$2\Z$.
-    More generally, any linear transformation applied to a lattice is also a lattice.
+    More generally, any \emph{invertible} $\R$-linear transformation applied to a lattice is also a lattice.
   \item The set $\set{\vecx \in \Z^{n} : \sum_{i=1}^{n} x_{i} \in 2\Z}$ is a lattice; it is often called the ``checkerboard'' or ``chessboard'' lattice, especially in two dimensions.
     (See \cref{fig:lattices}.)
   \item The rationals $\Q \subset \R$ do \emph{not} form a lattice, because although they form a subgroup, it is not discrete: there exist rational numbers that are arbitrarily close to zero.
-  \item The odd integers $2\Z+1$ do \emph{not} form a lattice, because although they are discrete, they do not form a subgroup of $\R$.
-    (However, they do comprise a \emph{coset} of the lattice $2\Z$; more on this point later.)
+  \item The odd integers $2\Z+1$ do \emph{not} form a lattice, because although they are a discrete set, they do not form a subgroup of~$\R$.
+    However, they do comprise a \emph{coset} of the lattice $2\Z$; more on this point later.
   \item The group $G=\Z + \sqrt{2}\Z$ is \emph{not} a lattice, because it is not discrete: since $\sqrt{2}$ admits arbitrarily good rational approximations $a/b$, there are values $a-b\sqrt{2} \in G$ that are arbitrarily close to zero.
   \end{enumerate}
 \end{example}
