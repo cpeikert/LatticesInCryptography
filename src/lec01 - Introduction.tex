@@ -153,17 +153,17 @@ Recall that an integer matrix is said to be \emph{unimodular} if it determinant 
 
 \begin{lemma}%
   \label{lem:basis-unimod}
-  Bases $\matB_1,\matB_2$ generate the same lattice $\lat$ if and only if there exists a unimodular $\matU \in \Z^{n \times n}$ such that $\matB_1 = \matB_2 \matU$.
+  Bases $\matB_1,\matB_2$ generate the same lattice if and only if there exists a unimodular $\matU \in \Z^{n \times n}$ such that $\matB_1 = \matB_2 \matU$.
 \end{lemma}
 
 \begin{proof}
   Suppose $\lat(\matB_1)=\lat(\matB_2)$, or equivalently, $\matB_1 \cdot \Z^n=\matB_2 \cdot \Z^n$.
-  Then each column of $\matB_{1}$ is an integer combination of the columns of $\matB_{2}$, and vice-versa.
+  Then each column of $\matB_{1}$ is an integer combination of the columns of $\matB_{2}$, and vice versa.
   That is, there exist $\matU,\matV \in \Z^{n\times n}$ such that $\matB_1=\matB_2 \matU$ and $\matB_2=\matB_1 \matV = \matB_{2} \matU \matV$.
-  Because $\matB_{2}$ is invertible, we have $\matU \matV=\matI$ and therefore $\det(\matU) \det(\matV) = 1$, so $\det(\matU) = \det(\matV)=\pm 1$ because both matrices are integral.
+  Because $\matB_{2}$ is invertible, $\matU \matV=\matI$ and therefore $\det(\matU) \det(\matV) = 1$, so $\det(\matU) = \det(\matV)=\pm 1$ because both matrices are integral.
 
-  For the other direction, suppose $\matB_1=\matB_2 \matU$ for some unimodular $\matU$.
-  Then we have \[ \lat(\matB_1)=\matB_1 \cdot \Z^n = \matB_2 \cdot (\matU \cdot \Z^n) = \matB_2 \cdot \Z^n = \lat(\matB_{2}), \] where the equality $\matU \cdot \Z^{n} = \Z^{n}$ follows from the fact that $\matU \vecx = \vecy \iff \vecx = \matU^{-1} \vecy$, and that $\matU, \matU^{-1}$ are both integral.
+  For the other direction, suppose that $\matB_1=\matB_2 \matU$ for some unimodular~$\matU$.
+  Then \[ \lat(\matB_1)=\matB_1 \cdot \Z^n = \matB_2 \cdot (\matU \cdot \Z^n) = \matB_2 \cdot \Z^n = \lat(\matB_{2}), \] where the equality $\matU \cdot \Z^{n} = \Z^{n}$ follows from the fact that $\matU \vecx = \vecy \iff \vecx = \matU^{-1} \vecy$, and that $\matU, \matU^{-1}$ are both integral.
 \end{proof}
 
 \begin{corollary}%
@@ -216,7 +216,7 @@ However, in this course we will typically use the formulation from \cref{eq:fund
 
 \begin{proof}
   We need to show that each $\vecx \in \R^n$ is in exactly one translate $\vecv + \matB \cdot \calF$, where $\vecv = \matB \vecz \in \lat$ for some $\vecz \in \Z^{n}$.
-  Because $\matB$ is nonsingular, we have $\vecx \in \matB \vecz + \matB \cdot \calF$ if and only if $\matB^{-1} \vecx \in \vecz + \calF$.
+  Because $\matB$ is nonsingular, $\vecx \in \matB \vecz + \matB \cdot \calF$ if and only if $\matB^{-1} \vecx \in \vecz + \calF$.
   Since $\matB^{-1} \vecx \in \R^{n}$ and $\calF$ is a fundamental region of $\Z^{n}$, there is exactly one $\vecz \in \Z^{n}$ for which the latter inclusion holds, which proves the claim.
 \end{proof}
 
@@ -323,12 +323,12 @@ Recall that a \emph{centrally symmetric} body $S$ is one for which $\vecx \in S 
   Then the translates $S'_{\vecv} - \vecv \subseteq \calF$ have total volume $\vol(S') > \vol(\calF)$, so they must overlap somewhere, i.e., there exists some $\vecz \in (S'_{\vecu} - \vecu) \cap (S'_{\vecv} - \vecv)$ for distinct lattice points $\vecu,\vecv \in \lat$.
   It follows that $\vecx = \vecz + \vecu, \vecy = \vecz + \vecv \in S'$ are two distinct points in $S'$ whose difference $\vecx-\vecy = \vecu-\vecv \in \lat$ is a lattice point.
 
-  Finally, we have $2\vecx, -2\vecy\in S$ by definition of $S'$ and central symmetry of~$S$, and their midpoint $(2\vecx-2\vecy)/2 = \vecx-\vecy\in S$ by convexity.
+  Finally, $2\vecx, -2\vecy\in S$ by definition of $S'$ and the central symmetry of~$S$, so their midpoint $(2\vecx-2\vecy)/2 = \vecx-\vecy \in S$ by convexity.
 \end{proof}
 
 \begin{corollary}[Minkowski's First Theorem]%
   \label{cor:minkowski-first}
-  For any lattice $\lat$, we have $\lambda_1(\lat) \leq \sqrt{n} \cdot \det\parens{\lat}^{1/n}$.
+  For any lattice $\lat$, we have that $\lambda_1(\lat) \leq \sqrt{n} \cdot \det\parens{\lat}^{1/n}$.
 \end{corollary}
 
 Notice that this bound ``scales properly'': if we scale the lattice (and hence its minimum distance) by a~$c$ factor, the determinant scales by a~$c^{n}$ factor, hence the bound also scales by a~$c$ factor.
