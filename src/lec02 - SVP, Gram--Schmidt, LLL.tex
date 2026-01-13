@@ -199,11 +199,11 @@ Therefore, we can usually focus on just~$\matD$ and~$\matU$.\footnote{This all c
 
 \medskip
 
-\noindent The Gram--Schmidt vectors have many important connections with the geometry of the lattice.
+\noindent The Gram--Schmidt vectors have many important connections with the geometry of the lattice; here are two.
 
 \begin{lemma}%
   \label{lem:gs-det}
-  For any lattice $\lat = \lat(\matB)$, we have $\det(\lat) = \prod_{i=1}^{n} \length{\gs{\vecb}_{i}}$.
+  For any lattice $\lat = \lat(\matB)$, we have that $\det(\lat) = \prod_{i=1}^{n} \length{\gs{\vecb}_{i}}$.
 \end{lemma}
 
 \begin{proof}
@@ -214,17 +214,15 @@ Therefore, we can usually focus on just~$\matD$ and~$\matU$.\footnote{This all c
   \label{lem:gs-fund-region}
   For any lattice $\lat = \lat(\matB)$, the body $\piped(\gs{\matB}) = \gs{\matB} \cdot \hohalf^{n}$ is a fundamental region of $\lat$.
 \end{lemma}
+You will prove \cref{lem:gs-fund-region} in the homework.
+(Notice that the volume of $\piped(\gs{\matB})$ is $\prod_{i} \length{\gs{\vecb}_{i}}$, as expected.)
 
-\begin{proof}
-  You will prove this in the homework.
-  (Notice that the volume of $\piped(\gs{\matB})$ is $\prod_{i} \length{\gs{\vecb}_{i}}$, as expected.)
-\end{proof}
-
-\noindent A very useful fact is that the Gram--Schmidt vectors gives a lower bound on the lattice minimum distance.
+\medskip \noindent
+A very useful fact is that the Gram--Schmidt vectors gives a \emph{lower bound} on the lattice minimum distance.
 
 \begin{lemma}%
   \label{lem:gs-lower-lambda}
-  For any lattice $\lat = \lat(\matB)$, we have $\lambda_1(\lat) \geq \min_i \length{\gs{\vecb}_i}$.
+  For any lattice $\lat = \lat(\matB)$, we have that $\lambda_1(\lat) \geq \min_i \length{\gs{\vecb}_i}$.
 \end{lemma}
 
 Before giving the full proof, let's first develop some intuition in the two-dimensional case (see \cref{fig:lambdaSlices}).
@@ -266,7 +264,7 @@ So altogether, $\length{\vecv} \geq \min \set{\length{\gs{\vecb}_{1}}, \length{\
 \begin{proof}[Proof of \cref{lem:gs-lower-lambda}]
   Let $\matB = \matD \matU$ be the unique factorization from \cref{eq:QDU}, where as noted above we can assume $\matQ = \matI$ without loss of generality.
   Let $\vecv = \matB \vecz$ for nonzero $\vecz \in \Z^{n}$ be an arbitrary nonzero lattice point, and let $z_i$ be the last nonzero entry of $\vecz$.
-  Then, letting $\star$s denote arbitrary real numbers, we have
+  Then, letting $\star$s denote arbitrary real numbers,
   \begin{equation}
     \vecv = \matB \vecz = \matD
     \begin{pmatrix}
@@ -301,7 +299,7 @@ So altogether, $\length{\vecv} \geq \min \set{\length{\gs{\vecb}_{1}}, \length{\
       0
     \end{pmatrix}.
   \end{equation}
-  Because $\abs{z_{i}} \geq 1$, we have $\length{\vecv} \geq \length{\gs{\vecb}_{i}} \geq \min_{i} \length{\gs{\vecb}_{i}}$, as claimed.
+  Because $\abs{z_{i}} \geq 1$, we have that $\length{\vecv} \geq \length{\gs{\vecb}_{i}} \geq \min_{i} \length{\gs{\vecb}_{i}}$, as claimed.
 \end{proof}
 
 Combining Minkowski's inequality with \cref{lem:gs-det,lem:gs-lower-lambda}, we have now have the following bounds on the minimum distance:
@@ -323,7 +321,7 @@ While such a large factor might not seem so impressive at first, it is nontrivia
 Also, an exponential approximation factor can be very useful when the dimension~$n$ is small, or when a shortest nonzero lattice vector is much shorter than all other non-parallel lattice vectors.
 As we will see, at least one of these holds in many applications of LLL\@.
 
-The LLL algorithm converts an arbitrary lattice basis into one that generates the same lattice, and which is ``reduced'' in the following sense (the notations~$\mu_{i,j}$ and~$\gs{\vecb}_{i}$ refer to the Gram--Schmidt orthogonalization, as in the previous section):
+The LLL algorithm converts an arbitrary lattice basis into one that generates the same lattice, and which is ``reduced'' in the following sense (the notations~$\mu_{i,j}$ and~$\gs{\vecb}_{i}$ refer to the Gram--Schmidt orthogonalization, as in \cref{sec:gso}):
 
 \begin{definition}%
   \label{def:lll}
