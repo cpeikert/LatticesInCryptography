@@ -10,7 +10,7 @@
 % VARIABLES
 
 \newcommand{\lecturenum}{3}
-\newcommand{\lecturetopic}{LLL, Coppersmith}
+\newcommand{\lecturetopic}{LLL Algorithm}
 \newcommand{\scribename}{Yan Wang}
 
 % END OF VARIABLES
@@ -208,74 +208,6 @@ We conclude with some final remarks about the LLL algorithm.
 The factor $3/4$ in the Lov{\'a}sz condition is just for convenience of analysis.
 We can use any constant between $1/4$ and $1$, which yields a tradeoff between the final approximation factor and the number of iterations, but these will still remain exponential and polynomial (in~$n$), respectively.
 By choosing a value very close to~$1$, we can obtain an approximation factor of $(2/\sqrt{3})^{n}$ in polynomial time, but we cannot do any better using LLL.\@ We can get slightly better approximation factors of $2^{O(n(\log\log n)^2/\log n)}$, still in polynomial time, using Schnorr's generalization~\cite{DBLP:journals/tcs/Schnorr87} of LLL, where the analogue of the Lov{\'a}sz condition deals with blocks of $k \geq 2$ consecutive vectors.
-
-\section{Coppersmith's Method}%
-\label{sec:coppersmiths-method}
-
-One nice application of LLL is a technique of Coppersmith~\cite{DBLP:conf/eurocrypt/Coppersmith96} that finds all \emph{small} roots of a polynomial modulo a given number~$N$, even when the factorization of~$N$ is unknown.
-This technique has been a very powerful tool in cryptanalysis, as we will see next time.
-
-\begin{theorem}%
-  \label{thm:coppersmith}
-  There is a polynomial-time algorithm that, given any monic, degree-$d$ integer polynomial $f(x) \in \Z[x]$ and an integer $N$, outputs all integers $x_{0}$ such that $\abs{x_{0}} \leq B = N^{1/d}$ and $f(x_{0}) = 0 \bmod N$.
-\end{theorem}
-
-\noindent We make a few important remarks about the various components of this theorem:
-\begin{enumerate}[itemsep=0pt]
-\item When $N$ is prime, i.e., $\Z_{N}$ is a finite field, there are efficient algorithms that output \emph{all} roots of a given degree-$d$ polynomial $f(x)$ modulo $N$, of which there are at most $d$.
-  Similarly, there are efficient algorithm that factor polynomials over the rationals (or integers).
-  Therefore, the fact that the theorem handles a composite modulus $N$ is a distinguishing feature.
-\item For composite $N$, the number of roots of $f(x)$ modulo~$N$ can be nearly exponential in the bit length of~$N$, even for quadratic $f(x)$.
-  For example, if~$N$ is the product of~$k$ distinct primes, then any square modulo~$N$ has exactly~$2^{k}$ distinct square roots.
-  (This follows from the Chinese Remainder Theorem, since there are two square roots modulo each prime divisor of $N$.)
-  Since~$k$ can be as large as $\approx \log N / \log \log N$, the number of roots can be nearly exponential in $\log N$.
-  Therefore, in general no efficient algorithm can output \emph{all} roots of $f(x)$ modulo~$N$; the restriction to \emph{small} roots in the theorem statement circumvents this problem.\footnote{Indeed, the theorem implies that the number of small roots is always polynomially bounded.
-    This fact did not appear to be known before Coppersmith's result!}
-\item The size restriction appears necessary for another reason: knowing two square roots $r_{1} \neq \pm r_{2}$ of a square modulo a composite~$N$ reveals a nontrivial factor of~$N$, as $\gcd(r_{1}-r_{2}, N)$.
-  So even if the number of roots is small, finding all of them is still at least as hard as factoring.
-  However, it is easy to show that a square cannot have more than one ``small'' square root, of magnitude at most $N^{1/2}$.
-  Therefore, the theorem does not appear to yield an efficient factoring algorithm.
-  (However, it can be used to factor when some partial information about a factor is known, as shown in the related work~\cite{DBLP:conf/eurocrypt/Coppersmith96a}.)
-\end{enumerate}
-
-To highlight the heart of the method, in the remainder of this section we prove the theorem for a weaker bound of $B \approx N^{2/(d(d+1))}$, where the approximation hides a small constant factor.
-(We will prove the theorem for $B \approx N^{1/d}$ next time.)
-The strategy is to find another nonzero polynomial $h(x) = \sum h_{i} x^{i} \in \Z[x]$ such that:
-\begin{enumerate}[itemsep=0pt]
-\item every root of $f(x)$ modulo $N$ is also a root of $h(x)$, and
-\item the polynomial $h(Bx)$ is ``short,'' i.e., $\abs{h_{i} B^{i}} < N/(\deg(h)+1)$ for all $i$.
-\end{enumerate}
-For any such $h(x)$, and for any $x_{0}$ such that $|x_0| \leq B$, we have $\abs{h_i x_0^i} \leq \abs{h_{i} B^{i}} < N/(\deg(h)+1)$, which implies that $\abs{h(x_0)} < N$.
-Hence, for every \emph{small} root~$x_0$ (such that $\abs{x_{0}} \leq B$) of $f(x)$ modulo~$N$, we have that $h(x_0)=0$ \emph{over the integers} (not modulo anything).
-To find the small roots of $f(x)$ modulo~$N$, we can therefore just factor $h(x)$ over the integers, and test whether each of its (small) roots is a root of $f(x)$ modulo~$N$.
-
-We now give an efficient algorithm to find such an $h(x)$.
-The basic idea is that adding integer multiples of the polynomials $g_{i}(x) = N x^i \in \Z[x]$ to $f(x)$ certainly preserves the roots of~$f$ modulo~$N$.
-So we construct a lattice whose basis corresponds to the coefficient vectors of the polynomials $g_{i}(Bx)$ and $f(Bx)$, find a short nonzero vector in this lattice, and interpret it as the polynomial $h(Bx)$.
-The lattice basis is
-\[ \matB =
-  \begin{pmatrix}
-    N & & & & f_0 \\
-      & B N & & & f_1 B \\
-      & & B^2 N & & f_2 B^2   \\
-      & & & & \\
-      & & & B^{d-1} N & f_{d-1} B^{d-1} \\
-      & & & & B^d
-  \end{pmatrix}. \]
-Note that the lattice dimension is $d+1$, and that
-$\det(\matB) = B^{d(d+1)/2} \cdot N^d$.
-By running the LLL algorithm
-on this basis, we obtain a nonzero lattice vector~$\vecv \in
-\lat(\matB)$ for which
-\[ \length{\vecv} \leq 2^{d/2} \cdot B^{d/2} \cdot N^{d/(d+1)} =
-  (2B)^{d/2} \cdot N^{1-1/(d+1)}.
-\]
-
-Define $h(Bx)$ to be the polynomial whose coefficients are given by $\vecv$, i.e., $h(x) = v_0 + (v_{1}/B)x + \cdots + (v_{d}/B^{d}) x^d$.
-Notice that $h(x) \in \Z[X]$, because $B^i$ divides $v_i$ for each $i$ by construction of the lattice basis, and that every root of $f(x)$ modulo $N$ is also a root of $h(x)$ by construction.
-Finally, we see that
-\[ \abs{ h_{i} B^{i} } = \abs{v_{i}} \leq \length{v} < \frac{N}{d+1}, \] if we take $(2B)^{d/2} < N^{1/(d+1)}/(d+1)$, which is equivalent to $B < N^{2/(d(d+1))}/(2 (d+1)^{2/d})$; note that the denominator is upper bounded by a constant.
-This concludes the proof.
 
 \bibliography{common/lattices}
 \bibliographystyle{common/alphaabbrvprelim}
