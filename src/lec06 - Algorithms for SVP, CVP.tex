@@ -47,7 +47,7 @@ We first show that $\svp_{\gamma}$ is no harder than $\cvp_{\gamma}$; more speci
 Several other natural lattice problems also reduce to $\cvp_{\gamma}$~\cite{DBLP:conf/soda/Micciancio08}, making it a central algorithmic target of interest.
 
 \begin{theorem}
-  For any $\gamma \geq 1$, we have $\svp_{\gamma} \leq \cvp_{\gamma}$ via a Cook reduction.
+  For any $\gamma \geq 1$, we have that $\svp_{\gamma} \leq \cvp_{\gamma}$ via a Cook reduction.
 \end{theorem}
 
 \begin{proof}
@@ -65,7 +65,7 @@ Several other natural lattice problems also reduce to $\cvp_{\gamma}$~\cite{DBLP
   Moreover, if $\vecv \in \lat$ is any shortest nonzero lattice vector, then at least one of its coefficients with respect to $\matB$ must be odd, otherwise $\vecv/2 \in \lat$ would be a shorter nonzero lattice vector.
   Therefore, $\vecv \in \vecb_{i} + \lat_{i}$ for at least one~$i$, and so $\lambda(\vecb_{i}+\lat_{i}) = \lambda_{1}(\lat)$ for such~$i$.
 
-  Now by hypothesis on~$\Ora$, for every~$i$ we have $\vecv_{i} \in \vecb_{i} + \lat_{i} \subset \lat \setminus \set{\veczero}$ (so the reduction outputs a nonzero lattice vector) and $\length{\vecv_{i}} \leq \gamma \cdot \lambda(\vecb_{i} + \lat_{i})$.
+  Now by hypothesis on~$\Ora$, for every~$i$ we have that $\vecv_{i} \in \vecb_{i} + \lat_{i} \subset \lat \setminus \set{\veczero}$ (so the reduction outputs a nonzero lattice vector) and $\length{\vecv_{i}} \leq \gamma \cdot \lambda(\vecb_{i} + \lat_{i})$.
   Since $\lambda(\vecb_{i} + \lat_{i}) = \lambda_{1}(\lat)$ for at least one~$i$, some $\length{\vecv_{i}} \leq \gamma \cdot \lambda_{1}(\lat)$, and correctness follows.
 \end{proof}
 
@@ -182,7 +182,7 @@ The first shows that subtracting the chosen~$\vecv$ brings~$\vect$ closer to the
   Below we show that $\vect$ and $\vect-\alpha \vecv$ have equal norms, and that both lie in $\alpha \Vbar$.
   Then because $\alpha > 1$, it follows that $\vect-\vecv$ is on the interior of the line segment between $\vect$ and $\vect - \alpha \vecv$, so $\length{\vect - \vecv} < \length{\vect}$ and $\vect - \vecv \in \alpha \Vbar$ by convexity of $\Vbar$, as claimed.
 
-  Because $\alpha = 2 \inner{\vect, \vecv}/\inner{\vecv, \vecv}$, we have
+  Because $\alpha = 2 \inner{\vect, \vecv}/\inner{\vecv, \vecv}$,
   \begin{equation}
     \length{\vect}^{2} = \inner{\vect,\vect} =
     \inner{\vect, \vect} - 2 \alpha \inner{\vect, \vecv} + \alpha^{2} \inner{\vecv, \vecv}
@@ -223,8 +223,8 @@ We only summarize the main ideas behind the computation of the relevant vectors 
 The basic idea is the compute them in a ``bottom-up'' fashion, by iteratively computing the relevant vectors of the lower-rank lattices $\lat_{1} = \lat(\vecb_{1})$, $\lat_{2} = \lat(\vecb_{1}, \vecb_{2})$, $\lat_{3}=\lat(\vecb_{1}, \vecb_{2}, \vecb_{3})$, etc. Clearly, the relevant vectors of $\lat_{1} = \lat(\vecb_{1})$ are just $\set{\pm \vecb_{1}}$.
 
 To iteratively compute the relevant vectors of~$\lat_{i}$, we use a $\cvp$ oracle for~$\lat_{i-1}$, which we can implement using the ``walk'' step with the already-computed relevant vectors of~$\lat_{i-1}$.
-Here we use \cref{fact:voronoi}, which says that every relevant vector $\vecv \in \lat_{i}$ is the (unique, up to sign) shortest vector of some coset $\vect + 2\lat_{i}$ for $\vect \in \lat_{i}$.
-So if we find a shortest vector of each of the~$2^{n}$ such cosets $\vect + 2\lat_{i}$, we will find every relevant vector.
+Here we use \cref{fact:voronoi}, which says that every relevant vector $\vecv \in \lat_{i}$ is the (unique, up to sign) shortest vector of some coset $\vect + 2\lat_{i}$ for nonzero $\vect \in \lat_{i}$.
+So if we find a shortest vector of each of the~$2^{i}-1$ such cosets $\vect + 2\lat_{i}$, we will find every relevant vector.
 (We might find other non-relevant vectors as well, but these do not interfere with the ``walk'' step, so they can safely be retained.
 In fact, there is a way to check for relevance if desired.)
 
@@ -233,7 +233,7 @@ This is done by partitioning the coset $\vect + 2\lat_{i}$ according to the $\ve
 By using an LLL-reduced basis $\matB$ we can ensure that the number of slices we need to inspect is only $2^{O(n)}$.
 For each of the slices we find a shortest element in the corresponding coset, and then take a shortest one overall to get a shortest element of $\vect + 2\lat_{i}$.
 
-Overall, to find the relevant vectors of~$\lat_{i}$ given those of~$\lat_{i-1}$, we need to solve $\cvp$ on $2^{n}$ cosets of $2\lat_{i}$, each of which reduces to solving $\cvp$ on $2^{O(n)}$ cosets of $2\lat_{i-1}$, each of which takes $2^{O(n)}$ time using the ``walk'' step.
+Overall, to find the relevant vectors of~$\lat_{i}$ given those of~$\lat_{i-1}$, we need to solve $\cvp$ on $2^{i} - 1 = 2^{O(n)}$ cosets of $2\lat_{i}$, each of which reduces to solving $\cvp$ on $2^{O(n)}$ cosets of $2\lat_{i-1}$, each of which takes $2^{O(n)}$ time using the ``walk'' step.
 So the relevant vectors of $\lat_{i}$ can be computed in $2^{O(n)}$ time overall, and hence so can the relevant vectors of $\lat = \lat(\matB)$.
 
 \bibliography{common/lattices,common/crypto}
