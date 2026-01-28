@@ -202,7 +202,7 @@ Note that this attack is on the deterministic RSA function.
   We show next that $(x-M_{2})$ is indeed the greatest common divisor.
 
   First observe that for any $C \in \Z_{N}^*$, the polynomial $x^3-C$ has only one root modulo $N$, because the RSA function is a bijection.
-  As a result, we have $g_2(x)=x^3-C_2=(x-M_{2})(x^2+\beta_1x+\beta_0)$, where the quadratic term is irreducible, so $\gcd(g_{1}, g_{2})$ is either $(x-M_{2})$ or $g_{2}$.
+  As a result, $g_2(x)=x^3-C_2=(x-M_{2})(x^2+\beta_1x+\beta_0)$, where the quadratic term is irreducible, so $\gcd(g_{1}, g_{2})$ is either $(x-M_{2})$ or $g_{2}$.
   Since $b \neq 0$, we have that $g_2(x) \nmid g_1(x)$, and therefore the greatest common divisor is indeed $x-M_{2}$.
 \end{proof}
 
@@ -210,7 +210,7 @@ We now consider a potential padding method: to encrypt a message $M$, one append
 \[ C=f_{N,e}(M \| r).
 \] (Upon decryption, the padding bits are ignored.)
 Mathematically, this corresponds to transforming~$M$ to $2^{m} \cdot M + r$ for uniformly random $r \in \set{0, \ldots, 2^{m}-1}$.
-Note that $M$ must be short enough, and $m$ small enough, so that the result can be interpreted as an element of $\Z_{N}^{*}$ and unambiguously represents~$M$.
+Note that~$M$ must have few enough bits, and~$m$ must be small enough, so that the result can be interpreted as an element of $\Z_{N}^{*}$ and unambiguously represents~$M$.
 
 The following theorem of~\cite{DBLP:journals/joc/Coppersmith97} shows that if the pad length is too short (as determined by the size of~$e$), then it is possible to efficiently recover the message~$M$ from two distinct encryptions of it.
 Notice that for $e=3$, a pad length of $n/9 \approx 2{,}000/9 \approx 222$ is large enough to prevent any repeated pad values with overwhelming probability, yet it still provides essentially no security.
