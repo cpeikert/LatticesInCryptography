@@ -36,10 +36,10 @@ Recall the definition of the approximate Shortest Vector Problem.
 \begin{definition}%
   \label{def:cvp}
   For $\gamma = \gamma(n) \geq 1$, the $\gamma$-approximate Closest Vector Problem $\cvp_{\gamma}$ is: given a basis $\matB$ of a lattice $\lat = \lat(\matB) \subset \R^{n}$ and a point $\vect \in \R^{n}$, find some $\vecv \in \lat$ such that $\length{\vect - \vecv} \leq \gamma(n) \cdot \dist(\vect,\lat)$.
-  Equivalently, find an element of the lattice coset $\vect + \lat$ having norm at most $\gamma(n) \cdot \lambda(\vect+\lat)$, where $\lambda(\vect+\lat) := \min_{\vecx \in \vect+\lat} \length{\vecx} = \dist(\vect,\lat)$.
+  Equivalently, find an element of the lattice coset $\vect - \lat = \vect + \lat$ having norm at most $\gamma(n) \cdot \lambda(\vect+\lat)$, where $\lambda(\vect+\lat) := \min_{\vecx \in \vect+\lat} \length{\vecx} = \dist(\vect,\lat)$.
 \end{definition}
 
-Above we have used the fact that $\dist(\vect, \lat) = \min_{\vecv \in \lat} \length{\vect - \vecv} = \min_{\vecx \in \vect+\lat} \length{\vecx}$, because $\lat = -\lat$.
+In the final equality, we have used the fact that $\dist(\vect, \lat) = \min_{\vecv \in \lat} \length{\vect - \vecv} = \min_{\vecx \in \vect+\lat} \length{\vecx}$, because $\lat = -\lat$.
 The two versions of $\cvp$ are equivalent by associating each $\vecv \in \lat$ with $\vect - \vecv \in \vect + \lat$, and vice versa.
 Although the former version of the problem is the more ``obvious'' formulation, the latter version is often more convenient in algorithmic settings, so we will use it throughout what follows.
 
