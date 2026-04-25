@@ -1,6 +1,21 @@
 \documentclass[11pt]{article}
 
 \input{header}
+\usetikzlibrary{arrows.meta} % For arrow heads
+
+% other MACROS
+\newcommand*\bubble[1]{%
+  \tikz[baseline=(char.base)]{
+    \node[shape=circle,fill=black,inner sep=2pt,text=white] (char) {#1};
+  }
+}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+% math typesetting
+\newcommand{\data}{\mathsf{data}}
+
+% END OF MACROS
 
 % VARIABLES
 
@@ -20,11 +35,81 @@
 
 % LECTURE MATERIAL STARTS HERE
 
+% This is scribed from the 3/25/2026 lecture.
+
 \section{Bootstrapping from Fully Homomorphic Encryption}%
 \label{sec:bootstrapping}
 
-Intro here
-  
+``Bootstrapping'' refers to an idiom: ``how do you get ahead if you don't have any connections or resources? Just pull yourself up by your bootstraps!'' While this is physically impossible in real life, somehow it does work in FHE, allowing us to get some amazing---even seemingly impossible---results.
+
+\paragraph{Context:} \circled{1} In any lattice encryption scheme, ciphertexts have a modulus $q$ and some small error $e$ (e.g., $\langle s,c \rangle = q/2 \cdot \textmd{msg} + e$ ).
+\circled{2} As we do homomorphic operations on ciphertexts, the error grows.
+\circled{3} To decrypt the correct output message, we need bounded error---say, $|\textmd{err}| < q/4$.
+
+\medskip
+
+\noindent Together, this means that we can do only \emph{limited} homomorphic operations and maintain correctness. I.e., if we continue doing homomorphic operations on ciphertexts, the error will eventually grow too high and decryption will fail.
+
+\paragraph{High-error scenario.} The above problem leads to a natural question: ``what to do when error approaches the limit?'' 
+
+
+
+
+\begin{tikzpicture}[>=stealth]
+    % Define cloud style
+    \tikzset{
+        cloud node/.style={
+            draw,
+            shape=cloud,
+            aspect=2.2,
+            cloud puffs=14,
+            cloud puff arc=120,
+            inner sep=0.3cm,
+            align=center
+        }
+    }
+
+    % User
+    \node[align=left, anchor=west] (user) at (0, -1) {user \\ ($\sk$)};
+
+    % First Cloud
+    \node[cloud node] (eval1) at (8, -1.5) {Eval$(f, c)$};
+
+    % First forward arrow
+    \draw[->, semithick] (1.8, -0.8) to[bend left=10] node[midway, above] {$c \leftarrow \skcenc (\data)$} (6.5, -0.8);
+
+    % First return arrow
+    \draw[<-, semithick] (1.8, -2.5) to[bend right=10] node[midway, above, align=center] { $c_f \ \left[ = \skcenc(f(\text{data})) \right]$ \\ \small (large noise)} (6.5, -2.2);
+
+    % Step 1
+    \node at (-1.5, -2.5) {\circled{1}};
+    \node[anchor=west] at (-0.5, -2.5) {$y \leftarrow \text{Dec}(c_f)$};
+    \node[anchor=west, rotate=90] at (-0.24,-3.3) {$=$};
+    \node[anchor=west, font=\small] at (-0.9, -3.5) {$f(\text{data})$};
+
+    % Step 2
+    \node at (-1.5, -4.8) {\circled{2}};
+    \node[anchor=west] (enc2) at (-0.5, -4.8) {$c' \leftarrow \skcenc(y)$};
+    \node[anchor=west, font=\small] at (-0.5, -5.4) {(small noise)};
+
+    % Second Cloud
+    \node[cloud node] (eval2) at (8, -6) {Eval$(f', c')$};
+
+    % Second forward arrow
+    \draw[->, semithick] (1.8, -5.3) to[bend left=15] node[midway, above] {$c'$} (6.5, -5.3);
+
+    % Second return arrow
+    \draw[<-, semithick] (1.8, -7) to[bend right=10] node[midway, above] {$c'_{f'}$} (6.5, -7);
+
+    % Vertical dots
+    \node at (0.5, -6.9) {\Large $\vdots$};
+
+\end{tikzpicture}
+
+
+
+
+
 
 \end{document}
 
