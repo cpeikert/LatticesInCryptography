@@ -50,9 +50,18 @@
 
 \noindent Together, this means that we can do only \emph{limited} homomorphic operations and maintain correctness. I.e., if we continue doing homomorphic operations on ciphertexts, the error will eventually grow too high and decryption will fail.
 
-\paragraph{High-error scenario.} The above problem leads to a natural question: ``what to do when error approaches the limit?'' 
+\subsection{Dealing with Error}
+
+\paragraph{High-error scenario.} The above problem leads to a natural question: ``what to do when error approaches the limit?''
+
+\medskip
+
+\noindent Imagine we have a remote evaluator running in, say, the cloud, that takes ciphertext from a user. What protocol can we use to avoid this accumulated error?
 
 
+\subsubsection{Naive}
+
+The naive approach is for the remote evaluator to run until the error becomes too large, send back the partially evaluated data, and then receive a re-enrypted ciphertext with the error removed. This is described in Figure~\ref{fig:naive}.
 
 \begin{figure}[htbp]
 \centering
@@ -110,10 +119,49 @@
 
 
 \caption{Naive method.}
+\label{fig:naive}
 \end{figure}
 
 
+The user encrypts and sends over the original ciphertext, upon which the remote runs $\mathsf{Eval}(f, c)$---which does homomorphic operations---until the error almost exceeds the decryption bounds. Then, the remote sends back the noisy partial eval $c_f = \skcenc(f(\data))$. Since the error is sill bounded, the user can correctly decrypt this updated ciphertext as $y \gets \skcdec(c_f)$, where $y=f(\data)$, from step \circled{1}. Then, the user can simply re-encrypt $y$ as $c' \gets \skcenc(y)$, essentially re-setting the error term of the current ciphertext \circled{2}. The remote can then run $\mathsf{Eval}(f', c')$ until the error again grows too large. Then, it sends back the new current partial evaluation of $c'_{f'}$, and the process repeats.
 
+On its face, this protocol works: there's no problem with correctness. The issue is that it has a lot of interaction between the remote cloud and the user, and the whole point of FHE is to to not have such interaction, nor should the user have to do additional work. Computation is for the cloud.
+
+\bigskip
+
+\noindent Luckily, there is a way to avoid relying on the user!
+
+
+\subsubsection{Improved: Outsourcing Decryption}
+
+\paragraph{Core idea.} FHE lets users \emph{outsource} computation.
+
+\medskip
+
+If a user wanted to run $\mathsf{Eval}(\cdot,\cdot)$ locally, then they would. And the issue with the naive approach is it requires the user to constantly encrypt/decrypt ciphertexts. Hence, what if the user could \emph{outsource} the decryption steps $\skcdec_{\sk}$ to the cloud?
+
+Following the core idea of FHE, users ``hide'' private data from the cloud, which can still compute notwithstanding. So, what data from the decryption steps---\circled{1} or \circled{2} in Figure~\ref{fig:naive}---do we \emph{not} want the cloud to know? Clearly, we need to hide the original $\data$. We also don't want the cloud to have the secret key $\sk$. But how can we hide the secret key and still outsource decryption/encryption? We can do it via more FHE! Namely, we will encrypt the secret key under a homomorphic encryption scheme.
+
+\begin{figure}[hbtp]
+    \centering
+    % TODO: diagram shown on screen at about 23:00
+    $$TODO$$
+    \caption{Encrypted secret key method.}
+    \label{fig:sk_encrypt}
+\end{figure}
+
+\paragraph{Goal:} Homomorphically evaluate $\skcdec$ so that noise of output is much less than the ceiling / threshold.
+
+\medskip
+
+I.e., we need to do it with as little noise blow-up on the encrypted secret key. Another important consideration is whether it's actually \emph{secure to encrypt a secret key with itself}. This is a very long-standing and challenging problem, and it's still wide-open: we don't actually know if it's truly secure to do this. This is known as \textbf{circular security}.
+
+
+\begin{definition}
+    \label{def:circ-sec}
+    \textbf{Circular security.}
+    Circular security is...
+\end{definition}
 
 \end{document}
 
