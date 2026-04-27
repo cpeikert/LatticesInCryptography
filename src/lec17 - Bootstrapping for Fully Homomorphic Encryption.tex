@@ -144,7 +144,7 @@ Following the core idea of FHE, users ``hide'' private data from the cloud, whic
 
 \begin{figure}[hbtp]
     \centering
-    % TODO: diagram shown on screen at about 23:00
+    % TODO: diagram shown on screen at about 23:00 or 58:26
     $$TODO$$
     \caption{Encrypted secret key method.}
     \label{fig:sk_encrypt}
@@ -234,6 +234,8 @@ It turns out we can do much better by defining $A_{\textmd{mul}}$ differently. T
 Consequently, we can multiply an unlimited number of $x_i$; each error chunk gets blown-up by a fixed factor and they get added together. Unlike our first attempt, there's no exponential growth in the number of multiplies: it is instead \emph{linear} in the number of terms $x_i$ we multiply.
 
 \subsubsection{Generalizing to Matrices}
+\label{sec:generalizing-to-matrices}
+
 Let's consider an extension of the above principle. We are currently multiplying a chain of bits $x_i$, but they don't have to be jus bits! For instance, they could be any integers $x_i \in \mathbb{Z}$. The problem with $x_i \not \in [-1,1]$, however, is that their products show up in the error (e.g., $x_1x_2I$ in \cref{eq:3-bit-mul-err}), meaning they grow exponentially as we multiply them together. So, we must keep the $x_i$---whatever type they may be---small to avoid this exponential blow-up.
 
 While using arbitrary $x_i \in \mathbb{Z}$ is infeasible, we can still generalize the above to \emph{matrices} $X_i$. We can re-define our protocol for matrices, setting a new desired condition of
@@ -277,7 +279,7 @@ where $\mathsf{Lift}_{X_1}$ is whatever right-action representation ensures $A_2
     =
     e_1^t \cdot G^{-1}(...) + e_2^t \cdot (X_1 \otimes I)G^{-1}(...) + e_3^t\cdot ((X_1X_2) \otimes I)
 \end{equation}
-\noindent This can be analyzed like \cref{eq:3-bit-mul-err}.
+\noindent which can be analyzed similar to \cref{eq:3-bit-mul-err}.
 
 In particular, just like the integer example, we want these $X_i$ matrices to be small, ``non-expanding'' matrices to avoid exponential blow-up for their products. With $x_i \in \{0,1\}$ we avoided doing so with integers, and so we need to generalize something like that to matrices $X_i$. There are many metrics we could use to determine this, but consider the one in \cref{def:non-expanding-mat}.
 
@@ -298,7 +300,7 @@ Let's further specialize this and focus on \emph{permutation matrices}.
 
 \begin{definition}[Rotation matrix]
     \label{def:rot-mat}
-    A rotation matrix is a permutation matrix $D \in \{0,1\}^{k \times k}$ that, when multiplied with a vector, rotates its entries by $0$ to $k-1$ shifts. E.g., of the form
+    A rotation matrix is a permutation matrix $D \in \{0,1\}^{k \times k}$ that, when multiplied with a vector, rotates its entries by $0$ to $k-1$ shifts. \noindent The set of $k\times k$ rotation matrices is $\mathcal{R}^{k \times k}$. E.g., rotation matrices in $\mathcal{R}^{6 \times 6}$ are of the form
     $$D = \begin{bmatrix}
          &  &   & 1 &   &  \\
          &  &   &   & 1 &  \\
@@ -307,16 +309,92 @@ Let's further specialize this and focus on \emph{permutation matrices}.
          &1 &   &   &   &  \\
          &  & 1 &   &   &  \\
     \end{bmatrix},$$
-    which rotates by 3 entries.
+    which rotates by 3 entries. 
+
 \end{definition}
 
-\noindent These should not be confused with typical linear algebra rotation matrices, which rotate vectors geometrically. Importantly, note that rotation (and permutation) matrices are non-expanding, since all their entries are in $\{0,1\}$.
+\noindent These should not be confused with typical linear algebra rotation matrices, which rotate vectors geometrically. Importantly, note that rotation (and permutation) matrices are non-expanding, since all their entries are in $\{0,1\}$. Hence, taking products of them should avoid exponential error blow-up.
 
 \subsection{Implementing \skcdec}
 
 Connecting back with our original goal, we will show it suffices to implement $\skcdec$ as a (multiplication) chain of rotation matrices. It is a rather unoptimized example, but it demonstrates the basic principle, allowing us to do more efficient things later.
 
-Now, let's examine $D_c(\;\cdot\;)=\skcdec(\cdot, \; c)$, for fixed $c \in \Z^n_q$, and recalling it acts as function of the secret key. The goal is to compute $\langle s, c \rangle = q/2 \cdot \textmd{msg} + e$, for error $|e|<q/4$, and then ``round'' it to message \texttt{msg}. 
+Now, let's examine $D_c(\;\cdot\;)=\skcdec(\cdot, \; c)$, for fixed $c \in \Z^n_q$, and recalling it acts as function of the secret key. The goal is to compute $\langle s, c \rangle = q/2 \cdot \textmd{msg} + e$, for error $|e|<q/4$, and then ``round'' it to message \texttt{msg}. This is not complicated, as we want to implement it homomorphically with ease. This is an inner-product, all mod-$q$ arithmetic, and we're gonna end up with a value that's either somewhere close to $0$ or close to $q/2$, which then tells us what \texttt{msg} was. Pursuant to our new goal, we will try to implement this as a chain of rotation matrices.
+
+
+% TODO: refactor this as a claim / remark / lemma ?
+\paragraph{Note:} WLOG, we can say $s$ is a binary vector; i.e., $s \in \{0,1\}^n$.
+
+In general, it's a vector over $\Z_q$, but we can treat it as having binary entries because of the following. Let $s = g^{-1}(s_q)$, where $s_q$ is the mod-$q$ $\sk$. Ideally, we do the inner-product with $s_q$, but what we can do is blow these up as binary vectors, and then multiply the corresponding entry of $c$ with the powers of 2. This is a similar pattern we've been using. I.e., if we break $s_q$ down into its bits, and blow-up $c$ multiplied by powers of 2, we get the same inner-product
+$$\langle s_q, \; c \rangle = \langle g^{-1}(s_q), \; c \otimes g \rangle$$
+\noindent Thus, we can replace our secret key with a binary vector, and just replace our ciphertext and multiply by powers of 2.
+
+\bigskip
+
+Now, our decryption is even simpler: it's not only an inner-product, but rather just a subset-sum over the entries of the ciphertext. I.e., $\skcdec(s,c)$ is a subset-sum over $c$ (as indicated by $s$), which is then ``rounded.'' So, we just need to frame this subset-sum as multiplication of a suitable rotation matrix.
+
+
+\subsubsection{Matrix-based subset-sum}
+
+
+We will set up a group isomorphism $(\Z_q,+) \xrightarrow{\sim} (\mathcal{R}^{q \times q},\; \cdot)$ between addition on $\Z_q$ and multiplication of $q \times q$ rotation matrices. Let $1 \in \Z_q$ map to the 1-step rotation matrix $\matR$ (rotates $e_1e_2...e_n$ to $e_ne_1e_2...e_{n-1}$):
+% TODO: put this inside of a lemma / claim environment
+
+$$1 \mapsto \begin{bmatrix}
+    & & & & &1 \\
+    & 1& & & & \\
+    & & 1& & & \\
+    & & & ...& & \\
+    & & & & 1 &
+\end{bmatrix} = \matR$$
+
+\noindent Then, for $a \in \Z_q$, we can map
+$$a = 1^a  \mapsto \matR^a$$
+where $\matR^a$ is the $a$-step rotation matrix. The rest of the isometry proof follows easily from here.
+
+\bigskip
+
+Subset-sum happens in the additive $\Z_q$ group, but $(\Z_q,+) \cong (\mathcal{R}^{q \times q}, \cdot)$, so equivalently it's working in the multiplicative $\mathcal{R}^{q \times q}$ group. By \S~\ref{sec:generalizing-to-matrices}, we know our FHE scheme is very good at homomorphically multiplying rotation matrices, since they're non-expanding. The final piece is how to handle the subset sum ``as indicated by $s$.'' Write our $\sk$ encryption as
+\begin{equation}
+    \label{eq:enc-rotation-mat}
+    \skcenc(s) = \skcenc(s_1) \| ... \|\skcenc(s_n), \qquad s_i \in \{0,1\},
+\end{equation}
+\noindent where the $s_i$ are bits of $s$. We need to homomorphically operate on these encrypted bits in order to homomorphically compute $\skcdec(s,c)$. Explicitly, to compute $\langle s, \; c \rangle$ homomorphically, we need to sum up the entries of $c$ that are indicated by the bits $s_i$ of $s$. We essentially want to construct the appropriate permutation matrix based on the set $s_i$. But, since the $s_i$ are encrypted, they can't be read directly. However, what can be done is:
+\begin{enumerate}
+    \item for each entry $c_i \in \Z_q$, get $c_i \mapsto \matR^{c_i}$ by the above isomorphism;
+    \item construct $\skcenc(\matM) = \skcenc(s_i) \cdot \matR^{c_i} + \skcenc(1-s_i)\cdot \matI$ \quad (where $\matM$ is $\matI$ or $\matR^{c_i}$);
+    \item and homomorphically multiply the entire chain.
+\end{enumerate}
+\noindent Note $\skcenc(s_i)$ is an encrypted bit, which is being multiplied homomorphically by each entry of the permutation matrix $\matR^{c_i}$. This is easy to do; you can take any known value and multiply it inside an encrypted value (proof left as exercise). We also know we can negate and add $1$ to the encrypted value ($1-s_i$), and we can do the same thing with the identity $\matI$. This gives us:
+\begin{equation}
+    \skcenc\left(s_i\matR^{c_i}+(1-s_i)\matI\right) = \skcenc(s_i) \cdot \matR^{c_i} + \skcenc(1-s_i)\cdot \matI
+\end{equation}
+\noindent The argument to $\skcenc$ is then $\matR^{c_i}$ if $s_i = 1$, and it's $\matI$ if $s_i = 0$. This is sometimes called an \emph{encrypted multiplex operation}. We've got two values, and we want to select one of the two according the encrypted bit $\skcenc(s_i)$; then, we get out an encrypted answer.
+
+% TODO: conclude why dec is subset sum
+
+After the homomorphic inner product, we have
+\begin{equation}
+    \label{eq:enc-rot-ip}
+    \skcenc\left( \matR^{\langle s, c\rangle \mod q}\right),
+\end{equation}
+and we desire to know whether $\langle s, c\rangle$ is closer to $q/2$ or 0; i.e.,
+$$\skcenc\left(\langle s, c\rangle \approx q/2\right)$$
+\noindent It turns out that this is actually very easy to do, with almost no work required. To see this, first consider what the rotation matrix in \cref{eq:enc-rot-ip} actually looks like. In particular, it looks like the example given in \cref{def:rot-mat}. Note that rotation matrices are just column-rotated identity matrices, and so can be uniquely determined by the position of the $1$ in the first column. That is exactly the value mod-$q$. I.e., we know the entry of the $1$ in the first column is somewhere close to either $q/2$ or $0$, and we just need to discriminate between them.
+
+Here is a simple idea to do so: take all the positions that are close to $q/2$---meaning $q/2$ and the immediate neighborhood around it---and just homomorphically add all of these entries. We know there's at most one $1$ in the column, and every other entry a $0$, so this basically equates to doing an OR over these entries. You will get $1$ if the $1$ is inside the interval around $q/2$, and $0$ otherwise.
+
+Thus, we (homomorphically) sum the entries $\matR_{i,1}$ over all $i \approx q/2$, which again is in $\{0,1\}$, corresponding to whether it's closer to $q/2$ or $0$.
+
+% TODO: conclude how this takes care of rounding, which would seem difficult to handle on the surface
+
+\subsection{Conclusion}
+The above is one way to do it, and it is from efficient. Namely, we have to do a lot of $q \times q$ matrix multiplications homomorphically, and so there's quite a lot of overhead to it. But, this basic approach has been optimized and some additional ideas inserted in. Now, it can be executed on the order of a hundredth of a second or less on modern implementations. So, it's quite fast, though it needs several additional ideas to get there. For instance, the matrix operations can be done very efficiently, and there are ring structures and so forth that can make it even faster. Ultimately, it's decently fast, and the error blow-up is not too much of an issue due to the structure of \cref{eq:3-bit-mul-err} and \cref{eq:mat-mul-err2}. A benefit of this is that you can use a small modulus $q$, which can improve security, and allow you to use smaller ciphertexts and fast operations.
+
+As another takeway, the circular security problem is still open here. Also, the above methods focus on encrypting individual bits per ciphertext. In reality, we want to encrypt more data in smaller ciphertexts. I.e., the question of ``how much plaintext data can you stuff into a ciphertext'' is very important. Putting a single bit into an entire matrix is terrible overhead. There are still a great deal of unsolved questions about whether we can fit a lot more data into the ciphertext and still have the small error growth behavior. For instance, there are other schemes that allow you to pack much more data in, but they have worse error blow-up (e.g., exponential, rather than this scheme's linear complexity w/r/t number of multiplies).
+
+On a final note, we also currently do not know how to bootstrap for identity- and attribute-based encryption that used these techniques.
+
 
 \end{document}
 
