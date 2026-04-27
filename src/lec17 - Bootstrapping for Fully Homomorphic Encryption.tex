@@ -225,10 +225,61 @@ It turns out we can do much better by defining $A_{\textmd{mul}}$ differently. T
 
 \noindent In short, this changes the first entry so $e_1^t$ is not a product of two $G^{-1}$ matrices. We can then write the error as
 
-$$e_{\textmd{mul}}^t = e^t \cdot S = e_1^t \cdot G^{-1}(...) + e_2^t \cdot x_1G^{-1}(...) + e_3^t \cdot x_1x_2I$$
+\begin{equation}
+    \label{eq:3-bit-mul-err}
+    e_{\textmd{mul}}^t = e^t \cdot S = e_1^t \cdot G^{-1}(...) + e_2^t \cdot x_1G^{-1}(...) + e_3^t \cdot x_1x_2I
+\end{equation}
 \noindent where again $e^t = [e_1^t \; e_2^t \; e_3^t]$ is the current FHE error vector. Just like in the original scheme, $e_3^t$ is either annihilated or doesn't change, since $x_1,x_2$ are bits. Also like the original, $e_1^t$ and $e_2^t$ are only blown-up by a single $G^{-1}$ matrix, which we recall scales by a factor proportional to the dimension. Again, this contrasts with the previous attempt that needed a product of $G^{-1}$ matrices, which is exponential in the number of bits multiplied.
 
 Consequently, we can multiply an unlimited number of $x_i$; each error chunk gets blown-up by a fixed factor and they get added together. Unlike our first attempt, there's no exponential growth in the number of multiplies: it is instead \emph{linear} in the number of terms $x_i$ we multiply.
+
+\subsubsection{Generalizing to Matrices}
+Let's consider an extension of the above principal. We are currently multiplying a chain of bits $x_i$, but they don't have to be jus bits! For instance, they could be any integers $x_i \in \mathbb{Z}$. The problem with $x_i \not \in [-1,1]$, however, is that their products show up in the error (e.g., $x_1x_2I$ in \cref{eq:3-bit-mul-err}), meaning they grow exponentially as we multiply them together. So, we must keep the $x_i$---whatever type they may be---small to avoid this exponential blow-up.
+
+While using arbitrary $x_i \in \mathbb{Z}$ is infeasible, we can still generalize the above to \emph{matrices} $X_i$. In particular, just like the integer example, we want these $X_i$ to be small, ``non-expanding'' matrices. With $x_i \in \{0,1\}$, we avoid the error blow-up, and we need to generalize something like this to matrices. 
+
+\begin{definition}[Non-expanding matrix]
+    
+\end{definition}
+
+We can re-define our protocol for matrices, setting a new desired condition of
+\begin{equation}
+    \label{eq:mat-mul}
+    \left([A_1 \; A_2 \; A_3] - [X_1 \otimes G \quad X_2 \otimes G \quad X_3 \otimes G] \right) \cdot S = A_{\textmd{mul}} - (X_1X_2X_3) \otimes G
+\end{equation}
+\noindent where $\otimes$ is the tensor product. Then, $A_{\textmd{mul}}$ is the same as in \cref{eq:3-bit-mul-amul}, and $S$ becomes
+\begin{equation} % TODO: i am unsure of this
+    \label{eq:mat-mul-s}
+    S = \begin{bmatrix}
+        G^{-1}\!\left(A_2 \cdot G^{-1}(A_3)\right) \\
+        \mathsf{Lift}_{X_1}\!\left(G^{-1}(A_3)\right) \\
+        (X_1X_2)\otimes I
+    \end{bmatrix}
+\end{equation}
+where $\mathsf{Lift}_{X_1}$ is whatever right-action representation ensures $A_2 \mathsf{Lift}_{X_1}\left( G^{-1}(A_3)\right) = X_1A_2G^{-1}(A_3)$ and $(X_2 \otimes G) \mathsf{Lift}_{X_1}\left(G^{-1}(A_3)\right) = X_1X_2A_3$, which are needed to cancel. Then, the error becomes
+\begin{equation}
+    \label{eq:mat-mul-err}
+    e_{\textmd{mul}}^t
+    =
+    e^t \cdot S
+    =
+    e_1^t \cdot G^{-1}\!\left(A_2 \cdot G^{-1}(A_3)\right)
+    +
+    e_2^t \cdot \mathsf{Lift}_{X_1}\!\left(G^{-1}(A_3)\right)
+    +
+    e_3^t \cdot \left((X_1X_2)\otimes I\right)
+\end{equation}
+\noindent and if we can write $\mathsf{Lift}_{X_1}(G^{-1}(A_3)) = (X_1 \otimes I)G^{-1}(A_3)$, then it is
+\begin{equation}
+    \label{eq:mat-mul-err2}
+    e_{\textmd{mul}}^t
+    =
+    e_1^t \cdot G^{-1}\!\left(A_2 \cdot G^{-1}(A_3)\right)
+    +
+    e_2^t \cdot (X_1\otimes I)G^{-1}(A_3)
+    +
+    e_3^t \cdot \left((X_1X_2)\otimes I\right)
+\end{equation}
 
 \end{document}
 
