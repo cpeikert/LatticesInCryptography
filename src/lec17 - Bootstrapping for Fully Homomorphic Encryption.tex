@@ -154,15 +154,40 @@ Following the core idea of FHE, users ``hide'' private data from the cloud, whic
 
 \medskip
 
-I.e., we need to do it with as little noise blow-up on the encrypted secret key. Another important consideration is whether it's actually \emph{secure to encrypt a secret key with itself}. This is a very long-standing and challenging problem, and it's still wide-open: we don't actually know if it's truly secure to do this. This is known as \textbf{circular security}, as in \cref{def:circ-sec}.
+I.e., we need to do it with as little noise blow-up on the encrypted secret key. Another important consideration is whether it's actually \emph{secure to encrypt a secret key with itself}. This is a very long-standing and challenging problem, and it's still wide-open: we don't actually know if it's truly secure to do this. This is known as \emph{circular security}.
 
 
-\begin{definition}
+\begin{definition}[Circular security]
     \label{def:circ-sec}
-    \textbf{Circular security.}
     Circular security is...
     % TODO:
 \end{definition}
+
+There are---largely pathological---cases where it is insecure to do so; and there are cases where it is secure, but the way the key is represented isn't suitable for bootstrapping. Ultimately, we are encrypting the bits of the secret key under the secret key, and we don't really know how to rigorously say anything about that.
+
+Our function of interest here is:
+
+$$D_c(\:\cdot\:) := \skcdec(\cdot,\;c) \textmd{ \quad for some fixed $c$,}$$
+
+\noindent which we are viewing as a function of the secret key. Our goal is to express the computation of this function in a homomorphically-friendly way. Let's recall our homomorphic computation / encryption scheme:
+
+\begin{itemize}
+    \item We have matrices $A=[A_1,A_2]$ \quad (with entries over $\Z_q$)
+    \item $A_{\textmd{mul}} = A_1 \cdot G^{-1}(A_2)$ \quad (where $G^{-1}$ breaks every entry of $A_2$ into its binary representation)
+    \item $\left([A_1,A_2] - \left[x_1G, x_2G\right]\right) \cdot S_{\textmd{mul},x_1} = A_{\textmd{mul}} - x_1x_2G = A_1\cdot G^{-1}(A_2) - x_1x_2G$ \quad (bits $x_1,x_2$)
+    $$\textmd{where short matrix}\quad S_{\textmd{mul},x_1} = \begin{bmatrix}
+        G^{-1}(A_2) \\
+        x_1I
+    \end{bmatrix}$$
+    \item The (FHE) error vector $e^t=[e_1^t,e_2^t]$ becomes $e^t_{\textmd{mul}} = e^t \cdot S_{\textmd{mul},x_1} = e_1^t\cdot G^{-1}(A_2)+e_2^t\cdot (x_1I)$
+    
+\end{itemize}
+
+The above is how we defined multiplication. An interesting observation is that the error growth here is highly asymmetrical. In particular, $e_1^t$ gets hit with the binary matrix $G^{-1}(A_2)$---which is $m\times m$ or so---and $e_2^t$ has $x_1I$, which is either $I$ or $0$ since $x_1$ is a bit. So, $e_2$ either doesn't blow up at all, or it gets annihilated. On the other hand, $e_1$ does blow up by some factor proportional to the dimension of these matrices.
+
+
+
+
 
 \end{document}
 
