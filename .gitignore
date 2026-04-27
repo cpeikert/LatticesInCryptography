@@ -1,3 +1,4 @@
+# Build artifacts
 **/*.aux
 **/*.pdf
 **/*.pdfsync
@@ -17,3 +18,7 @@
 **/*.brf
 **/*.xsim
 **/*.fdb_latexmk
+**/*.xdv
+
+# IDE artifacts
+.vscode/

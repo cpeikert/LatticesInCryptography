@@ -1,0 +1,404 @@
+\documentclass[11pt]{article}
+
+\input{header}
+\usetikzlibrary{arrows.meta} % For arrow heads
+
+% other MACROS
+\newcommand*\bubble[1]{%
+  \tikz[baseline=(char.base)]{
+    \node[shape=circle,fill=black,inner sep=2pt,text=white] (char) {#1};
+  }
+}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+% math typesetting
+\newcommand{\data}{\mathsf{data}}
+
+% END OF MACROS
+
+% VARIABLES
+
+\newcommand{\lecturenum}{17} % TODO: decide on lecture number
+\newcommand{\lecturetopic}{Fully Homomorphic Encryption}
+\newcommand{\scribename}{Christopher Davis}
+
+% END OF VARIABLES
+
+\lecheader                      % execute lecture commands
+
+\pagestyle{plain}               % default: no special header
+
+\begin{document}
+
+\thispagestyle{fancy}           % first page should have special header
+
+% LECTURE MATERIAL STARTS HERE
+
+% This is scribed from the 3/25/2026 lecture.
+
+\section{Bootstrapping from Fully Homomorphic Encryption}%
+\label{sec:bootstrapping}
+
+``Bootstrapping'' refers to an idiom: ``how do you get ahead if you don't have any connections or resources? Just pull yourself up by your bootstraps!'' While this is physically impossible in real life, somehow it does work in FHE, allowing us to get some amazing---even seemingly impossible---results.
+
+\paragraph{Context:} \circled{1} In any lattice encryption scheme, ciphertexts have a modulus $q$ and some small error $e$ (e.g., $\langle s,c \rangle = q/2 \cdot \textmd{msg} + e$ ).
+\circled{2} As we do homomorphic operations on ciphertexts, the error grows.
+\circled{3} To decrypt the correct output message, we need bounded error---say, $|\textmd{err}| < q/4$.
+
+\medskip
+
+\noindent Together, this means that we can do only \emph{limited} homomorphic operations and maintain correctness. I.e., if we continue doing homomorphic operations on ciphertexts, the error will eventually grow too high and decryption will fail.
+
+\subsection{Dealing with Error}
+
+\paragraph{High-error scenario.} The above problem leads to a natural question: ``what to do when error approaches the limit?''
+
+\medskip
+
+\noindent Imagine we have a remote evaluator running in, say, the cloud, that takes ciphertext from a user. What protocol can we use to avoid this accumulated error?
+
+
+\subsubsection{Naive}
+
+The naive approach is for the remote evaluator to run until the error becomes too large, send back the partially evaluated data, and then receive a re-enrypted ciphertext with the error removed. This is described in Figure~\ref{fig:naive}.
+
+\begin{figure}[htbp]
+\centering
+
+\begin{tikzpicture}[>=stealth]
+    % Define cloud style
+    \tikzset{
+        cloud node/.style={
+            draw,
+            shape=cloud,
+            aspect=2.2,
+            cloud puffs=14,
+            cloud puff arc=120,
+            inner sep=0.3cm,
+            align=center
+        }
+    }
+
+    % User
+    \node[align=left, anchor=west] (user) at (0, -1) {user \\ ($\sk$)};
+
+    % First Cloud
+    \node[cloud node] (eval1) at (8, -1.5) {Eval$(f, c)$};
+
+    % First forward arrow
+    \draw[->, semithick] (1.8, -0.8) to[bend left=10] node[midway, above] {$c \leftarrow \skcenc (\data)$} (6.5, -0.8);
+
+    % First return arrow
+    \draw[<-, semithick] (1.8, -2.5) to[bend right=10] node[midway, above, align=center] { $c_f \ \left[ = \skcenc(f(\text{data})) \right]$ \\ \small (large noise)} (6.5, -2.2);
+
+    % Step 1
+    \node at (-1.5, -2.5) {\circled{1}};
+    \node[anchor=west] at (-0.5, -2.5) {$y \leftarrow \text{Dec}(c_f)$};
+    \node[anchor=west, rotate=90] at (-0.24,-3.3) {$=$};
+    \node[anchor=west, font=\small] at (-0.9, -3.5) {$f(\text{data})$};
+
+    % Step 2
+    \node at (-1.5, -4.8) {\circled{2}};
+    \node[anchor=west] (enc2) at (-0.5, -4.8) {$c' \leftarrow \skcenc(y)$};
+    \node[anchor=west, font=\small] at (-0.5, -5.4) {(small noise)};
+
+    % Second Cloud
+    \node[cloud node] (eval2) at (8, -6) {Eval$(f', c')$};
+
+    % Second forward arrow
+    \draw[->, semithick] (1.8, -5.3) to[bend left=15] node[midway, above] {$c'$} (6.5, -5.3);
+
+    % Second return arrow
+    \draw[<-, semithick] (1.8, -7) to[bend right=10] node[midway, above] {$c'_{f'}$} (6.5, -7);
+
+    % Vertical dots
+    \node at (0.5, -6.9) {\Large $\vdots$};
+
+\end{tikzpicture}
+
+
+\caption{Naive method.}
+\label{fig:naive}
+\end{figure}
+
+
+The user encrypts and sends over the original ciphertext, upon which the remote runs $\mathsf{Eval}(f, c)$---which does homomorphic operations---until the error almost exceeds the decryption bounds. Then, the remote sends back the noisy partial eval $c_f = \skcenc(f(\data))$. Since the error is sill bounded, the user can correctly decrypt this updated ciphertext as $y \gets \skcdec(c_f)$, where $y=f(\data)$, from step \circled{1}. Then, the user can simply re-encrypt $y$ as $c' \gets \skcenc(y)$, essentially re-setting the error term of the current ciphertext \circled{2}. The remote can then run $\mathsf{Eval}(f', c')$ until the error again grows too large. Then, it sends back the new current partial evaluation of $c'_{f'}$, and the process repeats.
+
+On its face, this protocol works: there's no problem with correctness. The issue is that it has a lot of interaction between the remote cloud and the user, and the whole point of FHE is to to not have such interaction, nor should the user have to do additional work. Computation is for the cloud.
+
+\bigskip
+
+\noindent Luckily, there is a way to avoid relying on the user!
+
+
+\subsubsection{Improved: Outsourcing Decryption}
+
+\paragraph{Core idea.} FHE lets users \emph{outsource} computation.
+
+\medskip
+
+If a user wanted to run $\mathsf{Eval}(\cdot,\cdot)$ locally, then they would. And the issue with the naive approach is it requires the user to constantly encrypt/decrypt ciphertexts. Hence, what if the user could \emph{outsource} the decryption steps $\skcdec_{\sk}$ to the cloud?
+
+Following the core idea of FHE, users ``hide'' private data from the cloud, which can still compute notwithstanding. So, what data from the decryption steps---\circled{1} or \circled{2} in Figure~\ref{fig:naive}---do we \emph{not} want the cloud to know? Clearly, we need to hide the original $\data$. We also don't want the cloud to have the secret key $\sk$. But how can we hide the secret key and still outsource decryption/encryption? We can do it via more FHE! Namely, we will encrypt the secret key under a homomorphic encryption scheme.
+
+\begin{figure}[hbtp]
+    \centering
+    % TODO: diagram shown on screen at about 23:00 or 58:26
+    $$TODO$$
+    \caption{Encrypted secret key method.}
+    \label{fig:sk_encrypt}
+\end{figure}
+
+\paragraph{Goal:} Homomorphically evaluate $\skcdec$ so that noise of output is much less than the ceiling / threshold.
+
+\medskip
+
+I.e., we need to do it with as little noise blow-up on the encrypted secret key. Another important consideration is whether it's actually \emph{secure to encrypt a secret key with itself}. This is a very long-standing and challenging problem, and it's still wide-open: we don't actually know if it's truly secure to do. This is known as \emph{circular security}.
+
+
+\begin{definition}[Circular security]
+    \label{def:circ-sec}
+    Circular security is...
+    % TODO:
+\end{definition}
+
+There are---largely pathological---cases where it is insecure to do so; and there are cases where it is secure, but the way the key is represented isn't suitable for bootstrapping. Ultimately, we are encrypting the bits of the secret key under the secret key, and we don't really know how to rigorously say anything about that.
+
+Our function of interest here is:
+
+$$D_c(\:\cdot\:) := \skcdec(\cdot,\;c) \textmd{ \quad for some fixed $c$,}$$
+
+\noindent which we are viewing as a function of the secret key. Our goal is to express the computation of this function in a homomorphically-friendly way. Let's recall our homomorphic computation / encryption scheme:
+
+\begin{itemize}
+    \item We have matrices $A=[A_1 \; A_2]$ \quad (with entries over $\Z_q$)
+    \item $A_{\textmd{mul}} = A_1 \cdot G^{-1}(A_2)$ \quad (where $G^{-1}$ breaks every entry of $A_2$ into its binary representation)
+    
+    % Maybe delete the last equality here, since it's just the defintion of A_mul?
+    \item $\left([A_1 \; A_2] - \left[x_1G \; x_2G\right]\right) \cdot S_{\textmd{mul},x_1} = A_{\textmd{mul}} - x_1x_2G = A_1\cdot G^{-1}(A_2) - x_1x_2G$ \quad (bits $x_1,x_2$)
+    $$\textmd{where short matrix}\quad S_{\textmd{mul},x_1} = \begin{bmatrix}
+        G^{-1}(A_2) \\
+        x_1I
+    \end{bmatrix}$$
+    \item The (FHE) error vector $e^t=[e_1^t \; e_2^t]$ becomes $e^t_{\textmd{mul}} = e^t \cdot S_{\textmd{mul},x_1} = e_1^t\cdot G^{-1}(A_2)+e_2^t\cdot (x_1I)$
+    
+\end{itemize}
+
+The above is how we defined multiplication. An interesting observation is that the error growth here is highly asymmetrical. In particular, $e_1^t$ gets hit with the binary matrix $G^{-1}(A_2)$---which is $m\times m$ or so---and $e_2^t$ has $x_1I$, which is either $I$ or $0$ since $x_1$ is a bit. So, $e_2$ either doesn't blow up at all, or it gets annihilated. On the other hand, $e_1$ does blow up by some factor proportional to the dimension of these matrices.
+
+
+Let's consider an example to generalize this. Suppose we're doing a series of multiplies with three bits:
+$$A=[A_1,A_2,A_3] \quad \textmd{(entries over } \Z_q \textmd{).}$$
+Then, for bits $x_1,x_2,x_3$, with the desired goal of
+\begin{equation}
+    \label{eq:3-bit-mul-cond}
+    \left([A_1 \; A_2 \; A_3] - [x_1G \quad x_2G \quad x_3G]\right) \cdot S = A_{\textmd{mul}} - x_1x_2x_3G,
+\end{equation}
+
+\noindent we get that
+$$A_{\textmd{mul}} = A_1\cdot G^{-1}(A_2) \cdot G^{-1}(A_3)$$
+\noindent and
+$$S = \begin{bmatrix}
+    G^{-1}(A_1) \cdot G^{-1}(A_2) \\
+    x_1 G^{-1}(A_3) \\
+    x_1x_2I
+\end{bmatrix}.$$
+
+\noindent This is not ideal due to the following. The error vector will get hit by $S$, and so $e_1^t,e_2^t,e_3^t$ will get blown up by their respective block-rows in $S$. In particular, $e_1^t$ is a product of two $G^{-1}$ matrices, each of which already blows it up by the dimension. Thus, if we are multiplying with several bits, it would be exponential in the number of bits we are multiplying. Consequently, $e_1$ explodes quite a lot.
+
+It turns out we can do much better by defining $A_{\textmd{mul}}$ differently. The idea is to conceptualize this as a right-associative multiplication. In particularly, we can set
+\begin{equation}
+    \label{eq:3-bit-mul-amul}
+    A_{\textmd{mul}} = A_1 \cdot G^{-1}(A_2 \cdot G^{-1}(A_3))
+\end{equation}
+\noindent which is just a right-associative chain of the earlier two-bit definition. This corresponds to $x_1(x_2x_3)$, whereas the above attempt roughly corresponds to $(x_1x_2)x_3$. Then, with the desired \cref{eq:3-bit-mul-cond}, we can define
+\begin{equation}
+    \label{3-bit-mul-s}
+    S = \begin{bmatrix}
+        G^{-1}\left(A_2 \cdot G^{-1}(A_3)\right) \\
+        x_1G^{-1}(A_3) \\
+        x_1x_2I
+    \end{bmatrix}
+\end{equation}
+
+
+\noindent In short, this changes the first entry so $e_1^t$ is not a product of two $G^{-1}$ matrices. We can then write the error as
+
+\begin{equation}
+    \label{eq:3-bit-mul-err}
+    e_{\textmd{mul}}^t = e^t \cdot S = e_1^t \cdot G^{-1}(...) + e_2^t \cdot x_1G^{-1}(...) + e_3^t \cdot x_1x_2I
+\end{equation}
+\noindent where again $e^t = [e_1^t \; e_2^t \; e_3^t]$ is the current FHE error vector. Just like in the original scheme, $e_3^t$ is either annihilated or doesn't change, since $x_1,x_2$ are bits. Also like the original, $e_1^t$ and $e_2^t$ are only blown-up by a single $G^{-1}$ matrix, which we recall scales by a factor proportional to the dimension. Again, this contrasts with the previous attempt that needed a product of $G^{-1}$ matrices, which is exponential in the number of bits multiplied.
+
+Consequently, we can multiply an unlimited number of $x_i$; each error chunk gets blown-up by a fixed factor and they get added together. Unlike our first attempt, there's no exponential growth in the number of multiplies: it is instead \emph{linear} in the number of terms $x_i$ we multiply.
+
+\subsubsection{Generalizing to Matrices}
+\label{sec:generalizing-to-matrices}
+
+Let's consider an extension of the above principle. We are currently multiplying a chain of bits $x_i$, but they don't have to be jus bits! For instance, they could be any integers $x_i \in \mathbb{Z}$. The problem with $x_i \not \in [-1,1]$, however, is that their products show up in the error (e.g., $x_1x_2I$ in \cref{eq:3-bit-mul-err}), meaning they grow exponentially as we multiply them together. So, we must keep the $x_i$---whatever type they may be---small to avoid this exponential blow-up.
+
+While using arbitrary $x_i \in \mathbb{Z}$ is infeasible, we can still generalize the above to \emph{matrices} $X_i$. We can re-define our protocol for matrices, setting a new desired condition of
+\begin{equation}
+    \label{eq:mat-mul}
+    \left([A_1 \; A_2 \; A_3] - [X_1 \otimes G \quad X_2 \otimes G \quad X_3 \otimes G] \right) \cdot S = A_{\textmd{mul}} - (X_1X_2X_3) \otimes G
+\end{equation}
+\noindent where $\otimes$ is the tensor product. Then, $A_{\textmd{mul}}$ is the same as in \cref{eq:3-bit-mul-amul}, and $S$ becomes
+\begin{equation} % TODO: i am unsure of this
+    \label{eq:mat-mul-s}
+    S = \begin{bmatrix}
+        G^{-1}\!\left(A_2 \cdot G^{-1}(A_3)\right) \\
+        \mathsf{Lift}_{X_1}\!\left(G^{-1}(A_3)\right) \\
+        (X_1X_2)\otimes I
+    \end{bmatrix}
+\end{equation}
+where $\mathsf{Lift}_{X_1}$ is whatever right-action representation ensures $A_2 \mathsf{Lift}_{X_1}\left( G^{-1}(A_3)\right) = X_1A_2G^{-1}(A_3)$ and $(X_2 \otimes G) \mathsf{Lift}_{X_1}\left(G^{-1}(A_3)\right) = X_1X_2A_3$, which are needed to cancel. Then, the error becomes
+\begin{equation}
+    \label{eq:mat-mul-err}
+    e_{\textmd{mul}}^t
+    =
+    e^t \cdot S
+    =
+    e_1^t \cdot G^{-1}\!\left(A_2 \cdot G^{-1}(A_3)\right)
+    +
+    e_2^t \cdot \mathsf{Lift}_{X_1}\!\left(G^{-1}(A_3)\right)
+    +
+    e_3^t \cdot \left((X_1X_2)\otimes I\right)
+\end{equation}
+% TODO: should we have this next statment? Or is it confusing (or worse, not correct)? Should we just move the collapsed version G^{-1}(...) to the above?
+\noindent and if we can write $\mathsf{Lift}_{X_1}(G^{-1}(A_3)) = (X_1 \otimes I)G^{-1}(A_3)$, then it is
+\begin{equation}
+    \label{eq:mat-mul-err2}
+    e_{\textmd{mul}}^t
+    % =
+    % e_1^t \cdot G^{-1}\!\left(A_2 \cdot G^{-1}(A_3)\right)
+    % +
+    % e_2^t \cdot (X_1\otimes I)G^{-1}(A_3)
+    % +
+    % e_3^t \cdot \left((X_1X_2)\otimes I\right)
+    =
+    e_1^t \cdot G^{-1}(...) + e_2^t \cdot (X_1 \otimes I)G^{-1}(...) + e_3^t\cdot ((X_1X_2) \otimes I)
+\end{equation}
+\noindent which can be analyzed similar to \cref{eq:3-bit-mul-err}.
+
+In particular, just like the integer example, we want these $X_i$ matrices to be small, ``non-expanding'' matrices to avoid exponential blow-up for their products. With $x_i \in \{0,1\}$ we avoided doing so with integers, and so we need to generalize something like that to matrices $X_i$. There are many metrics we could use to determine this, but consider the one in \cref{def:non-expanding-mat}.
+
+\begin{definition}[Non-expanding matrix]
+    \label{def:non-expanding-mat}
+    A non-expanding matrix is a matrix $A$ whose spectral norm---the largest singular value $\sigma_{\max}(A)$, denoted $\|A\|_2$---is less than or equal to 1 (i.e., $\|A\|_2 = \sigma_{\max}(A) \leq 1$).
+\end{definition}
+
+\noindent By this definition, a non-expanding matrix does not increase the Euclidean length of any vector, since $\|A\vecx\|_2 \leq \|A\|_2\|\vecx\|_2 \leq \|\vecx\|$, which holds because the spectral norm is consistent. This allows us to keep the entries of $X_i$ small. In particular, $\|A\|_{\max} \leq \|A\|_2$, and so a non-expanding $A$ satisfies $|(A)_{ij}| \leq \|A\|_{\max} \leq \|A\|_2 \leq 1$. Hence, all entries of (non-expanding) $X_i$ are in [-1,1].
+
+Let's further specialize this and focus on \emph{permutation matrices}.
+
+\begin{definition}[Permutation matrix]
+    A permutation matrix is a matrix $D \in \{0,1\}^{k \times k}$ with a single $1$ in each row and each column.
+\end{definition}
+
+\noindent This has the effect of permuting vector entries when multiplying. They can also be further generalized to signed permutation matrices---which allow $-1$ entries---among many other families of matrices. We can also consider \emph{rotation matrices}, defined in \cref{def:rot-mat}.
+
+\begin{definition}[Rotation matrix]
+    \label{def:rot-mat}
+    A rotation matrix is a permutation matrix $D \in \{0,1\}^{k \times k}$ that, when multiplied with a vector, rotates its entries by $0$ to $k-1$ shifts. \noindent The set of $k\times k$ rotation matrices is $\mathcal{R}^{k \times k}$. E.g., rotation matrices in $\mathcal{R}^{6 \times 6}$ are of the form
+    $$D = \begin{bmatrix}
+         &  &   & 1 &   &  \\
+         &  &   &   & 1 &  \\
+         &  &   &   &   & 1 \\
+       1 &  &   &   &   &  \\
+         &1 &   &   &   &  \\
+         &  & 1 &   &   &  \\
+    \end{bmatrix},$$
+    which rotates by 3 entries. 
+
+\end{definition}
+
+\noindent These should not be confused with typical linear algebra rotation matrices, which rotate vectors geometrically. Importantly, note that rotation (and permutation) matrices are non-expanding, since all their entries are in $\{0,1\}$. Hence, taking products of them should avoid exponential error blow-up.
+
+\subsection{Implementing \skcdec}
+
+Connecting back with our original goal, we will show it suffices to implement $\skcdec$ as a (multiplication) chain of rotation matrices. It is a rather unoptimized example, but it demonstrates the basic principle, allowing us to do more efficient things later.
+
+Now, let's examine $D_c(\;\cdot\;)=\skcdec(\cdot, \; c)$, for fixed $c \in \Z^n_q$, and recalling it acts as function of the secret key. The goal is to compute $\langle s, c \rangle = q/2 \cdot \textmd{msg} + e$, for error $|e|<q/4$, and then ``round'' it to message \texttt{msg}. This is not complicated, as we want to implement it homomorphically with ease. This is an inner-product, all mod-$q$ arithmetic, and we're gonna end up with a value that's either somewhere close to $0$ or close to $q/2$, which then tells us what \texttt{msg} was. Pursuant to our new goal, we will try to implement this as a chain of rotation matrices.
+
+
+% TODO: refactor this as a claim / remark / lemma ?
+\paragraph{Note:} WLOG, we can say $s$ is a binary vector; i.e., $s \in \{0,1\}^n$.
+
+In general, it's a vector over $\Z_q$, but we can treat it as having binary entries because of the following. Let $s = g^{-1}(s_q)$, where $s_q$ is the mod-$q$ $\sk$. Ideally, we do the inner-product with $s_q$, but what we can do is blow these up as binary vectors, and then multiply the corresponding entry of $c$ with the powers of 2. This is a similar pattern we've been using. I.e., if we break $s_q$ down into its bits, and blow-up $c$ multiplied by powers of 2, we get the same inner-product
+$$\langle s_q, \; c \rangle = \langle g^{-1}(s_q), \; c \otimes g \rangle$$
+\noindent Thus, we can replace our secret key with a binary vector, and just replace our ciphertext and multiply by powers of 2.
+
+\bigskip
+
+Now, our decryption is even simpler: it's not only an inner-product, but rather just a subset-sum over the entries of the ciphertext. I.e., $\skcdec(s,c)$ is a subset-sum over $c$ (as indicated by $s$), which is then ``rounded.'' So, we just need to frame this subset-sum as multiplication of a suitable rotation matrix.
+
+
+\subsubsection{Matrix-based subset-sum}
+
+
+We will set up a group isomorphism $(\Z_q,+) \xrightarrow{\sim} (\mathcal{R}^{q \times q},\; \cdot)$ between addition on $\Z_q$ and multiplication of $q \times q$ rotation matrices. Let $1 \in \Z_q$ map to the 1-step rotation matrix $\matR$ (rotates $e_1e_2...e_n$ to $e_ne_1e_2...e_{n-1}$):
+% TODO: put this inside of a lemma / claim environment
+
+$$1 \mapsto \begin{bmatrix}
+    & & & & &1 \\
+    & 1& & & & \\
+    & & 1& & & \\
+    & & & ...& & \\
+    & & & & 1 &
+\end{bmatrix} = \matR$$
+
+\noindent Then, for $a \in \Z_q$, we can map
+$$a = 1^a  \mapsto \matR^a$$
+where $\matR^a$ is the $a$-step rotation matrix. The rest of the isometry proof follows easily from here.
+
+\bigskip
+
+Subset-sum happens in the additive $\Z_q$ group, but $(\Z_q,+) \cong (\mathcal{R}^{q \times q}, \cdot)$, so equivalently it's working in the multiplicative $\mathcal{R}^{q \times q}$ group. By \S~\ref{sec:generalizing-to-matrices}, we know our FHE scheme is very good at homomorphically multiplying rotation matrices, since they're non-expanding. The final piece is how to handle the subset sum ``as indicated by $s$.'' Write our $\sk$ encryption as
+\begin{equation}
+    \label{eq:enc-rotation-mat}
+    \skcenc(s) = \skcenc(s_1) \| ... \|\skcenc(s_n), \qquad s_i \in \{0,1\},
+\end{equation}
+\noindent where the $s_i$ are bits of $s$. We need to homomorphically operate on these encrypted bits in order to homomorphically compute $\skcdec(s,c)$. Explicitly, to compute $\langle s, \; c \rangle$ homomorphically, we need to sum up the entries of $c$ that are indicated by the bits $s_i$ of $s$. We essentially want to construct the appropriate permutation matrix based on the set $s_i$. But, since the $s_i$ are encrypted, they can't be read directly. However, what can be done is:
+\begin{enumerate}
+    \item for each entry $c_i \in \Z_q$, get $c_i \mapsto \matR^{c_i}$ by the above isomorphism;
+    \item construct $\skcenc(\matM) = \skcenc(s_i) \cdot \matR^{c_i} + \skcenc(1-s_i)\cdot \matI$ \quad (where $\matM$ is $\matI$ or $\matR^{c_i}$);
+    \item and homomorphically multiply the entire chain.
+\end{enumerate}
+\noindent Note $\skcenc(s_i)$ is an encrypted bit, which is being multiplied homomorphically by each entry of the permutation matrix $\matR^{c_i}$. This is easy to do; you can take any known value and multiply it inside an encrypted value (proof left as exercise). We also know we can negate and add $1$ to the encrypted value ($1-s_i$), and we can do the same thing with the identity $\matI$. This gives us:
+\begin{equation}
+    \skcenc\left(s_i\matR^{c_i}+(1-s_i)\matI\right) = \skcenc(s_i) \cdot \matR^{c_i} + \skcenc(1-s_i)\cdot \matI
+\end{equation}
+\noindent The argument to $\skcenc$ is then $\matR^{c_i}$ if $s_i = 1$, and it's $\matI$ if $s_i = 0$. This is sometimes called an \emph{encrypted multiplex operation}. We've got two values, and we want to select one of the two according the encrypted bit $\skcenc(s_i)$; then, we get out an encrypted answer.
+
+% TODO: conclude why dec is subset sum
+
+After the homomorphic inner product, we have
+\begin{equation}
+    \label{eq:enc-rot-ip}
+    \skcenc\left( \matR^{\langle s, c\rangle \mod q}\right),
+\end{equation}
+and we desire to know whether $\langle s, c\rangle$ is closer to $q/2$ or 0; i.e.,
+$$\skcenc\left(\langle s, c\rangle \approx q/2\right)$$
+\noindent It turns out that this is actually very easy to do, with almost no work required. To see this, first consider what the rotation matrix in \cref{eq:enc-rot-ip} actually looks like. In particular, it looks like the example given in \cref{def:rot-mat}. Note that rotation matrices are just column-rotated identity matrices, and so can be uniquely determined by the position of the $1$ in the first column. That is exactly the value mod-$q$. I.e., we know the entry of the $1$ in the first column is somewhere close to either $q/2$ or $0$, and we just need to discriminate between them.
+
+Here is a simple idea to do so: take all the positions that are close to $q/2$---meaning $q/2$ and the immediate neighborhood around it---and just homomorphically add all of these entries. We know there's at most one $1$ in the column, and every other entry a $0$, so this basically equates to doing an OR over these entries. You will get $1$ if the $1$ is inside the interval around $q/2$, and $0$ otherwise.
+
+Thus, we (homomorphically) sum the entries $\matR_{i,1}$ over all $i \approx q/2$, which again is in $\{0,1\}$, corresponding to whether it's closer to $q/2$ or $0$.
+
+% TODO: conclude how this takes care of rounding, which would seem difficult to handle on the surface
+
+\subsection{Conclusion}
+The above is one way to do it, and it is from efficient. Namely, we have to do a lot of $q \times q$ matrix multiplications homomorphically, and so there's quite a lot of overhead to it. But, this basic approach has been optimized and some additional ideas inserted in. Now, it can be executed on the order of a hundredth of a second or less on modern implementations. So, it's quite fast, though it needs several additional ideas to get there. For instance, the matrix operations can be done very efficiently, and there are ring structures and so forth that can make it even faster. Ultimately, it's decently fast, and the error blow-up is not too much of an issue due to the structure of \cref{eq:3-bit-mul-err} and \cref{eq:mat-mul-err2}. A benefit of this is that you can use a small modulus $q$, which can improve security, and allow you to use smaller ciphertexts and fast operations.
+
+As another takeway, the circular security problem is still open here. Also, the above methods focus on encrypting individual bits per ciphertext. In reality, we want to encrypt more data in smaller ciphertexts. I.e., the question of ``how much plaintext data can you stuff into a ciphertext'' is very important. Putting a single bit into an entire matrix is terrible overhead. There are still a great deal of unsolved questions about whether we can fit a lot more data into the ciphertext and still have the small error growth behavior. For instance, there are other schemes that allow you to pack much more data in, but they have worse error blow-up (e.g., exponential, rather than this scheme's linear complexity w/r/t number of multiplies).
+
+On a final note, we also currently do not know how to bootstrap for identity- and attribute-based encryption that used these techniques.
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
