@@ -154,7 +154,7 @@ Following the core idea of FHE, users ``hide'' private data from the cloud, whic
 
 \medskip
 
-I.e., we need to do it with as little noise blow-up on the encrypted secret key. Another important consideration is whether it's actually \emph{secure to encrypt a secret key with itself}. This is a very long-standing and challenging problem, and it's still wide-open: we don't actually know if it's truly secure to do this. This is known as \emph{circular security}.
+I.e., we need to do it with as little noise blow-up on the encrypted secret key. Another important consideration is whether it's actually \emph{secure to encrypt a secret key with itself}. This is a very long-standing and challenging problem, and it's still wide-open: we don't actually know if it's truly secure to do. This is known as \emph{circular security}.
 
 
 \begin{definition}[Circular security]
@@ -172,22 +172,63 @@ $$D_c(\:\cdot\:) := \skcdec(\cdot,\;c) \textmd{ \quad for some fixed $c$,}$$
 \noindent which we are viewing as a function of the secret key. Our goal is to express the computation of this function in a homomorphically-friendly way. Let's recall our homomorphic computation / encryption scheme:
 
 \begin{itemize}
-    \item We have matrices $A=[A_1,A_2]$ \quad (with entries over $\Z_q$)
+    \item We have matrices $A=[A_1 \; A_2]$ \quad (with entries over $\Z_q$)
     \item $A_{\textmd{mul}} = A_1 \cdot G^{-1}(A_2)$ \quad (where $G^{-1}$ breaks every entry of $A_2$ into its binary representation)
-    \item $\left([A_1,A_2] - \left[x_1G, x_2G\right]\right) \cdot S_{\textmd{mul},x_1} = A_{\textmd{mul}} - x_1x_2G = A_1\cdot G^{-1}(A_2) - x_1x_2G$ \quad (bits $x_1,x_2$)
+    
+    % Maybe delete the last equality here, since it's just the defintion of A_mul?
+    \item $\left([A_1 \; A_2] - \left[x_1G \; x_2G\right]\right) \cdot S_{\textmd{mul},x_1} = A_{\textmd{mul}} - x_1x_2G = A_1\cdot G^{-1}(A_2) - x_1x_2G$ \quad (bits $x_1,x_2$)
     $$\textmd{where short matrix}\quad S_{\textmd{mul},x_1} = \begin{bmatrix}
         G^{-1}(A_2) \\
         x_1I
     \end{bmatrix}$$
-    \item The (FHE) error vector $e^t=[e_1^t,e_2^t]$ becomes $e^t_{\textmd{mul}} = e^t \cdot S_{\textmd{mul},x_1} = e_1^t\cdot G^{-1}(A_2)+e_2^t\cdot (x_1I)$
+    \item The (FHE) error vector $e^t=[e_1^t \; e_2^t]$ becomes $e^t_{\textmd{mul}} = e^t \cdot S_{\textmd{mul},x_1} = e_1^t\cdot G^{-1}(A_2)+e_2^t\cdot (x_1I)$
     
 \end{itemize}
 
 The above is how we defined multiplication. An interesting observation is that the error growth here is highly asymmetrical. In particular, $e_1^t$ gets hit with the binary matrix $G^{-1}(A_2)$---which is $m\times m$ or so---and $e_2^t$ has $x_1I$, which is either $I$ or $0$ since $x_1$ is a bit. So, $e_2$ either doesn't blow up at all, or it gets annihilated. On the other hand, $e_1$ does blow up by some factor proportional to the dimension of these matrices.
 
 
+Let's consider an example to generalize this. Suppose we're doing a series of multiplies with three bits:
+$$A=[A_1,A_2,A_3] \quad \textmd{(entries over } \Z_q \textmd{).}$$
+Then, for bits $x_1,x_2,x_3$, with the desired goal of
+\begin{equation}
+    \label{eq:3-bit-mul-cond}
+    \left([A_1 \; A_2 \; A_3] - [x_1G \quad x_2G \quad x_3G]\right) \cdot S = A_{\textmd{mul}} - x_1x_2x_3G,
+\end{equation}
+
+\noindent we get that
+$$A_{\textmd{mul}} = A_1\cdot G^{-1}(A_2) \cdot G^{-1}(A_3)$$
+\noindent and
+$$S = \begin{bmatrix}
+    G^{-1}(A_1) \cdot G^{-1}(A_2) \\
+    x_1 G^{-1}(A_3) \\
+    x_1x_2I
+\end{bmatrix}.$$
+
+\noindent This is not ideal due to the following. The error vector will get hit by $S$, and so $e_1^t,e_2^t,e_3^t$ will get blown up by their respective block-rows in $S$. In particular, $e_1^t$ is a product of two $G^{-1}$ matrices, each of which already blows it up by the dimension. Thus, if we are multiplying with several bits, it would be exponential in the number of bits we are multiplying. Consequently, $e_1$ explodes quite a lot.
+
+It turns out we can do much better by defining $A_{\textmd{mul}}$ differently. The idea is to conceptualize this as a right-associative multiplication. In particularly, we can set
+\begin{equation}
+    \label{eq:3-bit-mul-amul}
+    A_{\textmd{mul}} = A_1 \cdot G^{-1}(A_2 \cdot G^{-1}(A_3))
+\end{equation}
+\noindent which is just a right-associative chain of the earlier two-bit definition. This corresponds to $x_1(x_2x_3)$, whereas the above attempt roughly corresponds to $(x_1x_2)x_3$. Then, with the desired \cref{eq:3-bit-mul-cond}, we can define
+\begin{equation}
+    \label{3-bit-mul-s}
+    S = \begin{bmatrix}
+        G^{-1}\left(A_2 \cdot G^{-1}(A_3)\right) \\
+        x_1G^{-1}(A_3) \\
+        x_1x_2I
+    \end{bmatrix}
+\end{equation}
 
 
+\noindent In short, this changes the first entry so $e_1^t$ is not a product of two $G^{-1}$ matrices. We can then write the error as
+
+$$e_{\textmd{mul}}^t = e^t \cdot S = e_1^t \cdot G^{-1}(...) + e_2^t \cdot x_1G^{-1}(...) + e_3^t \cdot x_1x_2I$$
+\noindent where again $e^t = [e_1^t \; e_2^t \; e_3^t]$ is the current FHE error vector. Just like in the original scheme, $e_3^t$ is either annihilated or doesn't change, since $x_1,x_2$ are bits. Also like the original, $e_1^t$ and $e_2^t$ are only blown-up by a single $G^{-1}$ matrix, which we recall scales by a factor proportional to the dimension. Again, this contrasts with the previous attempt that needed a product of $G^{-1}$ matrices, which is exponential in the number of bits multiplied.
+
+Consequently, we can multiply an unlimited number of $x_i$; each error chunk gets blown-up by a fixed factor and they get added together. Unlike our first attempt, there's no exponential growth in the number of multiplies: it is instead \emph{linear} in the number of terms $x_i$ we multiply.
 
 \end{document}
 
